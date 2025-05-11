@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    @apply bg-gray-100 text-gray-700;
+    font-family: "Roboto", sans-serif;
+    font-weight: 300;
+    color: #444;
+}
+h2 {
+    @apply text-xl font-bold my-4;
+}
+h3 {
+    @apply text-lg font-bold my-4;
+}
+ul {
+    @apply my-10;
+}
+
+/* header */
+header {
+    @apply bg-white;
+
+    nav {
+        @apply flex items-center gap-5 max-w-screen-lg px-12 py-4 mx-auto;
+    }
+    h1 {
+        @apply mr-auto;
+    }
+}
+
+/* form elements */
+form {
+    @apply max-w-screen-sm;
+}
+input,
+select,
+textarea {
+    @apply block w-full mt-2 mb-4 p-2;
+}
+
+/* custom classes */
+.container {
+    @apply max-w-screen-lg mx-auto px-12 py-8;
+}
+.card {
+    @apply bg-white rounded border border-gray-200 px-3 py-3 my-2 flex justify-between items-center;
+}
+.highlight {
+    @apply border-l-4 border-l-red-500;
+}
+.btn {
+    @apply rounded px-3 py-2 bg-gray-200 hover:bg-red-500 hover:text-white;
+}
+
+.welcome-section {
+    height: 100vh;
+    background-image: linear-gradient(
+            to right,
+            rgba(17, 13, 13, 0.753),
+            rgba(245, 239, 239, 0.199)
+        ),
+        url("/public/assets/images/img_welcome_background.jpg");
+    background-size: cover;
+    position: relative;
+    color: #fff;
+}
+
+.welcome-section h1 {
+    font-size: 52px;
+    line-height: 1.05;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.welcome-section p {
+    line-height: 1.4;
+    margin-bottom: 15px;
+}
+
+.login-button {
+    @apply relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800;
+}
+
+.login-button span {
+    @apply relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent;
+}
+
+.register-button {
+    @apply text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700;
+}
+
+.hero-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero-nav {
+    padding: 12px;
+    display: flex;
+    max-width: 1600px;
+    align-items: center;
+    gap: 25px;
+    padding-top: 42px;
+}
+
+.logo-icon {
+    width: 150px;
+    margin-right: auto;
+    stroke: #fff;
+    opacity: 0.7;
+}

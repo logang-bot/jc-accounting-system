@@ -15,14 +15,16 @@ class EmpresasController extends Controller
         return view('home', compact('empresa'));
     }
 
-    public function index()
-    {
-        return view('empresas.create', ['empresas' => Empresa::all()]);
-    }
-
     public function create()
     {
         return view('empresas.create', ['empresas' => Empresa::all()]);
+    }
+    
+    public function show($id)
+    {
+        session(['empresa_id' => $id]);
+        $empresa = Empresa::with('datoEmpresa')->findOrFail($id);
+        return view('empresas.company', compact('empresa'));
     }
 
     public function store(Request $request)
@@ -44,116 +46,55 @@ class EmpresasController extends Controller
         return redirect()->route('empresas.create')->with('success', 'Empresa creada correctamente.');
     }
 
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'nit' => 'required|string|max:255',
+            'direccion' => 'required|string|max:255',
+            'ciudad' => 'required|string|max:255',
+            'provincia' => 'nullable|string|max:100',
+            'telefono' => 'required|string|max:255',
+            'celular' => 'nullable|string|max:20',
+            'correo_electronico' => 'nullable|email|max:100',
+            'periodo' => 'required|string|max:255',
+            'gestion' => 'required|string|max:255',
+        ]);
+
+        // Actualizar el nombre de la empresa
+        Empresa::findOrFail($id)->update(['name' => $request->name]);
+
+        // Actualizar o crear los datos de la empresa
+        DatoEmpresa::updateOrCreate(
+            ['empresa_id' => $id],
+            $request->only(['nit', 'direccion', 'ciudad', 'provincia', 'telefono', 'celular', 'correo_electronico', 'periodo', 'gestion'])
+        );
+
+        return redirect()->route('empresa.show', $id)->with('success', 'Datos actualizados correctamente.');
+    }
+
     public function destroy($id)
     {
         Empresa::findOrFail($id)->delete();
         return redirect()->route('empresas.create')->with('success', 'Empresa eliminada correctamente.');
     }
 
-    public function show($id)
-    {
-        return view('empresas.company', ['empresa' => Empresa::with('datoEmpresa')->findOrFail($id)]);
-    }
-
-    public function ingresarEmpresa($id)
-    {
-        session(['empresa_id' => $id]);
-        return redirect()->route('empresa.show', ['id' => $id]);
-    }
-
-    public function salir()
+    public function exit()
     {
         session()->forget('empresa_id');
         return redirect('/empresas/crear');
     }
+
+    // public function index()
+    // {
+    //     $empresa_id = session('empresa_id');
+
+    //     if (!$empresa_id) {
+    //         return redirect()->route('empresas')->with('error', 'Debe seleccionar una empresa primero.');
+    //     }
+
+    //     $empresa = Empresa::with('datoEmpresa')->findOrFail($empresa_id);
+    //     return view('empresas.company', compact('empresa'));
+    // }
+
 }
-
-
-/*
-namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-use App\Models\Empresa;
-
-class EmpresasController extends Controller
-{
-    public function home($id)
-    {
-        // Encuentra la empresa por su ID
-        $empresa = Empresa::findOrFail($id);
-
-        // Pasa la información de la empresa a la vista 'empresa.home'
-        return view('home', compact('empresa'));
-    }
-
-    public function index()
-    {
-        $empresas = Empresa::all();
-        return view('empresas.create', compact('empresas'));
-    }
-
-    public function create()
-    {
-        $empresas = Empresa::all();
-        return view('empresas.create', compact('empresas'));
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
-
-        Empresa::create(['name' => $request->name]);
-
-        return redirect()->route('empresas.create')->with('success', 'Empresa creada correctamente');
-    }
-
-    public function destroy($id)
-    {
-        $empresa = Empresa::findOrFail($id);
-        $empresa->delete();
-
-        return redirect()->route('empresas.create')->with('success', 'Empresa eliminada correctamente');
-    }
-
-    public function show($id)
-    {
-        $empresa = Empresa::findOrFail($id);
-        return view('company', compact('empresa'));
-    }
-
-    public function verEmpresa($id)
-    {
-        // Encuentra la empresa por su ID
-        $empresa = Empresa::findOrFail($id);
-
-        // Pasa la información de la empresa a la vista 'show'
-        return view('empresas.company', compact('empresa'));
-    }
-
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'nit' => 'required|string|max:20',
-            'direccion' => 'required|string|max:255',
-            'ciudad' => 'required|string|max:100',
-            'telefono' => 'required|string|max:20',
-        ]);
-
-        $empresa = Empresa::findOrFail($id);
-        $empresa->update($request->all());
-
-        return redirect()->route('empresa.ver', $id)->with('success', 'Empresa actualizada correctamente');
-    }
-
-    public function salir(Request $request)
-    {
-        // Eliminar la sesión de la empresa seleccionada
-        session()->forget('empresa_id');
-
-        // Redirigir a la página /empresas/crear
-        return redirect('/empresas/crear');
-    }
-}
-*/

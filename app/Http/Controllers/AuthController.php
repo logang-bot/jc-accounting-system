@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -51,9 +50,6 @@ class AuthController extends Controller
         throw ValidationException::withMessages([
             'Credentials' => 'Sorry, incorrect credentials'
         ]);
-
-
-
     }
 
     public function logout(Request $request)

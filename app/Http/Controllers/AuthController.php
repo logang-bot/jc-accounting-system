@@ -28,10 +28,8 @@ class AuthController extends Controller
         ]);
 
         $user = User::create($validated);
-
         Auth::login($user);
-
-        return redirect()->route('home');
+        return redirect()->route('show.empresas.create');
     }
 
     public function login(Request $request)
@@ -44,7 +42,7 @@ class AuthController extends Controller
         if (Auth::attempt($validated))
         {
             $request->session()->regenerate();
-            return redirect()->route('home');
+            return redirect()->route('show.empresas.create');
         } 
         
         throw ValidationException::withMessages([

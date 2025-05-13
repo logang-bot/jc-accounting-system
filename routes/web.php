@@ -6,12 +6,12 @@ use App\Http\Controllers\CuentaController;
 use App\Http\Controllers\ComprobantesController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
 
 // Rutas para autenticacion
 Route::middleware('guest')->controller(AuthController::class)->group(function() {
+    Route::get('/', function () {
+        return view('welcome');
+    })->name('home');
     
     // Rutas para vistas
     Route::get('/register', 'showRegister')->name('show.register');

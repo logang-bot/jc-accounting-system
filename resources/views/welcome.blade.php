@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de contabilidad</title>
 
-    @vite('resources/css/login.css')
+    @vite('resources/css/app.css')
 
 </head>
 

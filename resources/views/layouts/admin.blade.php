@@ -11,12 +11,12 @@
 </head>
 
 <body class="bg-gray-100">
-    <div id="db-wrapper" x-data="{ sidebarOpen: true }" class="flex">
+    <div x-data="{ sidebarOpen: true }" class="flex">
         <!-- Navbar vertical -->
         @include('layouts.partials.admin.navbar-vertical-admin')
 
         <!-- Page content -->
-        <div id="page-content" class="flex-1 flex flex-col">
+        <div id="page-content" class="flex-1 ml-0 transition-all duration-300" :class="sidebarOpen ? 'ml-64' : 'ml-0'">
             @include('layouts.partials.admin.header')
             @include('layouts.partials.admin.notifications')
 

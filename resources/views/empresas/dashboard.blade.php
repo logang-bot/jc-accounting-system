@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="h-screen bg-white transition-all duration-200">
+    <div class="h-screen bg-white">
         <!-- Background section -->
         <div class="bg-blue-600 pt-10 pb-[84px]"></div>
 

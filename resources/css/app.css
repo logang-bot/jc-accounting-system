@@ -3,14 +3,6 @@
 
 @source "../../node_modules/preline/dist/*.js";
 
-h2 {
-    @apply text-xl font-bold my-4;
-}
-
-h3 {
-    @apply text-lg font-bold my-4;
-}
-
 form {
     @apply max-w-screen-sm;
 }

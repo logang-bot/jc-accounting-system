@@ -99,7 +99,7 @@
         </div>
 
         <x-modal id="create-empresa-modal">
-            <div class="">
+            <div class="flex items-center justify-center min-h-screen px-4">
                 <div class="bg-white w-full max-w-md rounded-lg shadow-lg">
 
                     <!-- Modal Header -->

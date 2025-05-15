@@ -1,120 +1,125 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="bg-primary pt-10 pb-21"></div>
-    <div class="container-fluid mt-n22 px-6">
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0 text-white">Plan de Cuentas</h3>
-                    <div>
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                            data-bs-target="#modalCrearCuenta">
+    <div class="bg-white h-screen">
+        <div class="bg-blue-600 pt-10 pb-[84px]"></div>
+        <div class="mt-[-88px] px-6 w-full max-w-screen-xl mx-auto">
+            <div class="flex flex-col gap-6">
+                <!-- Header Actions -->
+                <div class="flex justify-between items-center">
+                    <h3 class="text-white text-2xl font-semibold">Plan de Cuentas</h3>
+                    <div class="flex gap-2 flex-wrap">
+                        <button type="button" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                            aria-controls="cuentas-create" data-hs-overlay="#cuentas-create">
                             Adicionar
                         </button>
-
-                        <button id="btnEditar" type="button" class="btn btn-warning" onclick="abrirModalEditarDesdeBoton()"
-                            disabled>
+                        <button id="btnEditar" type="button"
+                            class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 disabled:opacity-50"
+                            aria-controls="cuentas-edit" data-hs-overlay="#cuentas-edit" disabled>
                             Editar
                         </button>
-
-                        <button id="btnBorrar" type="button" class="btn btn-danger" onclick="abrirModalBorrar()" disabled>
+                        <button id="btnBorrar" type="button"
+                            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50"
+                            aria-controls="cuentas-delete" data-hs-overlay="#cuentas-delete" disabled>
                             Borrar
                         </button>
-
-                        <button type="button" class="btn btn-info" data-bs-toggle="modal"
-                            data-bs-target="#modalReporteCuenta">
+                        <button type="button" class="bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-700"
+                            aria-controls="cuentas-report" data-hs-overlay="#cuentas-report">
                             Reporte
                         </button>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Tabla -->
-        <div class="row mt-6">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header bg-white py-4">
-                        <h4 class="mb-0">Lista de Cuentas</h4>
+                <!-- Table -->
+                <div class="bg-white rounded shadow">
+                    <div class="border-b px-6 py-4">
+                        <h4 class="text-lg font-semibold">Lista de Cuentas</h4>
                     </div>
-                    <div class="card-body">
-                        <div style="max-height: 560px; overflow-y: auto; border: 1px solid #ddd;">
-                            <table class="table table-bordered" id="tablaCuentas">
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th>Código</th>
-                                        <th>Nombre</th>
-                                        <th>Tipo</th>
-                                        <th>Nivel</th>
-                                        <th>Movimiento</th>
-                                        <th>Acciones</th>
+                    <div class="p-4 overflow-y-auto" style="max-height: 560px;">
+                        <table class="min-w-full border border-gray-300 text-sm text-left">
+                            <thead class="bg-gray-800 text-white">
+                                <tr>
+                                    <th class="px-4 py-2 border">Código</th>
+                                    <th class="px-4 py-2 border">Nombre</th>
+                                    <th class="px-4 py-2 border">Tipo</th>
+                                    <th class="px-4 py-2 border">Nivel</th>
+                                    <th class="px-4 py-2 border">Movimiento</th>
+                                    <th class="px-4 py-2 border">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($cuentas as $cuenta)
+                                    <tr id="cuenta-{{ $cuenta->id_cuenta }}"
+                                        class="cuenta-row hover:bg-gray-100 cursor-pointer"
+                                        data-id="{{ $cuenta->id_cuenta }}" data-codigo="{{ $cuenta->codigo_cuenta }}"
+                                        data-nombre="{{ $cuenta->nombre_cuenta }}" data-tipo="{{ $cuenta->tipo_cuenta }}"
+                                        data-nivel="{{ $cuenta->nivel }}"
+                                        onclick="seleccionarCuenta({{ $cuenta->id_cuenta }}, '{{ $cuenta->codigo_cuenta }}', '{{ $cuenta->nombre_cuenta }}', '{{ $cuenta->tipo_cuenta }}', '{{ $cuenta->nivel }}')">
+                                        <td class="px-4 py-2 border font-mono w-40">{{ $cuenta->codigo_cuenta }}</td>
+                                        <td class="px-4 py-2 border">
+                                            {{ str_repeat('— ', min($cuenta->nivel - 1, 4)) . $cuenta->nombre_cuenta }}
+                                        </td>
+                                        <td class="px-4 py-2 border">{{ $cuenta->tipo_cuenta }}</td>
+                                        <td class="px-4 py-2 border">{{ $cuenta->nivel }}</td>
+                                        <td class="px-4 py-2 border">
+                                            @if ($cuenta->es_movimiento)
+                                                <span
+                                                    class="inline-block bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded">Sí</span>
+                                            @else
+                                                <span
+                                                    class="inline-block bg-gray-500 text-white text-xs font-semibold px-2 py-1 rounded">No</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-4 py-2 border">
+                                            <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                                                data-id="{{ $cuenta->id_cuenta }}"
+                                                data-codigo="{{ $cuenta->codigo_cuenta }}"
+                                                data-nombre="{{ $cuenta->nombre_cuenta }}"
+                                                data-tipo="{{ $cuenta->tipo_cuenta }}" data-nivel="{{ $cuenta->nivel }}"
+                                                onclick="abrirModalEditar(this)">
+                                                Editar
+                                            </button>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($cuentas as $cuenta)
-                                        <tr id="cuenta-{{ $cuenta->id_cuenta }}" class="cuenta-row"
-                                            data-id="{{ $cuenta->id_cuenta }}" 
-                                            data-codigo="{{ $cuenta->codigo_cuenta }}"
-                                            data-nombre="{{ $cuenta->nombre_cuenta }}"
-                                            data-tipo="{{ $cuenta->tipo_cuenta }}" 
-                                            data-nivel="{{ $cuenta->nivel }}"
-                                            onclick="seleccionarCuenta({{ $cuenta->id_cuenta }}, '{{ $cuenta->codigo_cuenta }}', '{{ $cuenta->nombre_cuenta }}', '{{ $cuenta->tipo_cuenta }}', '{{ $cuenta->nivel }}')">
-                                            <td style="width: 150px; font-family: 'Arial', monospace;">
-                                                {{ $cuenta->codigo_cuenta }}
-                                            </td>
-                                            <td>{{ str_repeat('— ', min($cuenta->nivel - 1, 4)) . $cuenta->nombre_cuenta }}
-                                            </td>
-                                            <td>{{ $cuenta->tipo_cuenta }}</td>
-                                            <td>{{ $cuenta->nivel }}</td>
-                                            <td>
-                                                @if ($cuenta->es_movimiento)
-                                                    <span class="badge bg-success">Sí</span>
-                                                @else
-                                                    <span class="badge bg-secondary">No</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-warning btn-editar"
-                                                    data-id="{{ $cuenta->id_cuenta }}"
-                                                    data-codigo="{{ $cuenta->codigo_cuenta }}"
-                                                    data-nombre="{{ $cuenta->nombre_cuenta }}"
-                                                    data-tipo="{{ $cuenta->tipo_cuenta }}"
-                                                    data-nivel="{{ $cuenta->nivel }}" onclick="abrirModalEditar(this)">
-                                                    Editar
-                                                </button>
-                                            </td>
-                                        </tr>
 
-                                        @if ($cuenta->children->isNotEmpty())
-                                            @foreach ($cuenta->children as $child)
-                                                @include('cuentas.partials.fila_cuenta', [
-                                                    'cuenta' => $child,
-                                                    'nivel' => $cuenta->nivel + 1,
-                                                ])
-                                            @endforeach
-                                        @endif
-                                    @empty
-                                        <tr>
-                                            <td colspan="6" class="text-center">No hay cuentas registradas</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
+                                    @if ($cuenta->children->isNotEmpty())
+                                        @foreach ($cuenta->children as $child)
+                                            @include('cuentas.partials.fila_cuenta', [
+                                                'cuenta' => $child,
+                                                'nivel' => $cuenta->nivel + 1,
+                                            ])
+                                        @endforeach
+                                    @endif
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4 text-gray-500">No hay cuentas registradas
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Modales -->
-        @include('cuentas.crud.create')
-        @include('cuentas.crud.edit')
-        @include('cuentas.crud.delete')
-        @include('cuentas.crud.report')
+            <x-modal id="cuentas-create">
+                @include('cuentas.crud.create')
+            </x-modal>
 
-        <!-- seleccionar cuenta -->
-        <script>
+            <x-modal id="cuentas-edit">
+                @include('cuentas.crud.edit')
+            </x-modal>
+
+            <x-modal id="cuentas-delete">
+                @include('cuentas.crud.delete')
+            </x-modal>
+
+            <x-modal id="cuentas-report">
+                @include('cuentas.crud.report')
+            </x-modal>
+
+            <!-- seleccionar cuenta -->
+            {{-- <script>
             let cuentaSeleccionadaId = null;
             let cuentaSeleccionadaCodigo = null;
             let cuentaSeleccionadaNombre = null;
@@ -209,6 +214,9 @@
                 let modalEditar = new bootstrap.Modal(document.getElementById('modalEditarCuenta'));
                 modalEditar.show();
             }
-        </script>
+        </script> --}}
+        </div>
+
     </div>
+
 @endsection

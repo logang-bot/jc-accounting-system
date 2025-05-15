@@ -16,6 +16,8 @@ class AuthController extends Controller
 
     public function showLogin()
     {
+        if (Auth::check())
+            return redirect()->route('show.empresas.create');
         return view('auth.login');
     }
 
@@ -46,7 +48,7 @@ class AuthController extends Controller
         } 
         
         throw ValidationException::withMessages([
-            'Credentials' => 'Sorry, incorrect credentials'
+            'Credentials' => 'Credenciales Incorrectas'
         ]);
     }
 

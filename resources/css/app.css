@@ -1,61 +1,23 @@
 @import "tailwindcss";
+@import "../../node_modules/preline/variants.css";
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+@source "../../node_modules/preline/dist/*.js";
 
-body {
-    @apply bg-gray-100 text-gray-700;
-    font-family: "Roboto", sans-serif;
-    font-weight: 300;
-    color: #444;
-}
 h2 {
     @apply text-xl font-bold my-4;
 }
+
 h3 {
     @apply text-lg font-bold my-4;
 }
-ul {
-    @apply my-10;
-}
 
-/* header */
-header {
-    @apply bg-white;
-
-    nav {
-        @apply flex items-center gap-5 max-w-screen-lg px-12 py-4 mx-auto;
-    }
-    h1 {
-        @apply mr-auto;
-    }
-}
-
-/* form elements */
 form {
     @apply max-w-screen-sm;
 }
-input,
+
 select,
 textarea {
     @apply block w-full mt-2 mb-4 p-2;
-}
-
-/* custom classes */
-.container {
-    @apply max-w-screen-lg mx-auto px-12 py-8;
-}
-.card {
-    @apply bg-white rounded border border-gray-200 px-3 py-3 my-2 flex justify-between items-center;
-}
-.highlight {
-    @apply border-l-4 border-l-red-500;
-}
-.btn {
-    @apply rounded px-3 py-2 bg-gray-200 hover:bg-red-500 hover:text-white;
 }
 
 .welcome-section {

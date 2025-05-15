@@ -1,149 +1,136 @@
-@extends('layouts.auth')
+@extends('layouts.main')
+
+@section('customstyles')
+    @vite('resources/css/empresas.css')
+@endsection
+
+@section('customscripts')
+    @vite('resources/js/empresasCreate.js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@endsection
 
 @section('content')
-    <style>
-        .table-fixed-height {
-            display: block;
-            height: 300px;
-            overflow-y: auto;
-            width: 100%;
-        }
+    @if (session('success'))
+        <div id="flash" class="p-4 text-center bg-green-50 text-green-500 font-bold">
+            {{ session('success') }}
+        </div>
+    @endif
 
-        .table-fixed-height thead,
-        .table-fixed-height tbody tr {
-            display: table;
-            width: 100%;
-            table-layout: fixed;
-        }
-
-        .table-fixed-height thead {
-            background-color: #f2f2f2;
-            color: #333;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-
-        .table-fixed-height th,
-        .table-fixed-height td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-    </style>
-    <div class="container d-flex flex-column align-items-center justify-content-center min-vh-100">
-        <div class="col-12 col-md-12 col-lg-10 col-xxl-8">
-            <div class="card smooth-shadow-md">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-md-6 text-center d-flex flex-column align-items-center justify-content-center">
-                            <h1 class="mb-3"
-                                style="font-family: 'Arial Black', sans-serif; font-size: 60px; color: #1c3552; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); letter-spacing: 1px;">
-                                Sistema Contable
-                            </h1>
-                            <img src="{{ asset('/admin_assets/images/ESCUDO.png') }}" alt="Logo" style="height: 300px;">
-                            <h2 class="mb-3"
-                                style="font-family: 'Arial Black', sans-serif; font-size: 60px; color: #1c3552; text-shadow: 2x 2px 4px rgba(0, 0, 0, 0.2); letter-spacing: 1px;">
-                                U A T F
-                            </h2>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="d-flex justify-content-center mb-3 w-100">
-                                <button type="button" class="btn btn-primary mx-2 w-100" data-bs-toggle="modal"
-                                    data-bs-target="#crearEmpresaModal">
-                                    {{ __('Crear Empresa') }}
-                                </button>
+    <div class="content flex items-center justify-center h-screen">
+        <div>
+            <div class="">
+                <div class="custom-card-glass shadow-md rounded-lg">
+                    <div class="p-6">
+                        <div class="">
+                            <!-- Title Section -->
+                            <div class="justify-center text-center pb-7">
+                                <h2 class="text-2xl font-semibold text-gray-800">
+                                    Lista de Empresas
+                                </h2>
                             </div>
-                            <div class="table-fixed-height">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>{{ __('Nombre') }}</th>
-                                            <th>{{ __('Opciones') }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($empresas as $empresa)
-                                            <tr class="hover-highlight" data-empresa-id="{{ $empresa->id }}">
-                                                <td>{{ $empresa->name }}</td>
-                                                <td>
-                                                    <a href="{{ route('show.empresa.home', $empresa->id) }}"
-                                                        class="btn btn-info btn-sm">Ingresar</a>
-                                                    <button onclick="confirmDelete({{ $empresa->id }})"
-                                                        class="btn btn-danger btn-sm">Eliminar</button>
-                                                    <form id="delete-form-{{ $empresa->id }}"
-                                                        action="{{ route('empresas.destroy', $empresa->id) }}"
-                                                        method="POST" style="display: none;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                    </form>
-                                                </td>
+
+                            <!-- Right Side Content -->
+                            <div class="flex flex-row  gap-3">
+
+                                <div class="flex flex-col items-stretch gap-4">
+                                    <!-- Button -->
+                                    <button type="button"
+                                        class="bg-green-600/20 hover:bg-green-600/60 text-white font-semibold py-2 px-4 rounded w-full "
+                                        aria-controls="create-empresa-modal" data-hs-overlay="#create-empresa-modal">
+                                        <x-carbon-add-filled />
+                                        Crear Empresa
+                                    </button>
+
+                                    <!-- Logout Button -->
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit"
+                                            class="bg-red-600/20 hover:bg-red-600/60 text-white font-semibold py-2 px-4 rounded w-full">
+                                            <x-carbon-exit />
+                                            Cerrar Sesión
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- Table -->
+                                <div class="p-3 bg-black/30 rounded-2xl">
+                                    <table class="min-w-80 text-sm text-left ">
+                                        <thead class=" text-white">
+                                            <tr>
+                                                <th class="px-4 py-2 border-b">{{ __('Nombre') }}</th>
+                                                <th class="px-4 py-2 border-b">{{ __('Opciones') }}</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <div class="mt-4">
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="btn btn-danger w-100">{{ __('Cerrar Sesión') }}</button>
-                                </form>
+                                        </thead>
+                                        <tbody class="text-white">
+                                            @foreach ($empresas as $empresa)
+                                                <tr class="hover:bg-black/20 transition-colors"
+                                                    data-empresa-id="{{ $empresa->id }}">
+                                                    <td class="py-4 px-4 align-middle">
+                                                        {{ $empresa->name }}
+                                                    </td>
+                                                    <td class="px-4">
+                                                        <div class="flex flex-row">
+                                                            <a href="{{ route('show.empresas.home', $empresa->id) }}"
+                                                                class="hover:bg-green-600 text-white py-1 px-3 rounded text-xs">
+                                                                <x-carbon-arrow-right class="w-6 h-6 text-white" />
+                                                            </a>
+                                                            <button data-empresa-id="{{ $empresa->id }}"
+                                                                class="delete-btn hover:bg-red-600/50 text-white py-1 px-3 rounded text-xs">
+                                                                <x-carbon-trash-can class="w-6 h-6 text-white" />
+                                                            </button>
+                                                            <form id="delete-form-{{ $empresa->id }}"
+                                                                action="{{ route('empresas.destroy', $empresa->id) }}"
+                                                                method="POST" class="hidden">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                            </form>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="modal fade" id="crearEmpresaModal" tabindex="-1" aria-labelledby="crearEmpresaModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="crearEmpresaModalLabel">{{ __('Crear Empresa') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="crearEmpresaForm" method="POST" action="{{ route('empresas.store') }}">
-                        @csrf
-                        <div class="mb-3">
-                            <label for="empresaName" class="form-label">{{ __('Nombre') }}</label>
-                            <input id="empresaName" type="text" class="form-control" name="name" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">{{ __('Crear') }}</button>
-                    </form>
+
+        <x-modal id="create-empresa-modal">
+            <div class="">
+                <div class="bg-white w-full max-w-md rounded-lg shadow-lg">
+
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between px-6 py-4 border-b">
+                        <h5 class="text-lg font-semibold">
+                            {{ __('Crear Empresa') }}
+                        </h5>
+                        <button class="text-gray-500 hover:text-gray-700 text-xl font-bold"
+                            data-hs-overlay="#create-empresa-modal">&times;</button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="p-6">
+                        <form id="crearEmpresaForm" method="POST" action="{{ route('empresas.store') }}">
+                            @csrf
+                            <div class="mb-4">
+                                <label for="empresaName" class="block text-sm font-medium text-gray-700 mb-1">
+                                    {{ __('Nombre') }}
+                                </label>
+                                <input id="empresaName" name="name" type="text" required
+                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
+                            </div>
+                            <button type="submit"
+                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
+                                {{ __('Crear') }}
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        function confirmDelete(id) {
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "Esta acción no se puede deshacer",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById(`delete-form-${id}`).submit();
-                }
-            });
-        }
+        </x-modal>
 
-        // Mostrar SweetAlert2 para mensajes de éxito
-        @if (session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: "{{ session('success') }}",
-                confirmButtonColor: '#3085d6'
-            });
-        @endif
-    </script>
+    </div>
 @endsection

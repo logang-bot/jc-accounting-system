@@ -1,74 +1,77 @@
-<div class="header @@classList">
-    <!-- navbar -->
-    <nav class="navbar-classic navbar navbar-expand-lg">
-        <a id="nav-toggle" href="#"><i data-feather="menu" class="nav-icon me-2 icon-xs"></i></a>
-        <!-- Navbar nav -->
-        <ul class="navbar-nav navbar-right-wrap ms-auto d-flex nav-top-wrap">
-            <!-- List -->
-            <li class="dropdown ms-2">
-                <a class="rounded-circle" href="#" role="button" id="dropdownUser" data-bs-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
-                    <div class="avatar avatar-md avatar-indicators avatar-online">
-                        @if (Auth::check())
-                            <img alt="avatar" src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" class="rounded-circle" />
-                        @else
-                            <img alt="avatar" src="{{ Avatar::create('Invitado')->toBase64() }}" class="rounded-circle" />
-                        @endif
-                    </div>
-                </a>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUser">
-                    <div class="px-4 pb-0 pt-2">
-                        <div class="lh-1">
-                            @if (Auth::check())
-                                <h5 class="mb-1">{{ Auth::user()->name }}</h5>
-                                <a href="#" class="text-inherit fs-6">{{ Auth::user()->email }}</a>
-                            @else
-                                <h5 class="mb-1">Invitado</h5>
-                                <a href="#" class="text-inherit fs-6">Sin correo</a>
-                            @endif
-                        </div>
-                        <div class="dropdown-divider mt-3 mb-2"></div>
-                    </div>
-                    <ul class="list-unstyled">
-                        @if (Auth::check())
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="me-2 icon-xxs dropdown-item-icon" data-feather="user"></i>Edit Profile
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="me-2 icon-xxs dropdown-item-icon" data-feather="settings"></i>Account Settings
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('salir.empresa') }}"
-                                    onclick="event.preventDefault(); document.getElementById('salir-empresa-form').submit();">
-                                    <i class="me-2 icon-xxs dropdown-item-icon" data-feather="log-out"></i> Salir de Empresa
-                                </a>
-                                <form id="salir-empresa-form" action="{{ route('salir.empresa') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <i class="me-2 icon-xxs dropdown-item-icon" data-feather="power"></i>{{ __('Logout') }}
-                                </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
-                            </li>
-                        @else
-                            <li>
-                                <a class="dropdown-item" href="{{ route('login') }}">
-                                    <i class="me-2 icon-xxs dropdown-item-icon" data-feather="log-in"></i>Iniciar sesión
-                                </a>
-                            </li>
-                        @endif
-                    </ul>
-                </div>
-            </li>
-        </ul>
-    </nav>
+<div id="page-content" class="bg-white shadow px-4 py-3 flex items-center justify-between transition-all duration-200">
+    <!-- Navbar toggle -->
+    <a id="nav-toggle" href="#" @click.prevent="sidebarOpen = !sidebarOpen" class="text-gray-700 hover:text-gray-900">
+        <x-carbon-menu class="w-5 h-5" />
+    </a>
+
+    <!-- Right side user dropdown -->
+    <div class="relative">
+        <button id="userMenuButton" class="flex items-center focus:outline-none" data-dropdown-toggle="userDropdown">
+            <div class="w-9 h-9 rounded-full border-2 border-white overflow-hidden relative">
+                @if (Auth::check())
+                    <img alt="avatar" src="{{ Avatar::create(Auth::user()->name)->toBase64() }}"
+                        class="w-full h-full object-cover" />
+                @else
+                    <img alt="avatar" src="{{ Avatar::create('Invitado')->toBase64() }}"
+                        class="w-full h-full object-cover" />
+                @endif
+                <span
+                    class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></span>
+            </div>
+        </button>
+
+        <!-- Dropdown -->
+        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg z-50">
+            <div class="px-4 py-3 border-b">
+                @if (Auth::check())
+                    <h5 class="text-sm font-semibold">{{ Auth::user()->name }}</h5>
+                    <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
+                @else
+                    <h5 class="text-sm font-semibold">Invitado</h5>
+                    <p class="text-xs text-gray-500">Sin correo</p>
+                @endif
+            </div>
+            <ul class="py-2 text-sm text-gray-700">
+                @if (Auth::check())
+                    <li>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">
+                            <i data-feather="user" class="inline w-4 h-4 mr-2"></i> Edit Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">
+                            <i data-feather="settings" class="inline w-4 h-4 mr-2"></i> Account Settings
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('empresas.exit') }}"
+                            onclick="event.preventDefault(); document.getElementById('salir-empresa-form').submit();"
+                            class="block px-4 py-2 hover:bg-gray-100">
+                            <i data-feather="log-out" class="inline w-4 h-4 mr-2"></i> Salir de Empresa
+                        </a>
+                        <form id="salir-empresa-form" action="{{ route('empresas.exit') }}" method="POST"
+                            class="hidden">
+                            @csrf
+                        </form>
+                    </li>
+                    <li>
+                        <a href="{{ route('logout') }}"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                            class="block px-4 py-2 hover:bg-gray-100">
+                            <i data-feather="power" class="inline w-4 h-4 mr-2"></i> {{ __('Logout') }}
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                            @csrf
+                        </form>
+                    </li>
+                @else
+                    <li>
+                        <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-gray-100">
+                            <i data-feather="log-in" class="inline w-4 h-4 mr-2"></i> Iniciar sesión
+                        </a>
+                    </li>
+                @endif
+            </ul>
+        </div>
+    </div>
 </div>

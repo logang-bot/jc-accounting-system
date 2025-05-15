@@ -12,7 +12,7 @@ class EmpresasController extends Controller
     {
         session(['empresa_id' => $id]);
         $empresa = Empresa::findOrFail($id);
-        return view('home', compact('empresa'));
+        return view('empresas.dashboard', compact('empresa'));
     }
 
     public function create()
@@ -43,7 +43,7 @@ class EmpresasController extends Controller
             'gestion' => now()->year,
         ]);
 
-        return redirect()->route('empresas.create')->with('success', 'Empresa creada correctamente.');
+        return redirect()->route('show.empresas.create')->with('success', 'Empresa creada correctamente.');
     }
 
     public function update(Request $request, $id)
@@ -76,7 +76,7 @@ class EmpresasController extends Controller
     public function destroy($id)
     {
         Empresa::findOrFail($id)->delete();
-        return redirect()->route('empresas.create')->with('success', 'Empresa eliminada correctamente.');
+        return redirect()->route('show.empresas.create')->with('success', 'Empresa eliminada correctamente.');
     }
 
     public function exit()

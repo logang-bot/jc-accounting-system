@@ -1,90 +1,87 @@
 <!-- Modal Adicionar Cuenta -->
-<div class="modal fade" id="modalCrearCuenta" tabindex="-1" aria-labelledby="modalCrearCuentaLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalCrearCuentaLabel">Crear Cuenta</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Formulario de crear cuenta -->
-                <form id="crearCuentaForm" method="POST" action="{{ route('cuentas.store') }}">
-                    @csrf
+<div class="flex items-center justify-center min-h-screen px-4">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-xl">
+        <div class="flex justify-between items-center p-4 border-b">
+            <h5 class="text-lg font-semibold">Crear Cuenta</h5>
+            <button type="button" aria-controls="cuentas-create" data-hs-overlay="#cuentas-create"
+                class="text-gray-500 hover:text-black">
+                &times;
+            </button>
+        </div>
+        <div class="p-4">
+            <form id="crearCuentaForm" method="POST" action="{{ route('cuentas.store') }}">
+                @csrf
 
-                    <!-- Tipo de Cuenta -->
-                    <div class="mb-3">
-                        <label class="form-label">Tipo de Cuenta</label>
-                        <div class="d-flex justify-content-between align-items-center">
-                            @foreach (['Activo', 'Pasivo', 'Patrimonio', 'Ingresos', 'Egresos'] as $tipo)
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="tipo_cuenta"
-                                        id="{{ strtolower($tipo) }}" value="{{ $tipo }}" required>
-                                    <label class="form-check-label"
-                                        for="{{ strtolower($tipo) }}">{{ $tipo }}</label>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <!-- Nivel de Cuenta -->
-                    <div class="mb-3">
-                        <label class="form-label">Nivel de Cuenta</label>
-                        <div class="d-flex justify-content-between align-items-center">
-                            @foreach (['Grupo', 'Rubro', 'Título', 'Cta-Compuesta', 'Sub-Cuenta'] as $nivel)
-                                <div class="form-check">
-                                    <input class="form-check-input nivel" type="checkbox" name="nivel"
-                                        value="{{ $nivel }}">
-                                    <label class="form-check-label">{{ $nivel }}</label>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <!-- Código de Cuenta -->
-                    <div class="mb-3">
-                        <label for="codigoCuenta" class="form-label">Código de Cuenta</label>
-                        <div class="d-flex">
-                            <input id="codigoCuenta1" type="text" class="form-control text-center me-1"
-                                maxlength="1" readonly style="width: 45px;">
-                            <input id="codigoCuenta2" type="text" class="form-control text-center me-1"
-                                maxlength="1" disabled style="width: 45px;">
-                            <input id="codigoCuenta3" type="text" class="form-control text-center me-1"
-                                maxlength="2" disabled style="width: 65px;">
-                            <input id="codigoCuenta4" type="text" class="form-control text-center me-1"
-                                maxlength="2" disabled style="width: 65px;">
-                            <input id="codigoCuenta5" type="text" class="form-control text-center me-1"
-                                maxlength="4" disabled style="width: 70px;">
-                            <input id="codigoCuentaFinal" type="text" class="form-control text-center"
-                                name="codigo_cuenta" required readonly style="width: 156px; font-weight: bold;">
-                        </div>
-                    </div>
-
-                    <!-- Nombre de la Cuenta y checkbox movimiento -->
-                    <div class="mb-3">
-                        <label for="editNombreCuenta" class="form-label">Nombre de la Cuenta</label>
-                        <div class="d-flex align-items-center">
-                            <input id="editNombreCuenta" type="text" class="form-control me-2" name="nombre_cuenta"
-                                required>
-
-                            <!-- Checkbox para marcar como cuenta de movimiento -->
-                            <div class="form-check ms-2">
-                                <input type="hidden" name="es_movimiento" value="0">
-                                <input class="form-check-input" type="checkbox" id="es_movimiento" name="es_movimiento"
-                                    value="1">
-                                <label class="form-check-label" for="es_movimiento">
-                                    Cuenta de Movimiento
-                                </label>
+                <!-- Tipo de Cuenta -->
+                <div class="mb-4">
+                    <label class="block font-medium mb-2">Tipo de Cuenta</label>
+                    <div class="flex justify-between flex-wrap gap-2">
+                        @foreach (['Activo', 'Pasivo', 'Patrimonio', 'Ingresos', 'Egresos'] as $tipo)
+                            <div class="flex items-center gap-1">
+                                <input type="radio" name="tipo_cuenta" id="{{ strtolower($tipo) }}"
+                                    value="{{ $tipo }}" required class="accent-blue-600">
+                                <label for="{{ strtolower($tipo) }}">{{ $tipo }}</label>
                             </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Nivel de Cuenta -->
+                <div class="mb-4">
+                    <label class="block font-medium mb-2">Nivel de Cuenta</label>
+                    <div class="flex justify-between flex-wrap gap-2">
+                        @foreach (['Grupo', 'Rubro', 'Título', 'Cta-Compuesta', 'Sub-Cuenta'] as $nivel)
+                            <div class="flex items-center gap-1">
+                                <input type="checkbox" name="nivel" value="{{ $nivel }}"
+                                    class="accent-blue-600">
+                                <label>{{ $nivel }}</label>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Código de Cuenta -->
+                <div class="mb-4">
+                    <label for="codigoCuenta" class="block font-medium mb-2">Código de Cuenta</label>
+                    <div class="flex gap-1">
+                        <input id="codigoCuenta1" type="text" maxlength="1" readonly
+                            class="w-11 text-center border rounded px-2 py-1">
+                        <input id="codigoCuenta2" type="text" maxlength="1" disabled
+                            class="w-11 text-center border rounded px-2 py-1">
+                        <input id="codigoCuenta3" type="text" maxlength="2" disabled
+                            class="w-16 text-center border rounded px-2 py-1">
+                        <input id="codigoCuenta4" type="text" maxlength="2" disabled
+                            class="w-16 text-center border rounded px-2 py-1">
+                        <input id="codigoCuenta5" type="text" maxlength="4" disabled
+                            class="w-20 text-center border rounded px-2 py-1">
+                        <input id="codigoCuentaFinal" type="text" name="codigo_cuenta" required readonly
+                            class="w-40 font-bold text-center border rounded px-2 py-1">
+                    </div>
+                </div>
+
+                <!-- Nombre de la Cuenta y checkbox movimiento -->
+                <div class="mb-4">
+                    <label for="editNombreCuenta" class="block font-medium mb-2">Nombre de la Cuenta</label>
+                    <div class="flex items-center gap-4">
+                        <input id="editNombreCuenta" type="text" name="nombre_cuenta" required
+                            class="flex-1 border rounded px-3 py-2">
+                        <div class="flex items-center gap-1">
+                            <input type="hidden" name="es_movimiento" value="0">
+                            <input type="checkbox" id="es_movimiento" name="es_movimiento" value="1"
+                                class="accent-blue-600">
+                            <label for="es_movimiento">Cuenta de Movimiento</label>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Botones -->
-                    <div class="d-flex justify-content-center mt-3">
-                        <button type="submit" id="crearButton" class="btn btn-primary me-2">Crear</button>
-                        <button type="button" class="btn btn-secondary" onclick="confirmCancel()">Cancelar</button>
-                    </div>
-                </form>
-            </div>
+                <!-- Botones -->
+                <div class="flex justify-center mt-6 gap-4">
+                    <button type="submit" id="crearButton"
+                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Crear</button>
+                    <button type="button" aria-controls="cuentas-create" data-hs-overlay="#cuentas-create"
+                        class="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400">Cancelar</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

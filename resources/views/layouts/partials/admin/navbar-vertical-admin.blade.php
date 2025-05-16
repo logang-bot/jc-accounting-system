@@ -3,7 +3,7 @@
     class="fixed top-0 start-0 bottom-0 z-60 transition-all duration-200 bg-white border-e border-gray-200 dark:bg-neutral-800 dark:border-neutral-700 min-w-64">
 
     <header class="p-3 flex items-center gap-x-4">
-        <img src="{{ asset('assets/images/img_escudo.png') }}" class="w-12 h-12" />
+        <img src="{{ asset('assets/images/img_escudo.png') }}" class="w-16 h-16 grayscale" />
         <div class="text-white">
             <h3 class="text-xl font-bold">AUDITORIA</h3>
             <h4 class="text-sm font-medium">CONTADURIA PÚBLICA</h4>

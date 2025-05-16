@@ -207,7 +207,7 @@
             checkMovimiento.disabled = false;
         }
 
-        modalCrearCuenta.addEventListener("hidden.bs.modal", limpiarFormulario);
+        // modalCrearCuenta.addEventListener("hidden.bs.modal", limpiarFormulario);
 
         cancelarButton.addEventListener("click", function(event) {
             event.preventDefault();

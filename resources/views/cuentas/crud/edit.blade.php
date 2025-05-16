@@ -92,7 +92,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const modalEditarCuenta = new bootstrap.Modal(document.getElementById("modalEditarCuenta"));
+        // const modalEditarCuenta = new bootstrap.Modal(document.getElementById("modalEditarCuenta"));
 
         // Función para abrir el modal de edición y cargar datos
         function abrirModalEditar(id) {

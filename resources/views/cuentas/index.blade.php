@@ -37,8 +37,8 @@
                     </div>
                     <div class="p-4 overflow-y-auto" style="max-height: 560px;">
 
-
-                        <div class="space-y-1 border border-gray-300 rounded-md divide-y divide-gray-300">
+                        <div class="hs-accordion-group space-y-1 border border-gray-300 rounded-md divide-y divide-gray-300"
+                            data-hs-accordion-always-open>
 
                             <!-- Header row -->
                             <div class="grid grid-cols-6 bg-gray-800 text-white text-sm font-semibold">
@@ -52,7 +52,7 @@
 
                             <!-- Content rows -->
                             @forelse ($cuentas as $cuenta)
-                                <div class="hs-accordion" id="cuenta-wrapper-{{ $cuenta->id_cuenta }}">
+                                <div class="hs-accordion" id="cuenta-{{ $cuenta->id_cuenta }}">
                                     <div class="grid grid-cols-6 items-center text-sm cursor-pointer hover:bg-gray-100 px-4 py-2"
                                         onclick="seleccionarCuenta({{ $cuenta->id_cuenta }}, '{{ $cuenta->codigo_cuenta }}', '{{ $cuenta->nombre_cuenta }}', '{{ $cuenta->tipo_cuenta }}', '{{ $cuenta->nivel }}')">
                                         <div class="font-mono">{{ $cuenta->codigo_cuenta }}</div>
@@ -60,7 +60,7 @@
                                             {{ str_repeat('— ', min($cuenta->nivel - 1, 4)) . $cuenta->nombre_cuenta }}
                                         </div>
                                         <div>{{ $cuenta->tipo_cuenta }}</div>
-                                        <div>{{ $cuenta->nivel }}</div>
+                                        <div>Nivel {{ $cuenta->nivel }}</div>
                                         <div>
                                             @if ($cuenta->es_movimiento)
                                                 <span
@@ -81,7 +81,7 @@
                                             </button>
                                             @if ($cuenta->children->isNotEmpty())
                                                 <button type="button"
-                                                    class="bg-blue-500 text-white px-3 py-1 rounded hs-accordion-toggle"
+                                                    class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded hs-accordion-toggle"
                                                     aria-expanded="true"
                                                     aria-controls="cuenta-accordion-{{ $cuenta->id_cuenta }}">
                                                     Expandir
@@ -92,14 +92,16 @@
 
                                     @if ($cuenta->children->isNotEmpty())
                                         <div id="cuenta-accordion-{{ $cuenta->id_cuenta }}"
-                                            class=" pl-4 border-t border-gray-200"
-                                            aria-labelledby="cuenta-wrapper-{{ $cuenta->id_cuenta }}">
-                                            @foreach ($cuenta->children as $child)
-                                                @include('cuentas.partials.fila_cuenta', [
-                                                    'cuenta' => $child,
-                                                    'nivel' => $cuenta->nivel + 1,
-                                                ])
-                                            @endforeach
+                                            class="hs-accordion-content hidden pl-4 border-t border-gray-200"
+                                            aria-labelledby="cuenta-{{ $cuenta->id_cuenta }}">
+                                            <div class="hs-accordion-group" data-hs-accordion-always-open>
+                                                @foreach ($cuenta->children as $child)
+                                                    @include('cuentas.partials.fila_cuenta', [
+                                                        'cuenta' => $child,
+                                                        'nivel' => $cuenta->nivel + 1,
+                                                    ])
+                                                @endforeach
+                                            </div>
                                         </div>
                                     @endif
                                 </div>

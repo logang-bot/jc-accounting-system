@@ -38,7 +38,6 @@ class CuentaController extends Controller
             }
         }
 
-        // Pasar las cuentas a la vista
         return view('cuentas.index', compact('cuentas'));
     }
 
@@ -102,7 +101,7 @@ class CuentaController extends Controller
 
         // Generar código de cuenta si no se proporcionó
         if (empty($request->codigo_cuenta)) {
-            $data['codigo_cuenta'] = $this->generarCodigoCuenta($data['tipo_cuenta'], $data['parent_id'] ?? null);
+            // $data['codigo_cuenta'] = $this->generarCodigoCuenta($data['tipo_cuenta'], $data['parent_id'] ?? null);
         }
 
         // Forzar es_movimiento en nivel 5

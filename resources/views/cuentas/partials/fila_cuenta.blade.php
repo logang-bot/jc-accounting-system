@@ -1,9 +1,7 @@
-@php
-    $accordionId = 'cuenta-accordion-' . $cuenta->id_cuenta . '-' . $nivel;
-@endphp
+<div class="{{ $cuenta->children->isNotEmpty() ? 'hs-accordion' : '' }}">
 
-<div class="hs-accordion" id="cuenta-wrapper-{{ $cuenta->id_cuenta }}-{{ $nivel }}">
-    <div class="grid grid-cols-6 items-center text-sm cursor-pointer hover:bg-gray-100 px-4 py-2"
+    <div class="{{ $cuenta->children->isNotEmpty() ? 'hs-accordion' : '' }} grid grid-cols-6 items-center text-sm cursor-pointer hover:bg-gray-100 px-4 py-2 w-full"
+        id="cuenta-{{ $cuenta->id_cuenta }}"
         onclick="seleccionarCuenta({{ $cuenta->id_cuenta }}, '{{ $cuenta->codigo_cuenta }}', '{{ $cuenta->nombre_cuenta }}', '{{ $cuenta->tipo_cuenta }}', '{{ $cuenta->nivel }}')">
         <div class="font-mono" style="padding-left: {{ $nivel * 16 }}px;">
             {{ $cuenta->codigo_cuenta }}
@@ -27,23 +25,28 @@
                 data-tipo="{{ $cuenta->tipo_cuenta }}" data-nivel="{{ $cuenta->nivel }}">
                 Editar
             </button>
+
             @if ($cuenta->children->isNotEmpty())
-                <button type="button" class="bg-blue-500 text-white px-3 py-1 rounded hs-accordion-toggle"
-                    data-hs-collapse="#{{ $accordionId }}" onclick="event.stopPropagation()">
+                <button type="button"
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded hs-accordion-toggle"
+                    aria-expanded="true" aria-controls="cuenta-accordion-{{ $cuenta->id_cuenta }}">
                     Expandir
                 </button>
             @endif
         </div>
     </div>
-
     @if ($cuenta->children->isNotEmpty())
-        <div id="{{ $accordionId }}" class="pl-4 border-t border-gray-200">
-            @foreach ($cuenta->children as $child)
-                @include('cuentas.partials.fila_cuenta', [
-                    'cuenta' => $child,
-                    'nivel' => $nivel + 1,
-                ])
-            @endforeach
+        <div id="cuenta-accordion-{{ $cuenta->id_cuenta }}"
+            class="hs-accordion-content hidden pl-4 border-t border-gray-200"
+            aria-labelledby="cuenta-{{ $cuenta->id_cuenta }}">
+            <div class="hs-accordion-group" data-hs-accordion-always-open>
+                @foreach ($cuenta->children as $child)
+                    @include('cuentas.partials.fila_cuenta', [
+                        'cuenta' => $child,
+                        'nivel' => $cuenta->nivel + 1,
+                    ])
+                @endforeach
+            </div>
         </div>
     @endif
 </div>

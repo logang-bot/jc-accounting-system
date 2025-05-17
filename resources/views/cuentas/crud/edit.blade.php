@@ -1,87 +1,97 @@
 <!-- Modal Editar Cuenta -->
-<div class="modal fade" id="modalEditarCuenta" tabindex="-1" aria-labelledby="modalEditarCuentaLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalEditarCuentaLabel">Editar Cuenta</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="flex items-center justify-center min-h-screen px-4">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-xl"">
+        <div class="bg-white rounded-lg shadow-lg">
+            <div class="flex items-center justify-between p-4 border-b">
+                <h5 class="text-lg font-semibold">Editar Cuenta</h5>
+                <button type="button" class="text-gray-500 hover:text-gray-700" aria-controls="cuentas-edit"
+                    data-hs-overlay="#cuentas-edit">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
-            <div class="modal-body">
+            <div class="p-4">
                 <form id="formEditarCuenta" method="POST" action="">
                     @csrf
                     @method('PUT')
 
                     <!-- Tipo de Cuenta -->
-                    <div class="mb-3">
-                        <label class="form-label">Tipo de Cuenta</label>
-                        <div class="d-flex justify-content-between align-items-center">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Cuenta</label>
+                        <div class="flex flex-wrap gap-4">
                             @foreach (['Activo', 'Pasivo', 'Patrimonio', 'Ingresos', 'Egresos'] as $tipo)
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="tipo_cuenta"
-                                        id="editTipo{{ strtolower($tipo) }}" value="{{ $tipo }}">
-                                    <label class="form-check-label"
-                                        for="editTipo{{ strtolower($tipo) }}">{{ $tipo }}</label>
+                                <div class="flex items-center space-x-2">
+                                    <input class="text-blue-600 border-gray-300 focus:ring-blue-500" type="radio"
+                                        name="tipo_cuenta" id="editTipo{{ strtolower($tipo) }}">
+                                    <label for="editTipo{{ strtolower($tipo) }}"
+                                        class="text-sm text-gray-700">{{ $tipo }}</label>
                                 </div>
                             @endforeach
                         </div>
                     </div>
 
                     <!-- Nivel de Cuenta -->
-                    <div class="mb-3">
-                        <label class="form-label">Nivel de Cuenta</label>
-                        <div class="d-flex justify-content-between align-items-center">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nivel de Cuenta</label>
+                        <div class="flex flex-wrap gap-4">
                             @foreach (['1' => 'Grupo', '2' => 'Rubro', '3' => 'Título', '4' => 'Cta-Compuesta', '5' => 'Sub-Cuenta'] as $value => $nivel)
-                                <div class="form-check">
-                                    <input class="form-check-input nivel" type="checkbox" name="nivel[]"
-                                        id="editNivel{{ $value }}" value="{{ $value }}">
-                                    <label class="form-check-label"
-                                        for="editNivel{{ $value }}">{{ $nivel }}</label>
+                                <div class="flex items-center space-x-2">
+                                    <input class="text-blue-600 border-gray-300 focus:ring-blue-500 nivel"
+                                        type="checkbox" name="nivel[]" id="editNivel{{ $value }}"
+                                        value="{{ $value }}">
+                                    <label for="editNivel{{ $value }}"
+                                        class="text-sm text-gray-700">{{ $nivel }}</label>
                                 </div>
                             @endforeach
                         </div>
                     </div>
 
                     <!-- Código de Cuenta -->
-                    <div class="mb-3">
-                        <label for="editCodigoCuentaFinal" class="form-label">Código de Cuenta</label>
-                        <div class="d-flex">
-                            <input id="editCodigoCuenta1" type="text" class="form-control text-center me-1"
-                                maxlength="1" readonly style="width: 45px;">
-                            <input id="editCodigoCuenta2" type="text" class="form-control text-center me-1"
-                                maxlength="1" disabled style="width: 45px;">
-                            <input id="editCodigoCuenta3" type="text" class="form-control text-center me-1"
-                                maxlength="2" disabled style="width: 65px;">
-                            <input id="editCodigoCuenta4" type="text" class="form-control text-center me-1"
-                                maxlength="2" disabled style="width: 65px;">
-                            <input id="editCodigoCuenta5" type="text" class="form-control text-center me-1"
-                                maxlength="4" disabled style="width: 70px;">
-                            <input id="editCodigoCuentaFinal" type="text" class="form-control text-center"
-                                name="codigo_cuenta" required readonly style="width: 156px; font-weight: bold;">
+                    <div class="mb-4">
+                        <label for="editCodigoCuentaFinal" class="block text-sm font-medium text-gray-700 mb-2">Código
+                            de Cuenta</label>
+                        <div class="flex flex-wrap gap-1">
+                            <input id="editCodigoCuenta1" type="text" maxlength="1" readonly
+                                class="w-11 text-center border rounded px-2 py-1 text-sm bg-gray-100" />
+                            <input id="editCodigoCuenta2" type="text" maxlength="1" disabled
+                                class="w-11 text-center border rounded px-2 py-1 text-sm bg-gray-100" />
+                            <input id="editCodigoCuenta3" type="text" maxlength="2" disabled
+                                class="w-16 text-center border rounded px-2 py-1 text-sm bg-gray-100" />
+                            <input id="editCodigoCuenta4" type="text" maxlength="2" disabled
+                                class="w-16 text-center border rounded px-2 py-1 text-sm bg-gray-100" />
+                            <input id="editCodigoCuenta5" type="text" maxlength="4" disabled
+                                class="w-20 text-center border rounded px-2 py-1 text-sm bg-gray-100" />
+                            <input id="codigoCuentaEditar" type="text" name="codigo_cuenta" required readonly
+                                class="w-40 text-center font-bold border rounded px-2 py-1 text-sm bg-gray-100" />
                         </div>
                     </div>
 
                     <!-- Nombre de la Cuenta y checkbox movimiento -->
-                    <div class="mb-3">
-                        <label for="editNombreCuenta" class="form-label">Nombre de la Cuenta</label>
-                        <div class="d-flex align-items-center">
-                            <input id="editNombreCuenta" type="text" class="form-control me-2" name="nombre_cuenta"
-                                required>
+                    <div class="mb-4">
+                        <label for="editNombreCuenta" class="block text-sm font-medium text-gray-700 mb-2">Nombre de la
+                            Cuenta</label>
+                        <div class="flex items-center gap-4">
+                            <input id="nombreCuentaEditar" type="text" name="nombre_cuenta" required
+                                class="flex-1 border rounded px-3 py-2 text-sm" />
 
-                            <div class="form-check ms-2">
+                            <div class="flex items-center space-x-2">
                                 <input type="hidden" name="es_movimiento" value="0">
-                                <input class="form-check-input" type="checkbox" id="editEsMovimiento"
-                                    name="es_movimiento" value="1">
-                                <label class="form-check-label" for="editEsMovimiento">Cuenta de
-                                    Movimiento</label>
+                                <input class="text-blue-600 border-gray-300 focus:ring-blue-500" type="checkbox"
+                                    id="editEsMovimiento" name="es_movimiento" value="1">
+                                <label for="editEsMovimiento" class="text-sm text-gray-700">Cuenta de Movimiento</label>
                             </div>
                         </div>
                     </div>
 
                     <!-- Botones -->
-                    <div class="d-flex justify-content-center mt-3">
-                        <button type="submit" id="editarButton" class="btn btn-primary me-2">Guardar
+                    <div class="flex justify-center mt-6 gap-4">
+                        <button type="submit" id="editarButton"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow text-sm">Guardar
                             Cambios</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" aria-controls="cuentas-edit" data-hs-overlay="#cuentas-edit"
+                            class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow text-sm">Cancelar</button>
                     </div>
                 </form>
             </div>

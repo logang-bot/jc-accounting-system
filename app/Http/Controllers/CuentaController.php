@@ -37,7 +37,7 @@ class CuentaController extends Controller
                 $subcuenta->nivel = $this->determinarNivelPorCodigo($subcuenta->codigo_cuenta);
             }
         }
-
+// echo("<script>console.log('PHP: " . $cuentas . "');</script>");
         return view('cuentas.index', compact('cuentas'));
     }
 

@@ -24,20 +24,20 @@
                         <div class="">
                             <!-- Title Section -->
                             <div class="justify-center text-center pb-7">
-                                <h2 class="text-2xl font-semibold text-gray-800">
+                                <h2 class="text-2xl font-semibold text-white">
                                     Lista de Empresas
                                 </h2>
                             </div>
 
                             <!-- Right Side Content -->
-                            <div class="flex flex-row  gap-3">
+                            <div class="flex flex-row gap-5 min-h-100 overflow-hidden">
 
                                 <div class="flex flex-col items-stretch gap-4">
                                     <!-- Button -->
                                     <button type="button"
-                                        class="bg-green-600/20 hover:bg-green-600/60 text-white font-semibold py-2 px-4 rounded w-full "
+                                        class="bg-white/20 hover:bg-green-600/60 text-white font-semibold py-2 px-4 rounded w-full flex flex-row items-center gap-2"
                                         aria-controls="create-empresa-modal" data-hs-overlay="#create-empresa-modal">
-                                        <x-carbon-add-filled />
+                                        <x-carbon-add-filled class="w-5 h-5 " />
                                         Crear Empresa
                                     </button>
 
@@ -45,46 +45,46 @@
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
                                         <button type="submit"
-                                            class="bg-red-600/20 hover:bg-red-600/60 text-white font-semibold py-2 px-4 rounded w-full">
-                                            <x-carbon-exit />
+                                            class="bg-white/20 hover:bg-red-600/60 text-white font-semibold py-2 px-4 rounded w-full flex flex-row items-center gap-2">
+                                            <x-carbon-exit class="w-5 h-5 " />
                                             Cerrar Sesión
                                         </button>
                                     </form>
                                 </div>
 
                                 <!-- Table -->
-                                <div class="p-3 bg-black/30 rounded-2xl">
-                                    <table class="min-w-80 text-sm text-left ">
+                                <div class="p-1">
+                                    <table class="min-w-150 divide-y divide-gray-200 dark:divide-neutral-500">
                                         <thead class=" text-white">
                                             <tr>
-                                                <th class="px-4 py-2 border-b">{{ __('Nombre') }}</th>
-                                                <th class="px-4 py-2 border-b">{{ __('Opciones') }}</th>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-white">
+                                                    Nombre</th>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-white">
+                                                    Opciones</th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-white">
                                             @foreach ($empresas as $empresa)
-                                                <tr class="hover:bg-black/20 transition-colors"
+                                                <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100 dark:odd:bg-transparent dark:even:bg-neutral-600/50 dark:hover:bg-neutral-700"
                                                     data-empresa-id="{{ $empresa->id }}">
-                                                    <td class="py-4 px-4 align-middle">
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
                                                         {{ $empresa->name }}
                                                     </td>
-                                                    <td class="px-4">
-                                                        <div class="flex flex-row">
-                                                            <a href="{{ route('show.empresas.home', $empresa->id) }}"
-                                                                class="hover:bg-green-600 text-white py-1 px-3 rounded text-xs">
-                                                                <x-carbon-arrow-right class="w-6 h-6 text-white" />
-                                                            </a>
-                                                            <button data-empresa-id="{{ $empresa->id }}"
-                                                                class="delete-btn hover:bg-red-600/50 text-white py-1 px-3 rounded text-xs">
-                                                                <x-carbon-trash-can class="w-6 h-6 text-white" />
-                                                            </button>
-                                                            <form id="delete-form-{{ $empresa->id }}"
-                                                                action="{{ route('empresas.destroy', $empresa->id) }}"
-                                                                method="POST" class="hidden">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                            </form>
-                                                        </div>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+                                                        <a href="{{ route('show.empresas.home', $empresa->id) }}"
+                                                            class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400">Ingresar</a>
+
+                                                        <button type="button" data-empresa-id="{{ $empresa->id }}"
+                                                            class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400">Eliminar</button>
+                                                        <form id="delete-form-{{ $empresa->id }}"
+                                                            action="{{ route('empresas.destroy', $empresa->id) }}"
+                                                            method="POST" class="hidden">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                        </form>
                                                     </td>
                                                 </tr>
                                             @endforeach

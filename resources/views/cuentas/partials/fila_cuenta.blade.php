@@ -1,9 +1,9 @@
 <div class="{{ $cuenta->children->isNotEmpty() ? 'hs-accordion' : '' }}">
 
-    <div class="{{ $cuenta->children->isNotEmpty() ? 'hs-accordion' : '' }} grid grid-cols-6 items-center text-sm cursor-pointer hover:bg-gray-100 px-4 py-2 w-full"
+    <div class="grid grid-cols-6 items-center text-sm cursor-pointer hover:bg-gray-100 px-2 py-2 w-full"
         id="cuenta-{{ $cuenta->id_cuenta }}"
         onclick="seleccionarCuenta({{ $cuenta->id_cuenta }}, '{{ $cuenta->codigo_cuenta }}', '{{ $cuenta->nombre_cuenta }}', '{{ $cuenta->tipo_cuenta }}', '{{ $cuenta->nivel }}')">
-        <div class="font-mono" style="padding-left: {{ $nivel * 16 }}px;">
+        <div class="font-mono">
             {{ $cuenta->codigo_cuenta }}
         </div>
         <div>{{ $cuenta->nombre_cuenta }}</div>

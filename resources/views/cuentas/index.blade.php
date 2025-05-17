@@ -2,42 +2,29 @@
 
 @section('content')
     <div class="bg-white h-screen">
-        <div class="bg-blue-600 pt-10 pb-[84px]"></div>
-        <div class="mt-[-88px] px-6 w-full max-w-screen-xl mx-auto">
+        {{-- <div class="bg-blue-600 pt-10 pb-[84px]"></div> --}}
+        <div class="w-full mx-auto">
             <div class="flex flex-col gap-6">
-                <!-- Header Actions -->
-                <div class="flex justify-between items-center">
+                <!-- Header -->
+                <div class="flex justify-between items-center bg-blue-600 px-10 py-5">
                     <h3 class="text-white text-2xl font-semibold">Plan de Cuentas</h3>
-                    <div class="flex gap-2 flex-wrap">
+
+                </div>
+
+                <!-- Table -->
+                <div class="px-6 flex flex-row w-full gap-4">
+                    <div class="flex gap-2 flex-col w-[10%]">
                         <button type="button" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
                             aria-controls="cuentas-create" data-hs-overlay="#cuentas-create">
                             Adicionar
-                        </button>
-                        <button id="btnEditar" type="button"
-                            class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 disabled:opacity-50"
-                            aria-controls="cuentas-edit" data-hs-overlay="#cuentas-edit" disabled>
-                            Editar
-                        </button>
-                        <button id="btnBorrar" type="button"
-                            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50"
-                            aria-controls="cuentas-delete" data-hs-overlay="#cuentas-delete" disabled>
-                            Borrar
                         </button>
                         <button type="button" class="bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-700"
                             aria-controls="cuentas-report" data-hs-overlay="#cuentas-report">
                             Reporte
                         </button>
                     </div>
-                </div>
-
-                <!-- Table -->
-                <div class="bg-white rounded shadow">
-                    <div class="border-b px-6 py-4">
-                        <h4 class="text-lg font-semibold">Lista de Cuentas</h4>
-                    </div>
-                    <div class="p-4 overflow-y-auto" style="max-height: 560px;">
-
-                        <div class="hs-accordion-group space-y-1 border border-gray-300 rounded-md divide-y divide-gray-300"
+                    <div class="overflow-y-auto max-h-[560px] w-[90%]">
+                        <div class="hs-accordion-group border border-gray-300 divide-y divide-gray-300"
                             data-hs-accordion-always-open>
 
                             <!-- Header row -->
@@ -53,9 +40,8 @@
                             <!-- Content rows -->
                             @forelse ($cuentas as $cuenta)
                                 <div class="hs-accordion" id="cuenta-{{ $cuenta->id_cuenta }}">
-                                    <div class="grid grid-cols-6 items-center text-sm cursor-pointer hover:bg-gray-100 px-4 py-2"
-                                        onclick="seleccionarCuenta({{ $cuenta->id_cuenta }}, '{{ $cuenta->codigo_cuenta }}', '{{ $cuenta->nombre_cuenta }}', '{{ $cuenta->tipo_cuenta }}', '{{ $cuenta->nivel }}')">
-                                        <div class="font-mono">{{ $cuenta->codigo_cuenta }}</div>
+                                    <div class="grid grid-cols-6 items-center text-sm cursor-pointer hover:bg-gray-100">
+                                        <div class="font-mono px-4 py-3">{{ $cuenta->codigo_cuenta }}</div>
                                         <div>
                                             {{ str_repeat('— ', min($cuenta->nivel - 1, 4)) . $cuenta->nombre_cuenta }}
                                         </div>
@@ -71,8 +57,10 @@
                                             @endif
                                         </div>
                                         <div class="flex gap-2">
-                                            <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                                            <button
+                                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded cursor-pointer"
                                                 onclick="event.stopPropagation(); abrirModalEditar(this)"
+                                                aria-controls="cuentas-edit" data-hs-overlay="#cuentas-edit"
                                                 data-id="{{ $cuenta->id_cuenta }}"
                                                 data-codigo="{{ $cuenta->codigo_cuenta }}"
                                                 data-nombre="{{ $cuenta->nombre_cuenta }}"
@@ -81,10 +69,10 @@
                                             </button>
                                             @if ($cuenta->children->isNotEmpty())
                                                 <button type="button"
-                                                    class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded hs-accordion-toggle"
+                                                    class="hover:bg-black/20 px-3 py-1 rounded hs-accordion-toggle cursor-pointer"
                                                     aria-expanded="true"
                                                     aria-controls="cuenta-accordion-{{ $cuenta->id_cuenta }}">
-                                                    Expandir
+                                                    <x-carbon-chevron-down class="w-4 h-4 ms-auto" />
                                                 </button>
                                             @endif
                                         </div>
@@ -106,11 +94,12 @@
                                     @endif
                                 </div>
                             @empty
-                                <div class="text-center text-gray-500 py-4">No hay cuentas registradas</div>
                             @endforelse
+
+                            @if ($cuentas->isEmpty())
+                                <div class="text-center text-gray-500 py-4">No hay cuentas registradas</div>
+                            @endif
                         </div>
-
-
                     </div>
                 </div>
             </div>
@@ -139,44 +128,6 @@
                 let cuentaSeleccionadaTipo = null;
                 let cuentaSeleccionadaNivel = null;
                 let filaSeleccionada = null; // Nueva variable para la fila seleccionada
-
-                // Función para manejar la selección de una cuenta
-                function seleccionarCuenta(id, codigo, nombre, tipo, nivel) {
-                    cuentaSeleccionadaId = id;
-                    cuentaSeleccionadaCodigo = codigo;
-                    cuentaSeleccionadaNombre = nombre;
-                    cuentaSeleccionadaTipo = tipo;
-                    cuentaSeleccionadaNivel = nivel;
-
-                    // Remover selección anterior
-                    if (filaSeleccionada) {
-                        filaSeleccionada.classList.remove("seleccionada");
-                    }
-
-                    // Aplicar selección a la nueva fila
-                    filaSeleccionada = document.getElementById(`cuenta-${id}`);
-                    if (filaSeleccionada) {
-                        filaSeleccionada.classList.add("seleccionada"); // Fila seleccionada mantiene el sombreado
-                    }
-
-                    // Habilitar botones de Editar y Borrar
-                    document.getElementById("btnEditar").removeAttribute("disabled");
-                    document.getElementById("btnBorrar").removeAttribute("disabled");
-                }
-
-                // Función para abrir el modal de edición con los datos de la cuenta seleccionada
-                function abrirModalEditarSeleccionado() {
-                    if (cuentaSeleccionadaId) {
-                        document.getElementById('idCuentaEditar').value = cuentaSeleccionadaId;
-                        document.getElementById('codigoCuentaEditar').value = cuentaSeleccionadaCodigo;
-                        document.getElementById('nombreCuentaEditar').value = cuentaSeleccionadaNombre;
-                        document.getElementById('tipoCuentaEditar').value = cuentaSeleccionadaTipo;
-                        document.getElementById('nivelCuentaEditar').value = cuentaSeleccionadaNivel;
-
-                        // let modalEditar = new bootstrap.Modal(document.getElementById('modalEditarCuenta'));
-                        modalEditar.show();
-                    }
-                }
 
                 // Control de hover y clic en las filas
                 document.addEventListener("DOMContentLoaded", function() {
@@ -210,22 +161,27 @@
                     });
                 });
 
+                const tiposCuentas = ["Activo", "Pasivo", "Patrimonio", "Ingresos", "Egresos"];
                 // Función para abrir el modal de edición cuando se hace clic en el botón
                 function abrirModalEditar(button) {
                     const idCuenta = button.getAttribute('data-id');
                     const codigoCuenta = button.getAttribute('data-codigo');
                     const nombreCuenta = button.getAttribute('data-nombre');
                     const tipoCuenta = button.getAttribute('data-tipo');
+                    const intTipoCuenta = tiposCuentas.find((el) => el == tipoCuenta);
                     const nivelCuenta = button.getAttribute('data-nivel');
 
-                    document.getElementById('idCuentaEditar').value = idCuenta;
                     document.getElementById('codigoCuentaEditar').value = codigoCuenta;
                     document.getElementById('nombreCuentaEditar').value = nombreCuenta;
-                    document.getElementById('tipoCuentaEditar').value = tipoCuenta;
-                    document.getElementById('nivelCuentaEditar').value = nivelCuenta;
+                    // document.getElementById('tipoCuentaEditar').value = intTipoCuenta;
+                    // document.getElementById('nivelCuentaEditar').value = nivelCuenta;
+
+                    document.getElementById("editTipo" + tipoCuenta.toLowerCase()).checked = true;
+
+                    document.getElementById("editNivel" + nivelCuenta.toLowerCase()).checked = true;
 
                     // let modalEditar = new bootstrap.Modal(document.getElementById('modalEditarCuenta'));
-                    modalEditar.show();
+                    // modalEditar.show();
                 }
             </script>
         </div>

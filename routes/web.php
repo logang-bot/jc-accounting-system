@@ -49,7 +49,7 @@ Route::middleware('auth')->controller(CuentaController::class)->group(function()
         // Rutas para vistas
         Route::get('/home', 'home')->name('show.cuentas.home');
         Route::get('/crear', 'create')->name('show.cuentas.create');
-        Route::get('/{id}', 'showEdit')->name('show.cuentas.detail');
+        Route::get('/{id}', 'show')->name('show.cuentas.detail');
         Route::get('/edit/{id}', 'edit')->name('show.cuentas.edit');
 
         // Rutas de funcionalidades

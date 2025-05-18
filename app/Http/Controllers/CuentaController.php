@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CuentasContables;
+use Illuminate\Validation\ValidationException;
 
 class CuentaController extends Controller
 {
@@ -30,16 +31,6 @@ class CuentaController extends Controller
             ")
             ->get();
 
-        // Asignar niveles a las cuentas
-        // foreach ($cuentas as $cuenta) {
-        //     $cuenta->nivel = $this->determinarNivelPorCodigo($cuenta->codigo_cuenta);
-
-        //     // Asignar niveles a las subcuentas
-        //     foreach ($cuenta->children as $subcuenta) {
-        //         $subcuenta->nivel = $this->determinarNivelPorCodigo($subcuenta->codigo_cuenta);
-        //     }
-        // }
-// echo("<script>console.log('PHP: " . $cuentas . "');</script>");
         return view('cuentas.index', compact('cuentas'));
     }
 
@@ -48,31 +39,12 @@ class CuentaController extends Controller
         $cuentasPadre = CuentasContables::where('es_movimiento', false)
             ->where('nivel', '<', 5)
             ->get();
-        return view('cuentas.create', compact('cuentasPadre'));
-    }
-
-
-    private function determinarNivelPorCodigo($codigoCuenta)
-    {
-        // Extraer los valores clave del código de cuenta
-        $segundoNivel = substr($codigoCuenta, 1, 1); // Segundo dígito
-        $cuartoNivel = substr($codigoCuenta, 3, 1);  // Cuarto dígito
-        $sextoNivel = substr($codigoCuenta, 5, 1);   // Sexto dígito
-        $octavoNivel = substr($codigoCuenta, 7, 1);  // Octavo dígito
-        $ultimoDigitos = substr($codigoCuenta, 8, 2); // Últimos 2 dígitos
-
-        // Determinar el nivel basándonos en la jerarquía del código
-        if ($segundoNivel == '0' && $cuartoNivel == '0' && $sextoNivel == '0' && $octavoNivel == '0') {
-            return 1; // Nivel 1
-        } elseif ($cuartoNivel == '0' && $sextoNivel == '0' && $octavoNivel == '0') {
-            return 2; // Nivel 2
-        } elseif ($sextoNivel == '0' && $octavoNivel == '0') {
-            return 3; // Nivel 3
-        } elseif ($octavoNivel == '0' && $ultimoDigitos == '00') {
-            return 4; // Nivel 4
-        } else {
-            return 5; // Nivel 5
-        }
+            
+        return view('cuentas.create', [
+            'cuentasPadre' => $cuentasPadre,
+            'modo' => 'crear',
+            'cuenta' => null,
+        ]);
     }
 
     // Guardar una nueva cuenta
@@ -84,6 +56,8 @@ class CuentaController extends Controller
             'parent_id' => 'nullable|exists:cuentas,id_cuenta',
             'es_movimiento' => 'sometimes|boolean',
         ]);
+
+        $this->validarCuentaRaiz($request);
 
         // ✅ Validación: Solo una cuenta raíz por tipo
         if (empty($request->parent_id)) {
@@ -128,6 +102,31 @@ class CuentaController extends Controller
         }
     }
 
+    private function validarCuentaRaiz(Request $request)
+    {
+        $tiposPermitidos = ['Activo', 'Pasivo', 'Patrimonio', 'Ingresos', 'Egresos'];
+
+        if ($request->filled('parent_id')) {
+            return; // No es cuenta raíz, se permite cualquier tipo si el padre lo permite
+        }
+
+        if (!in_array($request->tipo_cuenta, $tiposPermitidos)) {
+            throw ValidationException::withMessages([
+                'tipo_cuenta' => 'Solo se permiten cuentas raíz con tipo: Activo, Pasivo, Patrimonio, Ingresos o Egresos.'
+            ]);
+        }
+
+        $existe = CuentasContables::where('tipo_cuenta', $request->tipo_cuenta)
+            ->whereNull('parent_id')
+            ->exists();
+
+        if ($existe) {
+            throw ValidationException::withMessages([
+                'tipo_cuenta' => 'Ya existe una cuenta raíz para este tipo.'
+            ]);
+        }
+    }
+
     // Mostrar formulario de edición
     public function edit($id)
     {
@@ -138,18 +137,16 @@ class CuentaController extends Controller
         if (!$cuenta) {
             return response()->json(['error' => 'Cuenta no encontrada'], 404);
         }
+        
+        $cuentasPadre = CuentasContables::where('es_movimiento', false)
+            ->where('nivel', '<', 5)
+            ->where('id_cuenta', '!=', $id) // No puede ser su propio padre
+            ->get();
 
-        // Asegurar que el campo 'nivel' sea siempre un array
-        $nivelesSeleccionados = is_array($cuenta->nivel) ? $cuenta->nivel : explode(',', $cuenta->nivel);
-
-        // Devolver los datos de la cuenta en formato JSON
-        return response()->json([
-            'id_cuenta'      => $cuenta->id_cuenta,
-            'nombre_cuenta'  => $cuenta->nombre_cuenta,
-            'codigo_cuenta'  => $cuenta->codigo_cuenta,
-            'tipo_cuenta'    => $cuenta->tipo_cuenta,
-            'nivel'          => $nivelesSeleccionados, // Array de niveles seleccionados
-            'es_movimiento'  => (int) $cuenta->es_movimiento, // Aseguramos que sea 0 o 1
+        return view('cuentas.create', [
+            'cuenta' => $cuenta,
+            'cuentasPadre' => $cuentasPadre,
+            'modo' => 'editar',
         ]);
     }
 
@@ -160,6 +157,7 @@ class CuentaController extends Controller
         $request->validate([
             'nombre_cuenta' => 'required|string|max:255',
             'tipo_cuenta' => 'required|string',
+            'parent_id' => 'nullable|exists:cuentas,id_cuenta',
             'es_movimiento' => 'sometimes|boolean'
         ]);
 
@@ -174,33 +172,43 @@ class CuentaController extends Controller
         // Revisar si tiene cuentas hijas
         $hasChildren = CuentasContables::where('parent_id', $cuenta->id_cuenta)->exists();
         
-        // Validación: si tiene padre, no se puede cambiar tipo_cuenta
-        if ($cuenta->parent_id) {
-            // Account has a parent → block changes to tipo_cuenta
-            if ($cuenta->tipo_cuenta !== $request->tipo_cuenta) {
-                return back()
-                    ->withErrors(['tipo_cuenta' => 'No se puede cambiar el tipo de cuenta si la cuenta tiene un padre.'])
-                    ->withInput();
-            }
-        } else {
-            // Root account → allow changing tipo_cuenta
-            if ($cuenta->tipo_cuenta !== $request->tipo_cuenta) {
-                $cuenta->tipo_cuenta = $request->input('tipo_cuenta');
-                $cuenta->codigo_cuenta = CuentasContables::generarCodigoCuenta($cuenta);
-            }
+        // Solo se permite editar tipo_cuenta y parent_id si NO tiene hijas
+        $puedeCambiarEstructura = !$hasChildren;
+        
+        // Detectar si el tipo_cuenta o parent_id fueron modificados
+        $tipoCuentaNuevo = $request->input('tipo_cuenta');
+        $parentIdNuevo = $request->input('parent_id') ?: null;
+
+        $cambioTipoCuenta = $cuenta->tipo_cuenta !== $tipoCuentaNuevo;
+        $cambioParent = $cuenta->parent_id !== $parentIdNuevo;
+
+        if (($cambioTipoCuenta || $cambioParent) && !$puedeCambiarEstructura) {
+            return back()
+                ->withErrors(['tipo_cuenta' => 'No se puede cambiar tipo ni ubicación de una cuenta que tiene cuentas hijas.'])
+                ->withInput();
+        }
+
+        // Si se cambia tipo_cuenta o parent, actualizamos los datos jerárquicos
+        if ($cambioTipoCuenta || $cambioParent) {
+            $cuenta->tipo_cuenta = $tipoCuentaNuevo;
+            $cuenta->parent_id = $parentIdNuevo;
+
+            // Re-generar código de cuenta
+            $cuenta->codigo_cuenta = CuentasContables::generarCodigoCuenta($cuenta);
+            $cuenta->nivel = CuentasContables::calcularNivel($cuenta->codigo_cuenta);
         }
 
         // Actualizar los campos de la cuenta
         $cuenta->nombre_cuenta = $request->input('nombre_cuenta');
 
-        // Validar que no pueda ser marcada como movimiento si tiene hijas
+        // Validar si puede ser marcada como cuenta de movimiento
         if ($request->boolean('es_movimiento') && $hasChildren) {
             return back()
                 ->withErrors(['es_movimiento' => 'No se puede marcar como cuenta de movimiento porque tiene cuentas hijas.'])
                 ->withInput();
         }
-        
-        // es_movimiento depende del nivel y de si tiene hijas
+
+        // Establecer es_movimiento correctamente
         if ($hasChildren) {
             $cuenta->es_movimiento = false;
         } else {
@@ -214,10 +222,10 @@ class CuentaController extends Controller
         try {
             // Guardar los cambios en la base de datos
             $cuenta->save();
-            return redirect()->route('cuentas.index')->with('success', 'Cuenta actualizada exitosamente.');
+            return redirect()->route('show.cuentas.home')->with('success', 'Cuenta actualizada exitosamente.');
         } catch (\Exception $e) {
             // Manejar errores durante la actualización
-            return redirect()->route('cuentas.index')->with('error', 'Error al actualizar la cuenta: ' . $e->getMessage());
+            return redirect()->route('show.cuentas.home')->with('error', 'Error al actualizar la cuenta: ' . $e->getMessage());
         }
     }
 

@@ -18,12 +18,16 @@
         </div>
         <div class="flex gap-2">
             @if ($cuenta->es_movimiento)
-                <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                {{-- <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
                     onclick="event.stopPropagation(); abrirModalEditar(this)" data-id="{{ $cuenta->id_cuenta }}"
                     data-codigo="{{ $cuenta->codigo_cuenta }}" data-nombre="{{ $cuenta->nombre_cuenta }}"
                     data-tipo="{{ $cuenta->tipo_cuenta }}" data-nivel="{{ $cuenta->nivel }}">
                     Editar
-                </button>
+                </button> --}}
+                <a href="{{ route('show.cuentas.edit', ['id' => $cuenta->id_cuenta]) }}"
+                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">
+                    Editar
+                </a>
             @endif
 
             @if ($cuenta->children->isNotEmpty())

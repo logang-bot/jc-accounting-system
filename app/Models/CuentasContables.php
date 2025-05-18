@@ -33,6 +33,12 @@ class CuentasContables extends Model
         'estado' => 'boolean'
     ];
 
+    
+    public function hasChildren(): bool
+    {
+        return $this->children()->exists();
+    }
+
     // Relación jerárquica
     public function children()
     {
@@ -68,7 +74,7 @@ class CuentasContables extends Model
     }
 
     // Generar código jerárquico
-    private static function generarCodigoCuenta($cuenta)
+    public static function generarCodigoCuenta($cuenta)
     {
         $prefijos = [
             'Activo' => '1',
@@ -131,4 +137,5 @@ class CuentasContables extends Model
 
         return $nivel;
     }
+
 }

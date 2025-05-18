@@ -89,7 +89,7 @@
 
 @section('content')
     <div class="max-w-2xl mx-auto p-6 m-6 bg-white rounded-xl shadow">
-        <h2 class="text-2xl font-bold mb-4">Crear Cuenta Contable</h2>
+        <h2 class="text-2xl font-bold mb-4">{{ $modo === 'editar' ? 'Editar cuenta' : 'Crear Cuenta Contable' }}</h2>
 
         @if ($errors->any())
             <div class="mb-4 p-4 bg-red-100 text-red-800 rounded">
@@ -101,48 +101,63 @@
             </div>
         @endif
 
-        <form action="{{ route('cuentas.store') }}" method="POST" class="space-y-4">
+        <form action="{{ $modo === 'editar' ? route('cuentas.update', $cuenta->id_cuenta) : route('cuentas.store') }}"
+            method="POST" class="space-y-4">
             @csrf
+            @if ($modo === 'editar')
+                @method('PUT')
+            @endif
 
+            {{-- Nombre de la cuenta --}}
             <div>
                 <label for="nombre_cuenta" class="block text-sm font-medium text-gray-700">Nombre de la Cuenta</label>
                 <input type="text" name="nombre_cuenta" id="nombre_cuenta"
+                    value="{{ old('nombre_cuenta', $cuenta->nombre_cuenta ?? '') }}"
                     class="mt-1 block w-full border border-gray-300 rounded px-3 py-2" required>
             </div>
 
+            {{-- Tipo de cuenta --}}
             <div>
                 <label for="tipo_cuenta" class="block text-sm font-medium text-gray-700">Tipo de Cuenta</label>
-                <select name="tipo_cuenta" id="tipo_cuenta"
+                <select name="tipo_cuenta" id="tipo_cuenta" {{ isset($cuenta) && $cuenta->hasChildren() ? 'disabled' : '' }}
                     class="mt-1 block w-full border border-gray-300 rounded px-3 py-2" required>
                     <option value="">-- Seleccione --</option>
-                    <option value="Activo">Activo</option>
-                    <option value="Pasivo">Pasivo</option>
-                    <option value="Patrimonio">Patrimonio</option>
-                    <option value="Ingresos">Ingresos</option>
-                    <option value="Egresos">Egresos</option>
-                </select>
-            </div>
-
-            <div>
-                <label for="parent_id" class="block text-sm font-medium text-gray-700">Cuenta Padre</label>
-                <select name="parent_id" id="parent_id" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2">
-                    <option value="">-- Ninguna (Cuenta Raíz) --</option>
-                    @foreach ($cuentasPadre as $cuenta)
-                        <option value="{{ $cuenta->id_cuenta }}" data-tipo="{{ $cuenta->tipo_cuenta }}">
-                            {{ $cuenta->codigo_cuenta }} - {{ $cuenta->nombre_cuenta }}
+                    @foreach (['Activo', 'Pasivo', 'Patrimonio', 'Ingresos', 'Egresos'] as $tipo)
+                        <option value="{{ $tipo }}"
+                            {{ old('tipo_cuenta', $cuenta->tipo_cuenta ?? '') == $tipo ? 'selected' : '' }}>
+                            {{ $tipo }}
                         </option>
                     @endforeach
                 </select>
             </div>
 
-            <div class="flex items-center">
-                <input type="checkbox" name="es_movimiento" id="es_movimiento" class="mr-2" value="1">
-                <label for="es_movimiento" class="text-sm font-medium text-gray-700">¿Es cuenta de movimiento?</label>
+            {{-- Cuenta padre --}}
+            <div>
+                <label for="parent_id" class="block text-sm font-medium text-gray-700">Cuenta Padre</label>
+                <select name="parent_id" id="parent_id" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2"
+                    {{ isset($cuenta) && $cuenta->hasChildren() ? 'disabled' : '' }}>
+                    <option value="">-- Ninguna (Cuenta Raíz) --</option>
+                    @foreach ($cuentasPadre as $padre)
+                        <option value="{{ $padre->id_cuenta }}" data-tipo="{{ $padre->tipo_cuenta }}"
+                            {{ old('parent_id', $cuenta->parent_id ?? '') == $padre->id_cuenta ? 'selected' : '' }}>
+                            {{ $padre->nombre_cuenta }} ({{ $padre->codigo_cuenta }})
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Es movimiento --}}
+            <div class="flex items-center gap-3">
+                <input type="checkbox" name="es_movimiento" value="1"
+                    {{ old('es_movimiento', $cuenta->es_movimiento ?? false) ? 'checked' : '' }}
+                    {{ isset($cuenta) && $cuenta->hasChildren() ? 'disabled' : '' }}>
+                <label for="es_movimiento" class="text-sm font-medium text-gray-700">Es cuenta de movimiento</label>
             </div>
 
             <div>
-                <button type="submit"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">Guardar</button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">
+                    {{ $modo === 'editar' ? 'Actualizar cuenta' : 'Crear cuenta' }}
+                </button>
             </div>
         </form>
     </div>
@@ -150,184 +165,197 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Campos de código
-            const codigoCuenta1 = document.getElementById("codigoCuenta1");
-            const codigoCuenta2 = document.getElementById("codigoCuenta2");
-            const codigoCuenta3 = document.getElementById("codigoCuenta3");
-            const codigoCuenta4 = document.getElementById("codigoCuenta4");
-            const codigoCuenta5 = document.getElementById("codigoCuenta5");
-            const codigoCuentaFinal = document.getElementById("codigoCuentaFinal");
+        // document.addEventListener("DOMContentLoaded", function() {
+        //     // Campos de código
+        //     const codigoCuenta1 = document.getElementById("codigoCuenta1");
+        //     const codigoCuenta2 = document.getElementById("codigoCuenta2");
+        //     const codigoCuenta3 = document.getElementById("codigoCuenta3");
+        //     const codigoCuenta4 = document.getElementById("codigoCuenta4");
+        //     const codigoCuenta5 = document.getElementById("codigoCuenta5");
+        //     const codigoCuentaFinal = document.getElementById("codigoCuentaFinal");
 
-            // Niveles
-            const nivelGrupo = document.querySelector("input[name='nivel'][value='Grupo']");
-            const nivelRubro = document.querySelector("input[name='nivel'][value='Rubro']");
-            const nivelTitulo = document.querySelector("input[name='nivel'][value='Título']");
-            const nivelCompuesta = document.querySelector("input[name='nivel'][value='Cta-Compuesta']");
-            const nivelSubCuenta = document.querySelector("input[name='nivel'][value='Sub-Cuenta']");
-            const nivelCheckboxes = [nivelGrupo, nivelRubro, nivelTitulo, nivelCompuesta, nivelSubCuenta];
+        //     // Niveles
+        //     const nivelGrupo = document.querySelector("input[name='nivel'][value='Grupo']");
+        //     const nivelRubro = document.querySelector("input[name='nivel'][value='Rubro']");
+        //     const nivelTitulo = document.querySelector("input[name='nivel'][value='Título']");
+        //     const nivelCompuesta = document.querySelector("input[name='nivel'][value='Cta-Compuesta']");
+        //     const nivelSubCuenta = document.querySelector("input[name='nivel'][value='Sub-Cuenta']");
+        //     const nivelCheckboxes = [nivelGrupo, nivelRubro, nivelTitulo, nivelCompuesta, nivelSubCuenta];
 
-            // Movimiento
-            const checkMovimiento = document.getElementById("es_movimiento");
+        //     // Movimiento
+        //     const checkMovimiento = document.getElementById("es_movimiento");
 
-            // Tipo de cuenta
-            const tipoCuentaRadios = document.querySelectorAll("input[name='tipo_cuenta']");
-            const tipoCuentaValores = {
-                "Activo": "1",
-                "Pasivo": "2",
-                "Patrimonio": "3",
-                "Ingresos": "4",
-                "Egresos": "5"
-            };
+        //     // Tipo de cuenta
+        //     const tipoCuentaRadios = document.querySelectorAll("input[name='tipo_cuenta']");
+        //     const tipoCuentaValores = {
+        //         "Activo": "1",
+        //         "Pasivo": "2",
+        //         "Patrimonio": "3",
+        //         "Ingresos": "4",
+        //         "Egresos": "5"
+        //     };
 
-            // Asignar ceros por defecto
-            [codigoCuenta1, codigoCuenta2, codigoCuenta3, codigoCuenta4, codigoCuenta5].forEach((input, index) => {
-                const longitudes = [1, 1, 2, 2, 4];
-                input.value = "0".repeat(longitudes[index]);
-                input.disabled = true;
-            });
+        //     // Asignar ceros por defecto
+        //     [codigoCuenta1, codigoCuenta2, codigoCuenta3, codigoCuenta4, codigoCuenta5].forEach((input, index) => {
+        //         const longitudes = [1, 1, 2, 2, 4];
+        //         input.value = "0".repeat(longitudes[index]);
+        //         input.disabled = true;
+        //     });
 
-            // Actualizar código final
-            function actualizarCodigoFinal() {
-                codigoCuentaFinal.value =
-                    (codigoCuenta1.value || "") +
-                    (codigoCuenta2.value || "") +
-                    (codigoCuenta3.value || "") +
-                    (codigoCuenta4.value || "") +
-                    (codigoCuenta5.value || "");
-            }
+        //     // Actualizar código final
+        //     function actualizarCodigoFinal() {
+        //         codigoCuentaFinal.value =
+        //             (codigoCuenta1.value || "") +
+        //             (codigoCuenta2.value || "") +
+        //             (codigoCuenta3.value || "") +
+        //             (codigoCuenta4.value || "") +
+        //             (codigoCuenta5.value || "");
+        //     }
 
-            // Permitir solo números
-            function permitirSoloNumeros(event) {
-                event.target.value = event.target.value.replace(/[^0-9]/g, "");
-                actualizarCodigoFinal();
-            }
+        //     // Permitir solo números
+        //     function permitirSoloNumeros(event) {
+        //         event.target.value = event.target.value.replace(/[^0-9]/g, "");
+        //         actualizarCodigoFinal();
+        //     }
 
-            [codigoCuenta1, codigoCuenta2, codigoCuenta3, codigoCuenta4, codigoCuenta5].forEach(input => {
-                input.addEventListener("input", permitirSoloNumeros);
-            });
+        //     [codigoCuenta1, codigoCuenta2, codigoCuenta3, codigoCuenta4, codigoCuenta5].forEach(input => {
+        //         input.addEventListener("input", permitirSoloNumeros);
+        //     });
 
-            // Activar/desactivar input según checkbox
-            function toggleInput(checkbox, input, maxLength) {
-                input.disabled = !checkbox.checked;
-                if (!checkbox.checked) {
-                    input.value = "0".repeat(maxLength);
-                }
-                input.maxLength = maxLength;
-                actualizarCodigoFinal();
-            }
+        //     // Activar/desactivar input según checkbox
+        //     function toggleInput(checkbox, input, maxLength) {
+        //         input.disabled = !checkbox.checked;
+        //         if (!checkbox.checked) {
+        //             input.value = "0".repeat(maxLength);
+        //         }
+        //         input.maxLength = maxLength;
+        //         actualizarCodigoFinal();
+        //     }
 
-            // Tipo de cuenta
-            tipoCuentaRadios.forEach(radio => {
-                radio.addEventListener("change", function() {
-                    codigoCuenta1.value = tipoCuentaValores[this.value] || "0";
-                    if (nivelGrupo) {
-                        nivelGrupo.checked = true;
-                        toggleInput(nivelGrupo, codigoCuenta1, 1);
-                    }
-                    actualizarCodigoFinal();
-                });
-            });
+        //     // Tipo de cuenta
+        //     tipoCuentaRadios.forEach(radio => {
+        //         radio.addEventListener("change", function() {
+        //             codigoCuenta1.value = tipoCuentaValores[this.value] || "0";
+        //             if (nivelGrupo) {
+        //                 nivelGrupo.checked = true;
+        //                 toggleInput(nivelGrupo, codigoCuenta1, 1);
+        //             }
+        //             actualizarCodigoFinal();
+        //         });
+        //     });
 
-            // Niveles
-            nivelCheckboxes.forEach((checkbox, index) => {
-                const input = document.getElementById("codigoCuenta" + (index + 1));
-                const maxLength = [1, 1, 2, 2, 4][index];
+        //     // Niveles
+        //     nivelCheckboxes.forEach((checkbox, index) => {
+        //         const input = document.getElementById("codigoCuenta" + (index + 1));
+        //         const maxLength = [1, 1, 2, 2, 4][index];
 
-                checkbox.addEventListener("change", () => {
-                    toggleInput(checkbox, input, maxLength);
+        //         checkbox.addEventListener("change", () => {
+        //             toggleInput(checkbox, input, maxLength);
 
-                    if (checkbox === nivelSubCuenta) {
-                        if (checkbox.checked) {
-                            checkMovimiento.checked = true;
-                            checkMovimiento.disabled = true;
-                        } else {
-                            checkMovimiento.checked = false;
-                            checkMovimiento.disabled = false;
-                        }
-                    }
-                });
-            });
+        //             if (checkbox === nivelSubCuenta) {
+        //                 if (checkbox.checked) {
+        //                     checkMovimiento.checked = true;
+        //                     checkMovimiento.disabled = true;
+        //                 } else {
+        //                     checkMovimiento.checked = false;
+        //                     checkMovimiento.disabled = false;
+        //                 }
+        //             }
+        //         });
+        //     });
 
-            // Modal comportamiento
-            const modalCrearCuenta = document.getElementById("modalAdicionarCuenta");
-            const cancelarButton = document.querySelector(".btn-secondary");
+        //     // Modal comportamiento
+        //     const modalCrearCuenta = document.getElementById("modalAdicionarCuenta");
+        //     const cancelarButton = document.querySelector(".btn-secondary");
 
-            function limpiarFormulario() {
-                tipoCuentaRadios.forEach(radio => radio.checked = false);
-                nivelCheckboxes.forEach(checkbox => checkbox.checked = false);
+        //     function limpiarFormulario() {
+        //         tipoCuentaRadios.forEach(radio => radio.checked = false);
+        //         nivelCheckboxes.forEach(checkbox => checkbox.checked = false);
 
-                [codigoCuenta1, codigoCuenta2, codigoCuenta3, codigoCuenta4, codigoCuenta5].forEach((input,
-                    index) => {
-                    const longitudes = [1, 1, 2, 2, 4];
-                    input.value = "0".repeat(longitudes[index]);
-                    input.disabled = true;
-                });
+        //         [codigoCuenta1, codigoCuenta2, codigoCuenta3, codigoCuenta4, codigoCuenta5].forEach((input,
+        //             index) => {
+        //             const longitudes = [1, 1, 2, 2, 4];
+        //             input.value = "0".repeat(longitudes[index]);
+        //             input.disabled = true;
+        //         });
 
-                codigoCuentaFinal.value = "";
-                checkMovimiento.checked = false;
-                checkMovimiento.disabled = false;
-            }
+        //         codigoCuentaFinal.value = "";
+        //         checkMovimiento.checked = false;
+        //         checkMovimiento.disabled = false;
+        //     }
 
-            // modalCrearCuenta.addEventListener("hidden.bs.modal", limpiarFormulario);
+        //     // modalCrearCuenta.addEventListener("hidden.bs.modal", limpiarFormulario);
 
-            cancelarButton.addEventListener("click", function(event) {
-                event.preventDefault();
-                Swal.fire({
-                    title: "¿Cancelar la adición?",
-                    text: "Se perderán todos los datos ingresados.",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "Sí, cancelar",
-                    cancelButtonText: "No, continuar",
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        limpiarFormulario();
-                        let modalInstance = bootstrap.Modal.getInstance(modalCrearCuenta);
-                        modalInstance.hide();
-                        Swal.fire("Cancelado", "Los datos han sido eliminados.", "success");
-                    }
-                });
-            });
+        //     cancelarButton.addEventListener("click", function(event) {
+        //         event.preventDefault();
+        //         Swal.fire({
+        //             title: "¿Cancelar la adición?",
+        //             text: "Se perderán todos los datos ingresados.",
+        //             icon: "warning",
+        //             showCancelButton: true,
+        //             confirmButtonText: "Sí, cancelar",
+        //             cancelButtonText: "No, continuar",
+        //             reverseButtons: true
+        //         }).then((result) => {
+        //             if (result.isConfirmed) {
+        //                 limpiarFormulario();
+        //                 let modalInstance = bootstrap.Modal.getInstance(modalCrearCuenta);
+        //                 modalInstance.hide();
+        //                 Swal.fire("Cancelado", "Los datos han sido eliminados.", "success");
+        //             }
+        //         });
+        //     });
 
-            document.getElementById("crearCuentaForm").addEventListener("submit", function(event) {
-                event.preventDefault();
-                Swal.fire({
-                    title: "¿Crear cuenta?",
-                    text: "Se guardará la nueva cuenta en el sistema.",
-                    icon: "question",
-                    showCancelButton: true,
-                    confirmButtonText: "Sí, crear",
-                    cancelButtonText: "No, cancelar"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        this.submit();
-                        Swal.fire("¡Cuenta Creada!", "La cuenta ha sido agregada exitosamente.",
-                            "success");
-                    }
-                });
-            });
+        //     document.getElementById("crearCuentaForm").addEventListener("submit", function(event) {
+        //         event.preventDefault();
+        //         Swal.fire({
+        //             title: "¿Crear cuenta?",
+        //             text: "Se guardará la nueva cuenta en el sistema.",
+        //             icon: "question",
+        //             showCancelButton: true,
+        //             confirmButtonText: "Sí, crear",
+        //             cancelButtonText: "No, cancelar"
+        //         }).then((result) => {
+        //             if (result.isConfirmed) {
+        //                 this.submit();
+        //                 Swal.fire("¡Cuenta Creada!", "La cuenta ha sido agregada exitosamente.",
+        //                     "success");
+        //             }
+        //         });
+        //     });
 
-            actualizarCodigoFinal();
-        });
+        //     actualizarCodigoFinal();
+        // });
         document.addEventListener('DOMContentLoaded', function() {
             const tipoCuentaSelect = document.getElementById('tipo_cuenta');
             const parentSelect = document.getElementById('parent_id');
-            const allOptions = Array.from(parentSelect.options);
+            const originalOptions = Array.from(parentSelect.options);
 
-            tipoCuentaSelect.addEventListener('change', function() {
-                const selectedTipo = this.value;
-
-                // Clear and re-add options
+            function filtrarOpciones() {
+                const tipoSeleccionado = tipoCuentaSelect.value;
                 parentSelect.innerHTML = '';
 
-                allOptions.forEach(option => {
-                    if (!option.value || option.dataset.tipo === selectedTipo) {
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = '-- Ninguna (Cuenta Raíz) --';
+                parentSelect.appendChild(defaultOption);
+
+                if (!tipoSeleccionado) {
+                    parentSelect.disabled = true;
+                    return;
+                }
+
+                parentSelect.disabled = false;
+
+                originalOptions.forEach(option => {
+                    if (option.dataset && option.dataset.tipo === tipoSeleccionado) {
                         parentSelect.appendChild(option);
                     }
                 });
-            });
+            }
+
+            tipoCuentaSelect.addEventListener('change', filtrarOpciones);
+            filtrarOpciones(); // Ejecutar una vez al cargar la página
         });
     </script>
 @endsection

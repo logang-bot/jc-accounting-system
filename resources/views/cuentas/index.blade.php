@@ -39,7 +39,8 @@
 
                             <!-- Content rows -->
                             @forelse ($cuentas as $cuenta)
-                                <div class="hs-accordion" id="cuenta-{{ $cuenta->id_cuenta }}">
+                                <div class="hs-accordion" id="cuenta-{{ $cuenta->id_cuenta }}"
+                                    data-row-id={{ $cuenta->id_cuenta }}>
                                     <div class="grid grid-cols-6 items-center text-sm cursor-pointer hover:bg-gray-100">
                                         <div class="font-mono px-4 py-3">{{ $cuenta->codigo_cuenta }}</div>
                                         <div>
@@ -57,25 +58,31 @@
                                             @endif
                                         </div>
                                         <div class="flex gap-2">
-                                            @if ($cuenta->es_movimiento)
-                                                <button
-                                                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded cursor-pointer"
-                                                    onclick="event.stopPropagation(); abrirModalEditar(this)"
-                                                    aria-controls="cuentas-edit" data-hs-overlay="#cuentas-edit"
-                                                    data-id="{{ $cuenta->id_cuenta }}"
-                                                    data-codigo="{{ $cuenta->codigo_cuenta }}"
-                                                    data-nombre="{{ $cuenta->nombre_cuenta }}"
-                                                    data-tipo="{{ $cuenta->tipo_cuenta }}"
-                                                    data-nivel="{{ $cuenta->nivel }}">
-                                                    Editar
-                                                </button>
-                                            @endif
                                             @if ($cuenta->children->isNotEmpty())
                                                 <button type="button"
-                                                    class="hover:bg-black/20 px-3 py-1 rounded hs-accordion-toggle cursor-pointer"
+                                                    class="hover:bg-blue-700 px-3 py-1 rounded hs-accordion-toggle cursor-pointer flex flex-row gap-1 text-blue-500 items-center hover:text-white"
                                                     aria-expanded="true"
                                                     aria-controls="cuenta-accordion-{{ $cuenta->id_cuenta }}">
+                                                    Expandir
                                                     <x-carbon-chevron-down class="w-4 h-4 ms-auto" />
+                                                </button>
+                                            @endif
+
+                                            @if ($cuenta->es_movimiento)
+                                                <a href="{{ route('show.cuentas.edit', ['id' => $cuenta->id_cuenta]) }}"
+                                                    class="hover:bg-yellow-500 px-3 py-1 rounded hs-accordion-toggle cursor-pointer flex flex-row gap-1 text-yellow-500 items-center hover:text-white">
+                                                    <x-carbon-edit class="w-4 h-4 ms-auto" />
+                                                    Editar
+                                                </a>
+                                            @endif
+
+                                            @if ($cuenta->children->isEmpty())
+                                                <button type="button"
+                                                    class="hover:bg-red-600 px-3 py-1 rounded hs-accordion-toggle cursor-pointer flex flex-row gap-1 text-red-500 items-center hover:text-white"
+                                                    data-cuenta-delete-id="{{ $cuenta->id_cuenta }}"
+                                                    aria-controls="cuentas-delete" data-hs-overlay="#cuentas-delete">
+                                                    <x-carbon-trash-can class="w-4 h-4 ms-auto" />
+                                                    Eliminar
                                                 </button>
                                             @endif
                                         </div>
@@ -111,9 +118,9 @@
                 @include('cuentas.create')
             </x-modal> --}}
 
-            <x-modal id="cuentas-edit">
+            {{-- <x-modal id="cuentas-edit">
                 @include('cuentas.edit')
-            </x-modal>
+            </x-modal> --}}
 
             <x-modal id="cuentas-delete">
                 @include('cuentas.delete')
@@ -123,70 +130,6 @@
                 @include('cuentas.report')
             </x-modal>
 
-            <!-- seleccionar cuenta -->
-            <script>
-                let cuentaSeleccionadaId = null;
-                let cuentaSeleccionadaCodigo = null;
-                let cuentaSeleccionadaNombre = null;
-                let cuentaSeleccionadaTipo = null;
-                let cuentaSeleccionadaNivel = null;
-                let filaSeleccionada = null; // Nueva variable para la fila seleccionada
-
-                // Control de hover y clic en las filas
-                document.addEventListener("DOMContentLoaded", function() {
-                    document.querySelectorAll(".cuenta-row").forEach(item => {
-                        // Hover: resaltar fila al pasar el mouse
-                        item.addEventListener("mouseenter", function() {
-                            if (!this.classList.contains("seleccionada")) {
-                                this.classList.add("table-secondary"); // Resaltar cuando el mouse pasa
-                            }
-                        });
-
-                        // Hover: quitar el resalto al salir del mouse
-                        item.addEventListener("mouseleave", function() {
-                            if (!this.classList.contains("seleccionada")) {
-                                this.classList.remove(
-                                    "table-secondary"); // Quitar resalto solo si no está seleccionada
-                            }
-                        });
-
-                        // Clic en fila para seleccionar
-                        item.addEventListener("click", function() {
-                            let id = this.dataset.id;
-                            let codigo = this.dataset.codigo;
-                            let nombre = this.dataset.nombre;
-                            let tipo = this.dataset.tipo;
-                            let nivel = this.dataset.nivel;
-
-                            seleccionarCuenta(id, codigo, nombre, tipo,
-                                nivel); // Llamar para seleccionar la fila
-                        });
-                    });
-                });
-
-                const tiposCuentas = ["Activo", "Pasivo", "Patrimonio", "Ingresos", "Egresos"];
-                // Función para abrir el modal de edición cuando se hace clic en el botón
-                function abrirModalEditar(button) {
-                    const idCuenta = button.getAttribute('data-id');
-                    const codigoCuenta = button.getAttribute('data-codigo');
-                    const nombreCuenta = button.getAttribute('data-nombre');
-                    const tipoCuenta = button.getAttribute('data-tipo');
-                    const intTipoCuenta = tiposCuentas.find((el) => el == tipoCuenta);
-                    const nivelCuenta = button.getAttribute('data-nivel');
-
-                    document.getElementById('codigoCuentaEditar').value = codigoCuenta;
-                    document.getElementById('nombreCuentaEditar').value = nombreCuenta;
-                    // document.getElementById('tipoCuentaEditar').value = intTipoCuenta;
-                    // document.getElementById('nivelCuentaEditar').value = nivelCuenta;
-
-                    document.getElementById("editTipo" + tipoCuenta.toLowerCase()).checked = true;
-
-                    document.getElementById("editNivel" + nivelCuenta.toLowerCase()).checked = true;
-
-                    // let modalEditar = new bootstrap.Modal(document.getElementById('modalEditarCuenta'));
-                    // modalEditar.show();
-                }
-            </script>
         </div>
 
     </div>

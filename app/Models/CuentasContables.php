@@ -42,7 +42,9 @@ class CuentasContables extends Model
     // Relación jerárquica
     public function children()
     {
-        return $this->hasMany(CuentasContables::class, 'parent_id')->with('children');
+        return $this->hasMany(CuentasContables::class, 'parent_id')
+            ->where('estado', true)
+            ->with('children');
     }
 
     public function parent()

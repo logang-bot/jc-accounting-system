@@ -1,78 +1,60 @@
 <!-- Modal Borrar Cuenta -->
-<div class="modal fade" id="modalBorrarCuenta" tabindex="-1" aria-labelledby="modalBorrarCuentaLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalBorrarCuentaLabel">Borrar Cuenta</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                <p>¿Estás seguro de que deseas eliminar esta cuenta?</p>
-                <form id="formBorrarCuenta" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <div class="d-flex justify-content-center mt-3">
-                        <button type="submit" class="btn btn-danger me-2">Sí, Borrar</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    </div>
-                </form>
-            </div>
+<div class="flex items-center justify-center min-h-screen px-4">
+    <div class="max-w-sm mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">¿Estás seguro?</h2>
+        <p class="text-sm text-gray-600 mb-4">Esta acción eliminará la cuenta contable permanentemente.</p>
+        <div class="flex justify-end gap-2 mt-4">
+            <button type="button" class="hs-overlay-close px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
+                id="cancelDelete" aria-controls="cuentas-delete" data-hs-overlay="#cuentas-delete">
+                Cancelar
+            </button>
+            <button type="button" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded" id="confirmDelete"
+                aria-controls="cuentas-delete" data-hs-overlay="#cuentas-delete">
+                Eliminar
+            </button>
         </div>
     </div>
 </div>
 
-
-
 <script>
-    document.getElementById("btnBorrar").addEventListener("click", function() {
-        if (cuentaSeleccionadaId) {
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "Esta acción eliminará la cuenta seleccionada.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, borrar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Enviar el formulario manualmente
-                    borrarCuenta(cuentaSeleccionadaId);
-                }
-            });
-        } else {
-            Swal.fire('Atención', 'Debes seleccionar una cuenta primero.', 'info');
-        }
+    let cuentaIdAEliminar = null;
+
+    document.querySelectorAll('[data-cuenta-delete-id]').forEach(button => {
+        button.addEventListener('click', function() {
+            cuentaIdAEliminar = this.dataset.cuentaDeleteId;
+        });
     });
 
-    function borrarCuenta(id) {
-        fetch(`/cuentas/${id}`, {
+    document.getElementById('confirmDelete').addEventListener('click', function() {
+        if (!cuentaIdAEliminar) return;
+
+        fetch(`/cuentas/delete/${cuentaIdAEliminar}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Accept': 'application/json'
                 }
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    Swal.fire(
-                        '¡Eliminado!',
-                        data.message,
-                        'success'
-                    ).then(() => {
-                        // Recargar página o recargar la tabla
-                        window.location.reload();
-                    });
+                    document.querySelector(`[data-row-id="${cuentaIdAEliminar}"]`)?.remove();
                 } else {
-                    Swal.fire('Error', 'No se pudo eliminar la cuenta.', 'error');
+                    alert(data.message || 'Error al eliminar la cuenta');
                 }
+
+                // Close modal
+                const modalEl = document.querySelector('#delete-confirmation-modal');
+                window.HSOverlay?.getInstance(modalEl)?.close();
+                cuentaIdAEliminar = null;
             })
             .catch(error => {
-                console.error('Error:', error);
-                Swal.fire('Error', 'Hubo un problema al intentar eliminar la cuenta.', 'error');
+                alert('Error de red o del servidor.');
+
+                // Close modal
+                const modalEl = document.querySelector('#delete-confirmation-modal');
+                window.HSOverlay?.getInstance(modalEl)?.close();
+                cuentaIdAEliminar = null;
             });
-    }
+    });
 </script>

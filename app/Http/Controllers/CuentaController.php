@@ -14,10 +14,7 @@ class CuentaController extends Controller
         // Obtener todas las cuentas principales con sus subcuentas
         $cuentas = CuentasContables::whereNull('parent_id') // Solo las cuentas principales
             ->where('estado', true)
-            ->with(['children' => function ($query) {
-                $query->where('estado', true)
-                    ->orderBy('codigo_cuenta', 'asc'); // Ordenar subcuentas por código
-            }])
+            ->with('children')
             ->orderByRaw("
                 CASE
                     WHEN tipo_cuenta = 'Activo' THEN 1        
@@ -238,7 +235,22 @@ class CuentaController extends Controller
             return response()->json(['success' => false, 'message' => 'Cuenta no encontrada.'], 404);
         }
 
-        $cuenta->delete();
+        // Evitar eliminar cuentas raíz
+        if (is_null($cuenta->parent_id)) {
+            return response()->json(['success' => false, 'message' => 'No se puede eliminar una cuenta raíz.'], 403);
+        }
+
+        // Verificar si tiene cuentas hijas
+        if ($cuenta->children()->exists()) {
+            return response()->json(['success' => false, 'message' => 'No se puede eliminar una cuenta que tiene subcuentas.'], 403);
+        }
+
+        // Recomendado en vez de eliminar de la base de datos
+        $cuenta->estado = false;
+        $cuenta->save();
+
+        // Eliminacion real
+        // $cuenta->delete();
 
         return response()->json(['success' => true, 'message' => 'Cuenta eliminada correctamente.']);
     }

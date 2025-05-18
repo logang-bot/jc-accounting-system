@@ -55,7 +55,7 @@ Route::middleware('auth')->controller(CuentaController::class)->group(function()
         // Rutas de funcionalidades
         Route::post('/', 'store')->name('cuentas.store');
         Route::put('/{id}', 'update')->name('cuentas.update');
-        Route::delete('/{id_cuenta}', 'destroy')->name('cuentas.destroy');
+        Route::delete('/delete/{id}', 'destroy')->name('cuentas.destroy');
     });
 });
 

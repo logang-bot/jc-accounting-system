@@ -20,6 +20,7 @@ class CuentasContables extends Model
         'nivel',
         'parent_id',
         'es_movimiento',
+        'estado'
     ];
 
     protected $attributes = [
@@ -29,6 +30,7 @@ class CuentasContables extends Model
     protected $casts = [
         'nivel' => 'integer',
         'es_movimiento' => 'boolean',
+        'estado' => 'boolean'
     ];
 
     // Relación jerárquica
@@ -55,7 +57,13 @@ class CuentasContables extends Model
             $cuenta->nivel = $cuenta->nivel ?? self::calcularNivel($cuenta->codigo_cuenta) ?? 1;
 
             // Respetar el valor enviado en el formulario
-            $cuenta->es_movimiento = filter_var($cuenta->es_movimiento, FILTER_VALIDATE_BOOLEAN);
+            $cuenta->es_movimiento = match (true) {
+                $cuenta->nivel === 5 => true,
+                $cuenta->nivel === 4 => filter_var($cuenta->es_movimiento, FILTER_VALIDATE_BOOLEAN),
+                default => false,
+            };
+
+            $cuenta->estado = $cuenta->estado ?? true;
         });
     }
 
@@ -74,31 +82,53 @@ class CuentasContables extends Model
             return str_pad($prefijos[$cuenta->tipo_cuenta], 10, '0', STR_PAD_RIGHT);
         }
 
-        $ultimaCuenta = self::where('parent_id', $cuenta->parent_id)
+        // Obtener el código del padre
+        $parent = $cuenta->parent;
+        $parentCodigo = $parent->codigo_cuenta;
+
+        // Calcular el nivel actual a partir del padre
+        $nivelPadre = self::calcularNivel($parentCodigo);
+
+        // Determinar cuántos dígitos activos tiene el código del padre
+        $longitudActivo = 1 + ($nivelPadre - 1) * 2;
+
+        // Obtener el prefijo del padre (por ejemplo '1101')
+        $prefijo = substr($parentCodigo, 0, $longitudActivo);
+
+        // Buscar el último hijo con ese prefijo
+        $hijos = self::where('parent_id', $cuenta->parent_id)
+            ->where('codigo_cuenta', 'like', $prefijo . '%')
             ->orderBy('codigo_cuenta', 'desc')
             ->first();
 
-        if ($ultimaCuenta) {
-            return (string)((int)$ultimaCuenta->codigo_cuenta + 1);
+        $nuevoSegmento = '01';
+
+        if ($hijos) {
+            $codigoUltimo = substr($hijos->codigo_cuenta, $longitudActivo, 2);
+            $nuevoSegmento = str_pad(((int)$codigoUltimo + 1), 2, '0', STR_PAD_LEFT);
         }
 
-        return $cuenta->parent->codigo_cuenta . '01';
+        $nuevoPrefijo = $prefijo . $nuevoSegmento;
+
+        // Rellenar con ceros hasta completar 10 caracteres
+        return str_pad($nuevoPrefijo, 10, '0', STR_PAD_RIGHT);
     }
 
     // Calcular nivel a partir del código
     public static function calcularNivel($codigo)
     {
-        if (preg_match('/^[1-5]000000000$/', $codigo)) {
-            return 1;
-        } elseif (preg_match('/^[1-5][1-9]00000000$/', $codigo)) {
-            return 2;
-        } elseif (preg_match('/^[1-5][1-9][0-9]{2}000000$/', $codigo)) {
-            return 3;
-        } elseif (preg_match('/^[1-5][1-9][0-9]{4}0000$/', $codigo)) {
-            return 4;
-        } elseif (preg_match('/^[1-5][1-9][0-9]{6}$/', $codigo)) {
-            return 5;
+        // Cuenta cuántos grupos de 2 dígitos no-cero hay después del primer dígito
+        $chunks = str_split(substr($codigo, 1), 2);
+
+        $nivel = 1;
+        foreach ($chunks as $chunk) {
+            if ((int)$chunk > 0) {
+                $nivel++;
+            } else {
+                break;
+            }
         }
-        return 1;
+
+        return $nivel;
     }
 }

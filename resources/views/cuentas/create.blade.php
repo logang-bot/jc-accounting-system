@@ -88,7 +88,7 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow">
+    <div class="max-w-2xl mx-auto p-6 m-6 bg-white rounded-xl shadow">
         <h2 class="text-2xl font-bold mb-4">Crear Cuenta Contable</h2>
 
         @if ($errors->any())
@@ -128,7 +128,8 @@
                 <select name="parent_id" id="parent_id" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2">
                     <option value="">-- Ninguna (Cuenta Raíz) --</option>
                     @foreach ($cuentasPadre as $cuenta)
-                        <option value="{{ $cuenta->id_cuenta }}">{{ $cuenta->codigo_cuenta }} - {{ $cuenta->nombre_cuenta }}
+                        <option value="{{ $cuenta->id_cuenta }}" data-tipo="{{ $cuenta->tipo_cuenta }}">
+                            {{ $cuenta->codigo_cuenta }} - {{ $cuenta->nombre_cuenta }}
                         </option>
                     @endforeach
                 </select>
@@ -309,6 +310,24 @@
             });
 
             actualizarCodigoFinal();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const tipoCuentaSelect = document.getElementById('tipo_cuenta');
+            const parentSelect = document.getElementById('parent_id');
+            const allOptions = Array.from(parentSelect.options);
+
+            tipoCuentaSelect.addEventListener('change', function() {
+                const selectedTipo = this.value;
+
+                // Clear and re-add options
+                parentSelect.innerHTML = '';
+
+                allOptions.forEach(option => {
+                    if (!option.value || option.dataset.tipo === selectedTipo) {
+                        parentSelect.appendChild(option);
+                    }
+                });
+            });
         });
     </script>
 @endsection

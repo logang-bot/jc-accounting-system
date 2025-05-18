@@ -57,16 +57,19 @@
                                             @endif
                                         </div>
                                         <div class="flex gap-2">
-                                            <button
-                                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded cursor-pointer"
-                                                onclick="event.stopPropagation(); abrirModalEditar(this)"
-                                                aria-controls="cuentas-edit" data-hs-overlay="#cuentas-edit"
-                                                data-id="{{ $cuenta->id_cuenta }}"
-                                                data-codigo="{{ $cuenta->codigo_cuenta }}"
-                                                data-nombre="{{ $cuenta->nombre_cuenta }}"
-                                                data-tipo="{{ $cuenta->tipo_cuenta }}" data-nivel="{{ $cuenta->nivel }}">
-                                                Editar
-                                            </button>
+                                            @if ($cuenta->es_movimiento)
+                                                <button
+                                                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded cursor-pointer"
+                                                    onclick="event.stopPropagation(); abrirModalEditar(this)"
+                                                    aria-controls="cuentas-edit" data-hs-overlay="#cuentas-edit"
+                                                    data-id="{{ $cuenta->id_cuenta }}"
+                                                    data-codigo="{{ $cuenta->codigo_cuenta }}"
+                                                    data-nombre="{{ $cuenta->nombre_cuenta }}"
+                                                    data-tipo="{{ $cuenta->tipo_cuenta }}"
+                                                    data-nivel="{{ $cuenta->nivel }}">
+                                                    Editar
+                                                </button>
+                                            @endif
                                             @if ($cuenta->children->isNotEmpty())
                                                 <button type="button"
                                                     class="hover:bg-black/20 px-3 py-1 rounded hs-accordion-toggle cursor-pointer"

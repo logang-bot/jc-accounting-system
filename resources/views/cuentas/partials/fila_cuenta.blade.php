@@ -11,20 +11,20 @@
         <div>Nivel {{ $cuenta->nivel }}</div>
         <div>
             @if ($cuenta->es_movimiento)
-                <span
-                    class="inline-block bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded">Movimiento</span>
+                <span class="inline-block bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded">Si</span>
             @else
-                <span
-                    class="inline-block bg-gray-500 text-white text-xs font-semibold px-2 py-1 rounded">Agrupador</span>
+                <span class="inline-block bg-gray-500 text-white text-xs font-semibold px-2 py-1 rounded">No</span>
             @endif
         </div>
         <div class="flex gap-2">
-            <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
-                onclick="event.stopPropagation(); abrirModalEditar(this)" data-id="{{ $cuenta->id_cuenta }}"
-                data-codigo="{{ $cuenta->codigo_cuenta }}" data-nombre="{{ $cuenta->nombre_cuenta }}"
-                data-tipo="{{ $cuenta->tipo_cuenta }}" data-nivel="{{ $cuenta->nivel }}">
-                Editar
-            </button>
+            @if ($cuenta->es_movimiento)
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                    onclick="event.stopPropagation(); abrirModalEditar(this)" data-id="{{ $cuenta->id_cuenta }}"
+                    data-codigo="{{ $cuenta->codigo_cuenta }}" data-nombre="{{ $cuenta->nombre_cuenta }}"
+                    data-tipo="{{ $cuenta->tipo_cuenta }}" data-nivel="{{ $cuenta->nivel }}">
+                    Editar
+                </button>
+            @endif
 
             @if ($cuenta->children->isNotEmpty())
                 <button type="button"

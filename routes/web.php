@@ -26,33 +26,49 @@ Route::middleware('auth')->controller(EmpresasController::class)->group(function
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     // Rutas para empresas
-    Route::prefix('/empresas')->group(function () {
+    Route::prefix('/empresas')->group(function() {
 
         // Rutas para vistas
-        Route::get('/{id}/home', 'home')->name('show.empresas.home');
+        Route::get('/home', 'home')->name('show.empresas.home');
         Route::get('/crear', 'create')->name('show.empresas.create');
-        Route::get('/empresa/{id}', 'show')->name('show.empresas.detail');
+        Route::get('/{id}', 'show')->name('show.empresas.detail');
+        Route::get('/edit/{id}', 'edit')->name('show.empresas.edit');
 
         // Rutas de funcionalidades
         Route::post('/', 'store')->name('empresas.store');
-        Route::put('/empresa/{id}', 'update')->name('empresa.update');
+        Route::put('/{id}', 'update')->name('empresa.update');
         Route::delete('/{id}', 'destroy')->name('empresas.destroy');
         Route::post('/exit', 'exit')->name('empresas.exit');
     });
 });
 
+Route::middleware('auth')->controller(CuentaController::class)->group(function() {
 
+    Route::prefix('/cuentas')->group(function() {
+        
+        // Rutas para vistas
+        Route::get('/home', 'home')->name('show.cuentas.home');
+        Route::get('/crear', 'create')->name('show.cuentas.create');
+        Route::get('/{id}', 'showEdit')->name('show.cuentas.detail');
+        Route::get('/edit/{id}', 'edit')->name('show.cuentas.edit');
+
+        // Rutas de funcionalidades
+        Route::post('/', 'store')->name('cuentas.store');
+        Route::put('/{id}', 'update')->name('cuentas.update');
+        Route::delete('/{id_cuenta}', 'destroy')->name('cuentas.destroy');
+    });
+});
 
 //Cuentas///////////////////////////////////////////
-Route::resource('cuentas', CuentaController::class);
-//Adicionar
-Route::post('/cuentas', [CuentaController::class, 'store'])->name('cuentas.store');
-//Editar
-//Route::get('/cuentas/{id}/edit', [CuentaController::class, 'edit']);
-//Actualizar
-Route::put('/cuentas/{id}', [CuentaController::class, 'update'])->name('cuentas.update');
-//Borrar
-Route::delete('/cuentas/{id_cuenta}', [CuentaController::class, 'destroy'])->name('cuentas.destroy');
+// Route::resource('cuentas', CuentaController::class);
+// //Adicionar
+// Route::post('/cuentas', [CuentaController::class, 'store'])->name('cuentas.store');
+// //Editar
+// //Route::get('/cuentas/{id}/edit', [CuentaController::class, 'edit']);
+// //Actualizar
+// Route::put('/cuentas/{id}', [CuentaController::class, 'update'])->name('cuentas.update');
+// //Borrar
+// Route::delete('/cuentas/{id_cuenta}', [CuentaController::class, 'destroy'])->name('cuentas.destroy');
 //Reporte
 Route::get('/cuentas/reporte', [CuentaController::class, 'reporte'])->name('cuentas.reporte');
 

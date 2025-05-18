@@ -8,7 +8,7 @@ use App\Models\CuentasContables;
 class CuentaController extends Controller
 {
     // Mostrar todas las cuentas
-    public function index()
+    public function home()
     {
         // Obtener todas las cuentas principales con sus subcuentas
         $cuentas = CuentasContables::whereNull('parent_id') // Solo las cuentas principales
@@ -41,6 +41,12 @@ class CuentaController extends Controller
         return view('cuentas.index', compact('cuentas'));
     }
 
+    public function create()
+    {
+        $cuentasPadre = CuentasContables::where('es_movimiento', false)->get();
+        return view('cuentas.create', compact('cuentasPadre'));
+    }
+
 
     private function determinarNivelPorCodigo($codigoCuenta)
     {
@@ -69,10 +75,8 @@ class CuentaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'codigo_cuenta' => 'nullable|unique:cuentas,codigo_cuenta|max:10',
             'nombre_cuenta' => 'required|string|max:255',
             'tipo_cuenta' => 'required|in:Activo,Pasivo,Patrimonio,Ingresos,Egresos',
-            'nivel' => 'nullable|string',
             'parent_id' => 'nullable|exists:cuentas,id_cuenta',
             'es_movimiento' => 'sometimes|boolean',
         ]);
@@ -85,6 +89,19 @@ class CuentaController extends Controller
             "Sub-Cuenta" => 5
         ];
 
+        // ✅ Validación: Solo una cuenta raíz por tipo
+        if (empty($request->parent_id)) {
+            $existe = CuentasContables::where('tipo_cuenta', $request->tipo_cuenta)
+                ->whereNull('parent_id')
+                ->exists();
+
+            if ($existe) {
+                return back()
+                    ->withErrors(['tipo_cuenta' => 'Ya existe una cuenta raíz para este tipo.'])
+                    ->withInput();
+            }
+        }
+
         // Inicializar datos
         $data = $request->only(['codigo_cuenta', 'nombre_cuenta', 'tipo_cuenta', 'parent_id']);
 
@@ -96,15 +113,14 @@ class CuentaController extends Controller
             $data['nivel'] = $niveles[$request->nivel] ?? 1;
         }
 
-        // Asegurar que nivel sea numérico
         $data['nivel'] = is_numeric($data['nivel']) ? intval($data['nivel']) : 1;
 
-        // Generar código de cuenta si no se proporcionó
-        if (empty($request->codigo_cuenta)) {
-            // $data['codigo_cuenta'] = $this->generarCodigoCuenta($data['tipo_cuenta'], $data['parent_id'] ?? null);
-        }
+        // Si no hay código, se deja para que el modelo lo genere automáticamente
+        // if (empty($request->codigo_cuenta)) {
+        //     $data['codigo_cuenta'] = $this->generarCodigoCuenta(...);
+        // }
 
-        // Forzar es_movimiento en nivel 5
+        // Forzar es_movimiento
         if ($data['nivel'] === 5) {
             $data['es_movimiento'] = true;
         } elseif ($data['nivel'] === 4) {
@@ -113,10 +129,9 @@ class CuentaController extends Controller
             $data['es_movimiento'] = false;
         }
 
-        // Crear la cuenta
         CuentasContables::create($data);
 
-        return redirect()->route('cuentas.index')->with('success', 'Cuenta creada correctamente.');
+        return redirect()->route('show.cuentas.home')->with('success', 'Cuenta creada correctamente.');
     }
 
 

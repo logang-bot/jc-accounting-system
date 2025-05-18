@@ -8,11 +8,10 @@ use App\Models\DatoEmpresa;
 
 class EmpresasController extends Controller
 {
-    public function home($id)
+    public function home()
     {
-        session(['empresa_id' => $id]);
-        $empresa = Empresa::findOrFail($id);
-        return view('empresas.dashboard', compact('empresa'));
+        $empresas = Empresa::all();
+        return view('empresas.dashboard', compact('empresas'));
     }
 
     public function create()
@@ -21,6 +20,13 @@ class EmpresasController extends Controller
     }
     
     public function show($id)
+    {
+        session(['empresa_id' => $id]);
+        $empresa = Empresa::with('datoEmpresa')->findOrFail($id);
+        return view('empresas.company', compact('empresa'));
+    }
+    
+    public function edit($id)
     {
         session(['empresa_id' => $id]);
         $empresa = Empresa::with('datoEmpresa')->findOrFail($id);

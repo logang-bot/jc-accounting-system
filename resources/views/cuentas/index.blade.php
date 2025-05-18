@@ -14,10 +14,10 @@
                 <!-- Table -->
                 <div class="px-6 flex flex-row w-full gap-4">
                     <div class="flex gap-2 flex-col w-[10%]">
-                        <button type="button" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                            aria-controls="cuentas-create" data-hs-overlay="#cuentas-create">
+                        <a href="{{ route('show.cuentas.create') }}" type="button"
+                            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-center">
                             Adicionar
-                        </button>
+                        </a>
                         <button type="button" class="bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-700"
                             aria-controls="cuentas-report" data-hs-overlay="#cuentas-report">
                             Reporte
@@ -104,20 +104,20 @@
                 </div>
             </div>
 
-            <x-modal id="cuentas-create">
-                @include('cuentas.crud.create')
-            </x-modal>
+            {{-- <x-modal id="cuentas-create">
+                @include('cuentas.create')
+            </x-modal> --}}
 
             <x-modal id="cuentas-edit">
-                @include('cuentas.crud.edit')
+                @include('cuentas.edit')
             </x-modal>
 
             <x-modal id="cuentas-delete">
-                @include('cuentas.crud.delete')
+                @include('cuentas.delete')
             </x-modal>
 
             <x-modal id="cuentas-report">
-                @include('cuentas.crud.report')
+                @include('cuentas.report')
             </x-modal>
 
             <!-- seleccionar cuenta -->

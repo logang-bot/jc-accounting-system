@@ -185,7 +185,7 @@ class CuentasSeeder extends Seeder
             'codigo_cuenta' => '5101000000',
             'nombre_cuenta' => 'GASTOS DE ADMINISTRACIÓN',
             'tipo_cuenta' => 'Egresos',
-            'nivel' => 3,
+            'nivel' => 2,
             'parent_id' => $egresos->id_cuenta,
             'es_movimiento' => true,
         ]);

@@ -174,7 +174,7 @@ class CuentaController extends Controller
         
         // Detectar si el tipo_cuenta o parent_id fueron modificados
         $tipoCuentaNuevo = $request->input('tipo_cuenta');
-        $parentIdNuevo = $request->input('parent_id') ?: null;
+        $parentIdNuevo = $request->filled('parent_id') ? (int) $request->input('parent_id') : null;
 
         $cambioTipoCuenta = $cuenta->tipo_cuenta !== $tipoCuentaNuevo;
         $cambioParent = $cuenta->parent_id !== $parentIdNuevo;

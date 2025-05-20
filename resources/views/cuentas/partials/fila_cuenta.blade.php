@@ -25,7 +25,7 @@
                 </button>
             @endif
 
-            @if ($cuenta->es_movimiento)
+            @if ($cuenta->nivel === 4 || $cuenta->nivel === 5)
                 <a href="{{ route('show.cuentas.edit', ['id' => $cuenta->id_cuenta]) }}"
                     class="hover:bg-yellow-500 px-3 py-1 rounded hs-accordion-toggle cursor-pointer flex flex-row gap-1 text-yellow-500 items-center hover:text-white">
                     <x-carbon-edit class="w-4 h-4 ms-auto" />

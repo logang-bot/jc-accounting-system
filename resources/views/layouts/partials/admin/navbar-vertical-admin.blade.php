@@ -29,7 +29,7 @@
                         class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
                         aria-expanded="true" aria-controls="users-accordion-collapse-1">
                         <x-carbon-gui-management class="w-4 h-4" />
-                        Gestion
+                        Gestion de empresa
                         <x-carbon-chevron-down class="w-4 h-4 ms-auto" />
                     </button>
 
@@ -44,6 +44,16 @@
                                     <a href="{{ route('show.empresas.home', ['id' => session('empresa_id', Auth::user()->empresa_id ?? 1)]) }}"
                                         class="hover:text-gray-300 flex flex-row items-center">
                                         Datos de la Empresa
+                                    </a>
+                                </button>
+                            </li>
+                            <li class="hs-accordion" id="users-accordion-sub-1">
+                                <button type="button"
+                                    class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                                    aria-expanded="true" aria-controls="users-accordion-sub-1-collapse-1">
+                                    <a href="{{ route('show.empresas.create') }}"
+                                        class="hover:text-gray-300 flex flex-row items-center">
+                                        Salir de la Empresa
                                     </a>
                                 </button>
                             </li>
@@ -103,22 +113,14 @@
                         role="region" aria-labelledby="projects-accordion">
                         <ul class="pt-1 ps-7 space-y-1">
                             <li>
-                                <a href="pages/sign-in.html"
+                                <a href="{{ route('logout') }}"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                                     class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200 hover:text-gray-300">
-                                    Sign
-                                    In</a>
+                                    Cerrar Sesion</a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                                    @csrf
+                                </form>
                             </li>
-                            <li>
-                                <a href="pages/sign-up.html"
-                                    class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200 hover:text-gray-300">Sign
-                                    Up</a>
-                            </li>
-                            <li>
-                                <a href="pages/forget-password.html"
-                                    class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200 hover:text-gray-300">Forget
-                                    Password</a>
-                            </li>
-
                         </ul>
                     </div>
                 </li>

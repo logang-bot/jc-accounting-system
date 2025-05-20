@@ -18,7 +18,6 @@
         <!-- Page content -->
         <div id="page-content" class="flex-1 ml-0 transition-all duration-300" :class="sidebarOpen ? 'ml-64' : 'ml-0'">
             @include('layouts.partials.admin.header')
-            @include('layouts.partials.admin.notifications')
 
             <!-- Main content area -->
             <main class="flex-1">

@@ -44,6 +44,7 @@ class CuentasContables extends Model
     {
         return $this->hasMany(CuentasContables::class, 'parent_id')
             ->where('estado', true)
+            ->orderBy('codigo_cuenta', 'asc')
             ->with('children');
     }
 
@@ -62,7 +63,7 @@ class CuentasContables extends Model
                 $cuenta->codigo_cuenta = self::generarCodigoCuenta($cuenta);
             }
 
-            $cuenta->nivel = $cuenta->nivel ?? self::calcularNivel($cuenta->codigo_cuenta) ?? 1;
+            $cuenta->nivel = self::calcularNivel($cuenta->codigo_cuenta);
 
             // Respetar el valor enviado en el formulario
             $cuenta->es_movimiento = match (true) {
@@ -78,6 +79,7 @@ class CuentasContables extends Model
     // Generar código jerárquico
     public static function generarCodigoCuenta($cuenta)
     {
+        
         $prefijos = [
             'Activo' => '1',
             'Pasivo' => '2',
@@ -87,57 +89,68 @@ class CuentasContables extends Model
         ];
 
         if (!$cuenta->parent_id) {
+            // Nivel 1: código base como "1000000000", "2000000000", etc.
             return str_pad($prefijos[$cuenta->tipo_cuenta], 10, '0', STR_PAD_RIGHT);
         }
 
-        // Obtener el código del padre
         $parent = $cuenta->parent;
-        $parentCodigo = $parent->codigo_cuenta;
+        $codigoPadre = $parent->codigo_cuenta;
+        $nivelPadre = self::calcularNivel($codigoPadre);
+        $nivelHijo = $nivelPadre + 1;
 
-        // Calcular el nivel actual a partir del padre
-        $nivelPadre = self::calcularNivel($parentCodigo);
+        // Definimos los rangos de dígitos por nivel
+        $rangos = [
+            1 => [0, 1],     // 1er dígito
+            2 => [1, 1],     // 2do dígito
+            3 => [2, 2],     // dígitos 3-4
+            4 => [4, 2],     // dígitos 5-6
+            5 => [6, 4],     // dígitos 7-10
+        ];
 
-        // Determinar cuántos dígitos activos tiene el código del padre
-        $longitudActivo = 1 + ($nivelPadre - 1) * 2;
+        if (!isset($rangos[$nivelPadre]) || !isset($rangos[$nivelHijo])) {
+            throw new \Exception("Nivel no válido para generación de código.");
+        }
 
-        // Obtener el prefijo del padre (por ejemplo '1101')
-        $prefijo = substr($parentCodigo, 0, $longitudActivo);
+        // Prefijo hasta el final del nivel padre
+        $inicioPrefijo = 0;
+        $longitudPrefijo = $rangos[$nivelPadre][0] + $rangos[$nivelPadre][1];
+        $prefijo = substr($codigoPadre, $inicioPrefijo, $longitudPrefijo);
 
-        // Buscar el último hijo con ese prefijo
-        $hijos = self::where('parent_id', $cuenta->parent_id)
+        // Buscar el último hijo
+        $hijoMasAlto = self::where('parent_id', $cuenta->parent_id)
             ->where('codigo_cuenta', 'like', $prefijo . '%')
             ->orderBy('codigo_cuenta', 'desc')
             ->first();
 
-        $nuevoSegmento = '01';
+        $nuevoSegmento = $nivelHijo === 5 ? '0001' : '01';
 
-        if ($hijos) {
-            $codigoUltimo = substr($hijos->codigo_cuenta, $longitudActivo, 2);
-            $nuevoSegmento = str_pad(((int)$codigoUltimo + 1), 2, '0', STR_PAD_LEFT);
+        if ($hijoMasAlto) {
+            $inicioSegmento = $rangos[$nivelHijo][0];
+            $longitudSegmento = $rangos[$nivelHijo][1];
+            $segmento = substr($hijoMasAlto->codigo_cuenta, $inicioSegmento, $longitudSegmento);
+            $nuevoNumero = str_pad((int)$segmento + 1, $longitudSegmento, '0', STR_PAD_LEFT);
+            $nuevoSegmento = $nuevoNumero;
         }
 
-        $nuevoPrefijo = $prefijo . $nuevoSegmento;
+        // Armar el nuevo código
+        $nuevoCodigo = substr_replace($codigoPadre, $nuevoSegmento, $rangos[$nivelHijo][0], $rangos[$nivelHijo][1]);
 
-        // Rellenar con ceros hasta completar 10 caracteres
-        return str_pad($nuevoPrefijo, 10, '0', STR_PAD_RIGHT);
+        // Asegurar que tenga 10 dígitos rellenando con ceros
+        return str_pad($nuevoCodigo, 10, '0', STR_PAD_RIGHT);
     }
 
     // Calcular nivel a partir del código
     public static function calcularNivel($codigo)
     {
-        // Cuenta cuántos grupos de 2 dígitos no-cero hay después del primer dígito
-        $chunks = str_split(substr($codigo, 1), 2);
-
-        $nivel = 1;
-        foreach ($chunks as $chunk) {
-            if ((int)$chunk > 0) {
-                $nivel++;
-            } else {
-                break;
-            }
-        }
-
-        return $nivel;
+        $codigo = str_pad($codigo, 10, '0', STR_PAD_RIGHT);
+    
+        // Verificar desde el nivel más profundo al más superficial
+        if (substr($codigo, 6, 4) !== '0000') return 5;
+        if (substr($codigo, 4, 2) !== '00') return 4;
+        if (substr($codigo, 2, 2) !== '00') return 3;
+        if (substr($codigo, 1, 1) !== '0') return 2;
+        
+        return 1; // Nivel raíz
     }
 
 }

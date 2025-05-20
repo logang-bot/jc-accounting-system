@@ -29,14 +29,14 @@ Route::middleware('auth')->controller(EmpresasController::class)->group(function
     Route::prefix('/empresas')->group(function() {
 
         // Rutas para vistas
-        Route::get('/home', 'home')->name('show.empresas.home');
+        Route::get('/home/{id}', 'home')->name('show.empresas.home');
         Route::get('/crear', 'create')->name('show.empresas.create');
         Route::get('/{id}', 'show')->name('show.empresas.detail');
         Route::get('/edit/{id}', 'edit')->name('show.empresas.edit');
 
         // Rutas de funcionalidades
         Route::post('/', 'store')->name('empresas.store');
-        Route::put('/{id}', 'update')->name('empresa.update');
+        Route::put('/{id}', 'update')->name('empresas.update');
         Route::delete('/{id}', 'destroy')->name('empresas.destroy');
         Route::post('/exit', 'exit')->name('empresas.exit');
     });

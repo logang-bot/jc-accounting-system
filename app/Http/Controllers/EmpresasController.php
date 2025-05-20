@@ -8,10 +8,11 @@ use App\Models\DatoEmpresa;
 
 class EmpresasController extends Controller
 {
-    public function home()
+    public function home($id)
     {
-        $empresas = Empresa::all();
-        return view('empresas.dashboard', compact('empresas'));
+        session(['empresa_id' => $id]);
+        $empresa = Empresa::find($id);
+        return view('empresas.dashboard', compact('empresa'));
     }
 
     public function create()

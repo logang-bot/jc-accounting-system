@@ -1,6 +1,5 @@
 <?php
 
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('comprobantes', function (Blueprint $table) {
-            $table->id('id_comprobante'); // Clave primaria
-
-            $table->string('numero_comprobante')->unique(); // Número de comprobante (único)
-            $table->date('fecha'); // Fecha del comprobante
-            $table->string('tipo_comprobante'); // Tipo de comprobante (Ingreso, Egreso, Diario, etc.)
-            $table->string('glosa_general', 255)->nullable(); // Glosa general
-
-            $table->timestamps(); // created_at y updated_at
+            $table->id(); // Primary key
+            $table->string('numero')->unique(); // e.g. COMP-2025-0001
+            $table->date('fecha');
+            $table->enum('tipo', ['ingreso', 'egreso', 'traspaso', 'ajuste'])->index();
+            $table->text('descripcion')->nullable();
+            $table->decimal('total', 15, 2)->default(0);
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

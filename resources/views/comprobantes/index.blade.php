@@ -1,68 +1,60 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="bg-primary pt-10 pb-21"></div>
-    <div class="container-fluid mt-n22 px-6">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0 text-white">Lista de Comprobantes</h3>
-                </div>
-                <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="bg-blue-600 p-8">
+        <div class="flex flex-wrap">
+            <div class="w-full">
+                <div class="flex justify-between items-center">
                     <h3 class="mb-0 text-white">Gestionar Comprobantes</h3>
                     <div>
                         <!-- Botón para crear un comprobante -->
-                        <a href="{{ route('comprobantes.create') }}" class="btn btn-light mx-1">Nuevo Comprobante</a>
+                        <a href="{{ route('show.comprobantes.create') }}"
+                            class="bg-white text-gray-800 px-4 py-2 rounded mx-1">Nuevo Comprobante</a>
 
-                        <!-- Botón para editar un comprobante -->
-                        <a href="{{ route('comprobantes.edit', $comprobante->id_comprobante ?? 0) }}"
-                            class="btn btn-warning mx-1">Editar Comprobante</a>
-
-                        <!-- Botón para borrar un comprobante -->
-                        <form
-                            action="{{ route('comprobantes.destroy', ['comprobante' => $comprobante->id_comprobante ?? 0]) }}"
-                            method="POST" style="display: inline;">
+                        {{-- <!-- Botón para borrar un comprobante -->
+                        <form action="{{ route('comprobantes.destroy', ['id' => $comprobante->id ?? 0]) }}" method="POST"
+                            class="inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger mx-1"
+                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded mx-1"
                                 onclick="return confirm('¿Está seguro de que desea eliminar este comprobante?')">
                                 Borrar Comprobante
                             </button>
-                        </form>
-
+                        </form> --}}
                     </div>
                 </div>
             </div>
         </div>
-
+    </div>
+    <div class="container mx-auto px-6">
         <!-- Formulario para filtros y búsqueda -->
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <form method="GET" action="{{ route('comprobantes.index') }}">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
+        <div class="flex flex-wrap mt-4">
+            <div class="w-full">
+                <form method="GET" action="{{ route('show.comprobantes.home') }}">
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="p-4">
+                            <div class="flex flex-wrap">
                                 <!-- Filtro por fecha -->
-                                <div class="col-md-3 mb-3">
-                                    <input type="date" name="fecha" class="form-control"
+                                <div class="w-full md:w-1/4 mb-3 pr-2">
+                                    <input type="date" name="fecha" class="w-full p-2 border rounded"
                                         placeholder="Filtrar por fecha" value="{{ request('fecha') }}">
                                 </div>
 
                                 <!-- Filtro por tipo de comprobante -->
-                                <div class="col-md-3 mb-3">
-                                    <input type="text" name="tipo_comprobante" class="form-control"
+                                <div class="w-full md:w-1/4 mb-3 pr-2">
+                                    <input type="text" name="tipo_comprobante" class="w-full p-2 border rounded"
                                         placeholder="Filtrar por tipo" value="{{ request('tipo_comprobante') }}">
                                 </div>
 
                                 <!-- Filtro por glosa -->
-                                <div class="col-md-3 mb-3">
-                                    <input type="text" name="glosa_general" class="form-control"
+                                <div class="w-full md:w-1/4 mb-3 pr-2">
+                                    <input type="text" name="glosa_general" class="w-full p-2 border rounded"
                                         placeholder="Buscar por glosa" value="{{ request('glosa_general') }}">
                                 </div>
 
                                 <!-- Botón para aplicar filtros -->
-                                <div class="col-md-3 mb-3">
-                                    <button type="submit" class="btn btn-primary w-100">Buscar</button>
+                                <div class="w-full md:w-1/4 mb-3">
+                                    <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded">Buscar</button>
                                 </div>
                             </div>
                         </div>
@@ -72,49 +64,51 @@
         </div>
 
         <!-- Tabla de comprobantes -->
-        <div class="row mt-6">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header bg-white py-4">
+        <div class="flex flex-wrap mt-6">
+            <div class="w-full">
+                <div class="bg-white rounded-lg shadow">
+                    <div class="bg-white px-4 py-4 border-b">
                         <h4 class="mb-0">Detalles de Comprobantes</h4>
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
+                    <div class="p-4">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full border">
                                 <thead>
-                                    <tr class="bg-primary text-white">
-                                        <th>#</th>
-                                        <th>Fecha</th>
-                                        <th>Tipo</th>
-                                        <th>Glosa</th>
-                                        <th>Acciones</th>
+                                    <tr class="bg-blue-600 text-white">
+                                        <th class="border p-2">#</th>
+                                        <th class="border p-2">Fecha</th>
+                                        <th class="border p-2">Tipo</th>
+                                        <th class="border p-2">Glosa</th>
+                                        <th class="border p-2">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse ($comprobantes as $comprobante)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $comprobante->fecha_movimiento }}</td>
-                                            <td>{{ $comprobante->tipo_movimiento }}</td>
-                                            <td>{{ $comprobante->glosa }}</td>
-                                            <td>
-                                                <a href="{{ route('comprobantes.show', $comprobante->id_comprobante) }}"
-                                                    class="btn btn-info btn-sm">Detalles</a>
-                                                <a href="{{ route('comprobantes.edit', $comprobante->id_comprobante) }}"
-                                                    class="btn btn-warning btn-sm">Editar</a>
-                                                <form
-                                                    action="{{ route('comprobantes.destroy', $comprobante->id_comprobante) }}"
-                                                    method="POST" style="display: inline;">
+                                            <td class="border p-2">{{ $loop->iteration }}</td>
+                                            <td class="border p-2">{{ $comprobante->fecha }}</td>
+                                            <td class="border p-2">{{ $comprobante->tipo }}</td>
+                                            <td class="border p-2">{{ $comprobante->descripcion }}</td>
+                                            <td class="border p-2">
+                                                <a href="{{ route('show.comprobantes.detail', $comprobante->id) }}"
+                                                    class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Detalles</a>
+                                                <a href="{{ route('show.comprobantes.edit', $comprobante->id) }}"
+                                                    class="bg-yellow-500 text-white px-3 py-1 rounded text-sm">Editar</a>
+                                                <form action="{{ route('comprobantes.destroy', $comprobante->id) }}"
+                                                    method="POST" class="inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm"
+                                                    <button type="submit"
+                                                        class="bg-red-500 text-white px-3 py-1 rounded text-sm"
                                                         onclick="return confirm('¿Está seguro de eliminar este comprobante?')">Eliminar</button>
                                                 </form>
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="5" class="text-center">No hay comprobantes registrados.</td>
+                                            <td colspan="5" class="border p-2 text-center text-gray-500 italic">
+                                                No hay comprobantes registrados.
+                                            </td>
                                         </tr>
                                     @endforelse
                                 </tbody>

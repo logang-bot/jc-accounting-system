@@ -44,6 +44,29 @@ class CuentaController extends Controller
         ]);
     }
 
+    // Mostrar formulario de edición
+    public function edit($id)
+    {
+        // Buscar la cuenta en la base de datos por su ID
+        $cuenta = CuentasContables::find($id);
+
+        // Validar si no se encuentra la cuenta
+        if (!$cuenta) {
+            return response()->json(['error' => 'Cuenta no encontrada'], 404);
+        }
+        
+        $cuentasPadre = CuentasContables::where('es_movimiento', false)
+            ->where('nivel', '<', 5)
+            ->where('id_cuenta', '!=', $id) // No puede ser su propio padre
+            ->get();
+
+        return view('cuentas.create', [
+            'cuenta' => $cuenta,
+            'cuentasPadre' => $cuentasPadre,
+            'modo' => 'editar',
+        ]);
+    }
+
     // Guardar una nueva cuenta
     public function store(Request $request)
     {
@@ -122,29 +145,6 @@ class CuentaController extends Controller
                 'tipo_cuenta' => 'Ya existe una cuenta raíz para este tipo.'
             ]);
         }
-    }
-
-    // Mostrar formulario de edición
-    public function edit($id)
-    {
-        // Buscar la cuenta en la base de datos por su ID
-        $cuenta = CuentasContables::find($id);
-
-        // Validar si no se encuentra la cuenta
-        if (!$cuenta) {
-            return response()->json(['error' => 'Cuenta no encontrada'], 404);
-        }
-        
-        $cuentasPadre = CuentasContables::where('es_movimiento', false)
-            ->where('nivel', '<', 5)
-            ->where('id_cuenta', '!=', $id) // No puede ser su propio padre
-            ->get();
-
-        return view('cuentas.create', [
-            'cuenta' => $cuenta,
-            'cuentasPadre' => $cuentasPadre,
-            'modo' => 'editar',
-        ]);
     }
 
     // Actualizar los datos de la cuenta
@@ -246,11 +246,11 @@ class CuentaController extends Controller
         }
 
         // Recomendado en vez de eliminar de la base de datos
-        $cuenta->estado = false;
-        $cuenta->save();
+        // $cuenta->estado = false;
+        // $cuenta->save();
 
         // Eliminacion real
-        // $cuenta->delete();
+        $cuenta->delete();
 
         return response()->json(['success' => true, 'message' => 'Cuenta eliminada correctamente.']);
     }

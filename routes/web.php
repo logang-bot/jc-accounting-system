@@ -59,19 +59,21 @@ Route::middleware('auth')->controller(CuentaController::class)->group(function()
     });
 });
 
-//Cuentas///////////////////////////////////////////
-// Route::resource('cuentas', CuentaController::class);
-// //Adicionar
-// Route::post('/cuentas', [CuentaController::class, 'store'])->name('cuentas.store');
-// //Editar
-// //Route::get('/cuentas/{id}/edit', [CuentaController::class, 'edit']);
-// //Actualizar
-// Route::put('/cuentas/{id}', [CuentaController::class, 'update'])->name('cuentas.update');
-// //Borrar
-// Route::delete('/cuentas/{id_cuenta}', [CuentaController::class, 'destroy'])->name('cuentas.destroy');
-//Reporte
 Route::get('/cuentas/reporte', [CuentaController::class, 'reporte'])->name('cuentas.reporte');
 
-
 //Comprobantes////////////////////////////////////////////////
-Route::resource('comprobantes', ComprobantesController::class);
+Route::middleware('auth')->controller(ComprobantesController::class)->group(function() {
+    Route::prefix('/comprobantes')->group(function() {
+        
+        // Rutas para vistas
+        Route::get('/home', 'home')->name('show.comprobantes.home');
+        Route::get('/crear', 'create')->name('show.comprobantes.create');
+        Route::get('/{id}', 'show')->name('show.comprobantes.detail');
+        Route::get('/edit/{id}', 'edit')->name('show.comprobantes.edit');
+
+        // Rutas de funcionalidades
+        Route::post('/', 'store')->name('comprobantes.store');
+        Route::delete('/delete/{id}', 'destroy')->name('comprobantes.destroy');
+    });
+});
+

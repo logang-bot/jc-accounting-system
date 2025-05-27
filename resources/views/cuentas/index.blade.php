@@ -8,7 +8,6 @@
                 <!-- Header -->
                 <div class="flex justify-between items-center bg-blue-600 px-10 py-5">
                     <h3 class="text-white text-2xl font-semibold">Plan de Cuentas</h3>
-
                 </div>
 
                 <!-- Table -->
@@ -113,14 +112,6 @@
                     </div>
                 </div>
             </div>
-
-            {{-- <x-modal id="cuentas-create">
-                @include('cuentas.create')
-            </x-modal> --}}
-
-            {{-- <x-modal id="cuentas-edit">
-                @include('cuentas.edit')
-            </x-modal> --}}
 
             <x-modal id="cuentas-delete">
                 @include('cuentas.delete')

@@ -9,45 +9,31 @@ use App\Models\DetalleComprobantes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
-use function Pest\Laravel\get;
+use Illuminate\Support\Facades\Validator;
 
 class ComprobantesController extends Controller
 {
-    // Muestra todos los comprobantes
-    // public function index(Request $request)
-    // {
-    //     $query = Comprobantes::with('detalles');
-
-    //     if ($request->has('fecha')) {
-    //         $query->where('fecha', $request->input('fecha'));
-    //     }
-
-    //     if ($request->has('tipo_comprobante')) {
-    //         $query->where('tipo_comprobante', $request->input('tipo_comprobante'));
-    //     }
-
-    //     if ($request->has('glosa_general')) {
-    //         $query->where('glosa_general', 'LIKE', '%' . $request->input('glosa_general') . '%');
-    //     }
-
-    //     $comprobantes = $query->paginate(10); // Paginación con filtros aplicados
-    //     return view('comprobantes.index', compact('comprobantes'));
-    // }
-
-
-
-    // Muestra un comprobante específico
-    // public function show($id)
-    // {
-    //     // Obtener el comprobante y sus detalles
-    //     $comprobante = Comprobantes::with('detalles')->findOrFail($id);
-    //     return view('comprobantes.show', compact('comprobante'));
-    // }
-
-    public function home()
+    public function home(Request $request)
     {
-        $comprobantes = Comprobante::latest()->paginate(15);
+        $query = Comprobante::query();
+
+        // Filtro por fecha exacta
+        if ($request->filled('fecha')) {
+            $query->whereDate('fecha', $request->fecha);
+        }
+
+        // Filtro por tipo de comprobante
+        if ($request->filled('tipo_comprobante')) {
+            $query->where('tipo', 'ILIKE', '%' . $request->tipo_comprobante . '%');
+        }
+
+        // Filtro por glosa / descripción
+        if ($request->filled('glosa_general')) {
+            $query->where('descripcion', 'ILIKE', '%' . $request->glosa_general . '%');
+        }
+
+        $comprobantes = $query->latest()->paginate(15)->appends($request->query());
+
         return view('comprobantes.index', compact('comprobantes'));
     }
 
@@ -57,17 +43,33 @@ class ComprobantesController extends Controller
         // Aquí podrías pasar las cuentas o cualquier otro dato necesario
         // $cuentas = CuentasContables::all();
         $cuentas = CuentasContables::where('es_movimiento', true)->get();
-        return view('comprobantes.create', compact('cuentas'));
+        return view('comprobantes.create', [
+            'editMode' => false,
+            'cuentas' => $cuentas,
+            'comprobante' => null // or new Comprobante if you prefer
+        ]);
+    }
+
+    public function show($id)
+    {
+        $comprobante = Comprobante::with(['detalles.cuenta', 'user'])->findOrFail($id);
+        return view('comprobantes.show', compact('comprobante'));
     }
 
     public function edit($id) {
-        return view('comprobantes.edit');
+        $cuentas = CuentasContables::where('es_movimiento', true)->get();
+        $comprobante = Comprobante::with('detalles')->findOrFail($id);
+        return view('comprobantes.create', [
+            'editMode' => true,
+            'comprobante' => $comprobante,
+            'cuentas' => $cuentas
+        ]);
     }
 
     // Guarda un nuevo comprobante
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'fecha' => 'required|date',
             'tipo' => 'required|in:ingreso,egreso,traspaso,ajuste',
             'descripcion' => 'nullable|string',
@@ -78,19 +80,33 @@ class ComprobantesController extends Controller
             'detalles.*.haber' => 'required|numeric|min:0',
         ]);
 
-        $totalDebe = collect($validated['detalles'])->sum('debe');
-        $totalHaber = collect($validated['detalles'])->sum('haber');
+        $validator->after(function ($validator) use ($request) {
+            $totalDebe = 0;
+            $totalHaber = 0;
 
-        if (round($totalDebe, 2) !== round($totalHaber, 2)) {
-            return response()->json([
-                'message' => 'El comprobante no cuadra. La suma del debe y del haber deben ser iguales.'
-            ], 422);
+            foreach ($request->input('detalles', []) as $detalle) {
+                $totalDebe += floatval($detalle['debe'] ?? 0);
+                $totalHaber += floatval($detalle['haber'] ?? 0);
+            }
+
+            if (round($totalDebe, 2) !== round($totalHaber, 2)) {
+                $validator->errors()->add('detalles', 'El comprobante no cuadra. La suma del debe y del haber deben ser iguales.');
+            }
+        });
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
-        
+        $validated = $validator->validated();
 
         try {
-            DB::transaction(function () use ($validated, $totalDebe) {
+            DB::transaction(function () use ($validated) {
+                $totalDebe = collect($validated['detalles'])->sum('debe');
+
                 $comprobante = Comprobante::create([
                     'fecha' => $validated['fecha'],
                     'tipo' => $validated['tipo'],
@@ -108,64 +124,84 @@ class ComprobantesController extends Controller
                     ]);
                 }
             });
+
             return redirect()->route('show.comprobantes.home')->with('success', 'Comprobante creado correctamente.');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Error al crear el comprobante: ' . $e->getMessage()])->withInput();
         }
     }
 
-    // Muestra el formulario para editar un comprobante existente
-    // public function edit($id)
-    // {
-    //     // Buscar el comprobante por su ID
-    //     $comprobante = Comprobantes::with('detalles')->findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'fecha' => 'required|date',
+            'tipo' => 'required|string|in:ingreso,egreso,traspaso,ajuste',
+            'descripcion' => 'nullable|string',
+            'detalles' => 'required|array|min:1',
+            'detalles.*.cuenta_id' => 'required|exists:cuentas,id_cuenta',
+            'detalles.*.descripcion' => 'nullable|string',
+            'detalles.*.debe' => 'nullable|numeric|min:0',
+            'detalles.*.haber' => 'nullable|numeric|min:0',
+        ]);
 
-    //     // Retornar la vista con el comprobante cargado
-    //     return view('comprobantes.edit', compact('comprobante'));
-    // }
+        $validator->after(function ($validator) use ($request) {
+            $totalDebe = 0;
+            $totalHaber = 0;
 
+            foreach ($request->input('detalles', []) as $detalle) {
+                $totalDebe += floatval($detalle['debe'] ?? 0);
+                $totalHaber += floatval($detalle['haber'] ?? 0);
+            }
 
-    // Actualiza un comprobante existente
-    // public function update(Request $request, $id)
-    // {
-    //     $request->validate([
-    //         'fecha' => 'required|date',
-    //         'tipo_comprobante' => 'required|string',
-    //         'glosa_general' => 'nullable|string',
-    //     ]);
+            if (round($totalDebe, 2) !== round($totalHaber, 2)) {
+                $validator->errors()->add('detalles', 'El comprobante no cuadra. La suma del debe y del haber deben ser iguales.');
+            }
+        });
 
-    //     $comprobante = Comprobantes::findOrFail($id);
-    //     $comprobante->update([
-    //         'fecha' => $request->fecha,
-    //         'tipo' => $request->tipo_comprobante,
-    //         'glosa' => $request->glosa_general,
-    //     ]);
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
-    //     // Eliminar los detalles antiguos si se van a reemplazar
-    //     $comprobante->detalles()->delete();
+        DB::transaction(function () use ($request, $id) {
+            $comprobante = Comprobante::findOrFail($id);
 
-    //     // Si hay detalles nuevos, guardarlos
-    //     if ($request->has('detalles')) {
-    //         foreach ($request->detalles as $detalle) {
-    //             DetalleComprobantes::create([
-    //                 'comprobante_id' => $comprobante->id_comprobante,
-    //                 'cuenta_id' => $detalle['cuenta_id'],
-    //                 'debe' => $detalle['debe'],
-    //                 'haber' => $detalle['haber'],
-    //                 'detalle' => $detalle['detalle'] ?? null,
-    //             ]);
-    //         }
-    //     }
+            $comprobante->update([
+                'fecha' => $request->fecha,
+                'tipo' => $request->tipo,
+                'descripcion' => $request->descripcion,
+            ]);
 
-    //     return redirect()->route('comprobantes.index')->with('success', 'Comprobante actualizado exitosamente.');
-    // }
+            // Remove existing detalles and recreate them
+            $comprobante->detalles()->delete();
 
-    // Elimina un comprobante
-    // public function destroy($id)
-    // {
-    //     $comprobante = Comprobantes::findOrFail($id);
-    //     $comprobante->delete();
+            foreach ($request->detalles as $detalle) {
+                $comprobante->detalles()->create([
+                    'cuenta_contable_id' => $detalle['cuenta_id'],
+                    'descripcion' => $detalle['descripcion'] ?? null,
+                    'debe' => $detalle['debe'] ?? 0,
+                    'haber' => $detalle['haber'] ?? 0,
+                ]);
+            }
+        });
 
-    //     return redirect()->route('comprobantes.index')->with('success', 'Comprobante eliminado exitosamente.');
-    // }
+        return redirect()->route('show.comprobantes.home')->with('success', 'Comprobante actualizado correctamente.');
+    }
+
+    public function destroy($id)
+    {
+        try {
+            DB::transaction(function () use ($id) {
+                $comprobante = Comprobante::findOrFail($id);
+                $comprobante->detalles()->delete(); // Elimina detalles primero
+                $comprobante->delete(); // Luego el comprobante
+            });
+
+            return redirect()->route('show.comprobantes.home')->with('success', 'Comprobante eliminado correctamente.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error al eliminar el comprobante: ' . $e->getMessage()]);
+        }
+    }
 }

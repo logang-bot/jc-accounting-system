@@ -5,7 +5,7 @@
         <div class="flex flex-wrap">
             <div class="w-full">
                 <div class="flex justify-between items-center">
-                    <h3 class="mb-0 text-white">Gestionar Comprobantes</h3>
+                    <h3 class="text-white text-2xl font-semibold">Gestionar Comprobantes</h3>
                     <div>
                         <!-- Botón para crear un comprobante -->
                         <a href="{{ route('show.comprobantes.create') }}"
@@ -40,10 +40,21 @@
                                         placeholder="Filtrar por fecha" value="{{ request('fecha') }}">
                                 </div>
 
-                                <!-- Filtro por tipo de comprobante -->
+                                <!-- Filtro por tipo de comprobante (dropdown) -->
                                 <div class="w-full md:w-1/4 mb-3 pr-2">
-                                    <input type="text" name="tipo_comprobante" class="w-full p-2 border rounded"
-                                        placeholder="Filtrar por tipo" value="{{ request('tipo_comprobante') }}">
+                                    <select name="tipo_comprobante" class="w-full p-2 border rounded">
+                                        <option value="">Todos los tipos</option>
+                                        <option value="ingreso"
+                                            {{ request('tipo_comprobante') == 'ingreso' ? 'selected' : '' }}>Ingreso
+                                        </option>
+                                        <option value="egreso"
+                                            {{ request('tipo_comprobante') == 'egreso' ? 'selected' : '' }}>Egreso</option>
+                                        <option value="traspaso"
+                                            {{ request('tipo_comprobante') == 'traspaso' ? 'selected' : '' }}>Traspaso
+                                        </option>
+                                        <option value="ajuste"
+                                            {{ request('tipo_comprobante') == 'ajuste' ? 'selected' : '' }}>Ajuste</option>
+                                    </select>
                                 </div>
 
                                 <!-- Filtro por glosa -->
@@ -55,6 +66,8 @@
                                 <!-- Botón para aplicar filtros -->
                                 <div class="w-full md:w-1/4 mb-3">
                                     <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded">Buscar</button>
+                                    <a href="{{ route('show.comprobantes.home') }}"
+                                        class="text-blue-600 underline whitespace-nowrap self-center">Limpiar filtros</a>
                                 </div>
                             </div>
                         </div>
@@ -95,12 +108,13 @@
                                                 <a href="{{ route('show.comprobantes.edit', $comprobante->id) }}"
                                                     class="bg-yellow-500 text-white px-3 py-1 rounded text-sm">Editar</a>
                                                 <form action="{{ route('comprobantes.destroy', $comprobante->id) }}"
-                                                    method="POST" class="inline">
+                                                    method="POST"
+                                                    onsubmit="return confirm('¿Estás seguro de que deseas eliminar este comprobante?');"
+                                                    style="display: inline-block;">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
-                                                        class="bg-red-500 text-white px-3 py-1 rounded text-sm"
-                                                        onclick="return confirm('¿Está seguro de eliminar este comprobante?')">Eliminar</button>
+                                                        class="text-red-600 hover:underline">Eliminar</button>
                                                 </form>
                                             </td>
                                         </tr>
@@ -117,7 +131,7 @@
 
                         <!-- Paginación -->
                         <div class="mt-4">
-                            {{ $comprobantes->links() }}
+                            {{ $comprobantes->appends(request()->query())->links() }}
                         </div>
                     </div>
                 </div>

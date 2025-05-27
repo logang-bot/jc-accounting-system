@@ -73,6 +73,7 @@ Route::middleware('auth')->controller(ComprobantesController::class)->group(func
 
         // Rutas de funcionalidades
         Route::post('/', 'store')->name('comprobantes.store');
+        Route::put('/{id}', 'update')->name('comprobantes.update');
         Route::delete('/delete/{id}', 'destroy')->name('comprobantes.destroy');
     });
 });

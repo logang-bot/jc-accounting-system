@@ -142,7 +142,7 @@
     </div>
 
     <script>
-        let rowCount = 1;
+        let rowCount = {{ $editMode ? count($comprobante->detalles) : 1 }};
 
         function updateSubmitButtonState() {
             const submitBtn = document.getElementById('submit-button');
@@ -154,12 +154,17 @@
             const newRow = tbody.rows[0].cloneNode(true);
             const inputs = newRow.querySelectorAll('input, select');
             inputs.forEach(el => {
+                if (el.tagName === 'INPUT') {
+                    el.value = '';
+                } else if (el.tagName === 'SELECT') {
+                    el.selectedIndex = 0;
+                }
+
                 const name = el.getAttribute('name');
                 if (name) {
                     const newName = name.replace(/\[\d+\]/, `[${rowCount}]`);
                     el.setAttribute('name', newName);
                 }
-                if (el.tagName === 'INPUT') el.value = '';
             });
             tbody.appendChild(newRow);
             rowCount++;

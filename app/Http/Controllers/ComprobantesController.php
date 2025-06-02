@@ -149,8 +149,10 @@ class ComprobantesController extends Controller
             $totalHaber = 0;
 
             foreach ($request->input('detalles', []) as $detalle) {
-                $totalDebe += floatval($detalle['debe'] ?? 0);
-                $totalHaber += floatval($detalle['haber'] ?? 0);
+                $debe = is_numeric($detalle['debe']) ? floatval($detalle['debe']) : 0;
+                $haber = is_numeric($detalle['haber']) ? floatval($detalle['haber']) : 0;
+                $totalDebe += $debe;
+                $totalHaber += $haber;
             }
 
             if (round($totalDebe, 2) !== round($totalHaber, 2)) {

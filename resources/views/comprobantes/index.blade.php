@@ -10,17 +10,6 @@
                         <!-- Botón para crear un comprobante -->
                         <a href="{{ route('show.comprobantes.create') }}"
                             class="bg-white text-gray-800 px-4 py-2 rounded mx-1">Nuevo Comprobante</a>
-
-                        {{-- <!-- Botón para borrar un comprobante -->
-                        <form action="{{ route('comprobantes.destroy', ['id' => $comprobante->id ?? 0]) }}" method="POST"
-                            class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded mx-1"
-                                onclick="return confirm('¿Está seguro de que desea eliminar este comprobante?')">
-                                Borrar Comprobante
-                            </button>
-                        </form> --}}
                     </div>
                 </div>
             </div>
@@ -33,13 +22,7 @@
                 <form method="GET" action="{{ route('show.comprobantes.home') }}">
                     <div class="bg-white rounded-lg shadow">
                         <div class="p-4">
-                            <div class="flex flex-wrap">
-                                <!-- Filtro por fecha -->
-                                <div class="w-full md:w-1/4 mb-3 pr-2">
-                                    <input type="date" name="fecha" class="w-full p-2 border rounded"
-                                        placeholder="Filtrar por fecha" value="{{ request('fecha') }}">
-                                </div>
-
+                            <div class="flex flex-col">
                                 <!-- Filtro por tipo de comprobante (dropdown) -->
                                 <div class="w-full md:w-1/4 mb-3 pr-2">
                                     <select name="tipo_comprobante" class="w-full p-2 border rounded">
@@ -57,10 +40,18 @@
                                     </select>
                                 </div>
 
-                                <!-- Filtro por glosa -->
-                                <div class="w-full md:w-1/4 mb-3 pr-2">
-                                    <input type="text" name="glosa_general" class="w-full p-2 border rounded"
-                                        placeholder="Buscar por glosa" value="{{ request('glosa_general') }}">
+                                <div class="flex flex-row">
+                                    <!-- Filtro por fecha -->
+                                    <div class="w-full md:w-1/4 mb-3 pr-2">
+                                        <input type="date" name="fecha" class="w-full p-2 border rounded"
+                                            placeholder="Filtrar por fecha" value="{{ request('fecha') }}">
+                                    </div>
+
+                                    <!-- Filtro por glosa -->
+                                    <div class="w-full md:w-1/4 mb-3 pr-2">
+                                        <input type="text" name="glosa_general" class="w-full p-2 border rounded"
+                                            placeholder="Buscar por glosa" value="{{ request('glosa_general') }}">
+                                    </div>
                                 </div>
 
                                 <!-- Botón para aplicar filtros -->
@@ -80,15 +71,12 @@
         <div class="flex flex-wrap mt-6">
             <div class="w-full">
                 <div class="bg-white rounded-lg shadow">
-                    <div class="bg-white px-4 py-4 border-b">
-                        <h4 class="mb-0">Detalles de Comprobantes</h4>
-                    </div>
                     <div class="p-4">
                         <div class="overflow-x-auto">
                             <table class="min-w-full border">
                                 <thead>
                                     <tr class="bg-blue-600 text-white">
-                                        <th class="border p-2">#</th>
+                                        <th class="border p-2">Numero de comprobante</th>
                                         <th class="border p-2">Fecha</th>
                                         <th class="border p-2">Tipo</th>
                                         <th class="border p-2">Glosa</th>
@@ -98,7 +86,7 @@
                                 <tbody>
                                     @forelse ($comprobantes as $comprobante)
                                         <tr>
-                                            <td class="border p-2">{{ $loop->iteration }}</td>
+                                            <td class="border p-2">{{ $comprobante->numero }}</td>
                                             <td class="border p-2">{{ $comprobante->fecha }}</td>
                                             <td class="border p-2">{{ $comprobante->tipo }}</td>
                                             <td class="border p-2">{{ $comprobante->descripcion }}</td>

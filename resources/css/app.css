@@ -3,15 +3,6 @@
 
 @source "../../node_modules/preline/dist/*.js";
 
-form {
-    @apply max-w-screen-sm;
-}
-
-select,
-textarea {
-    @apply block w-full mt-2 mb-4 p-2;
-}
-
 .welcome-section {
     height: 100vh;
     background-image: linear-gradient(

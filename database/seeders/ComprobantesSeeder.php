@@ -31,40 +31,42 @@ class ComprobantesSeeder extends Seeder
 
         // Crear 10 comprobantes
         for ($i = 1; $i <= 10; $i++) {
+            $tasaCambio = fake()->randomFloat(4, 6.50, 7.20);
+            $fecha = now()->subDays(rand(1, 90))->toDateString();
+
             $comprobante = Comprobante::create([
                 'numero' => 'COMP-' . now()->format('Y') . '-' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'fecha' => now()->subDays(rand(1, 90))->toDateString(),
+                'fecha' => $fecha,
                 'tipo' => fake()->randomElement(['ingreso', 'egreso', 'traspaso']),
                 'descripcion' => fake()->sentence(),
-                'total' => 0, // se actualizará luego
+                'total' => 0,
                 'user_id' => $user->id,
+                'tasa_cambio' => $tasaCambio,
             ]);
 
-            $detalles = [];
-            $total = 0;
+            // Seleccionar dos cuentas distintas para debe y haber
+            $cuentaDebe = $cuentasMovimiento->random();
+            $cuentaHaber = $cuentasMovimiento->where('id_cuenta', '!=', $cuentaDebe->id_cuenta)->random();
 
-            // Generar entre 2 y 4 detalles
-            $numDetalles = rand(2, 4);
-            for ($j = 0; $j < $numDetalles; $j++) {
-                $cuenta = $cuentasMovimiento->random();
-                $monto = fake()->randomFloat(2, 100, 500);
+            $monto = fake()->randomFloat(2, 100, 500);
 
-                $debe = $j % 2 === 0 ? $monto : 0;
-                $haber = $j % 2 !== 0 ? $monto : 0;
+            ComprobanteDetalles::create([
+                'comprobante_id' => $comprobante->id,
+                'cuenta_contable_id' => $cuentaDebe->id_cuenta,
+                'descripcion' => fake()->sentence(),
+                'debe' => $monto,
+                'haber' => 0,
+            ]);
 
-                $detalles[] = ComprobanteDetalles::create([
-                    'comprobante_id' => $comprobante->id,
-                    'cuenta_contable_id' => $cuenta->id_cuenta,
-                    'descripcion' => fake()->sentence(),
-                    'debe' => $debe,
-                    'haber' => $haber,
-                ]);
+            ComprobanteDetalles::create([
+                'comprobante_id' => $comprobante->id,
+                'cuenta_contable_id' => $cuentaHaber->id_cuenta,
+                'descripcion' => fake()->sentence(),
+                'debe' => 0,
+                'haber' => $monto,
+            ]);
 
-                $total += max($debe, $haber);
-            }
-
-            // Actualizar total del comprobante
-            $comprobante->update(['total' => $total]);
+            $comprobante->update(['total' => $monto]);
         }
     }
 }

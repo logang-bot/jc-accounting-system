@@ -20,7 +20,7 @@
                 <input type="number" step="0.0001" id="tasa-cambio" class="border rounded px-3 py-1 w-32" value="6.96">
                 <button type="button" onclick="actualizarConversiones()"
                     class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
-                    Actualizar $us
+                    Actualizar (USD)
                 </button>
             </div>
 
@@ -33,8 +33,8 @@
                         <th class="border p-2">Glosa individual</th>
                         <th class="border p-2">Debe Bs.</th>
                         <th class="border p-2">Haber Bs.</th>
-                        <th class="border p-2">Debe $us</th>
-                        <th class="border p-2">Haber $us</th>
+                        <th class="border p-2">Debe (USD)</th>
+                        <th class="border p-2">Haber (USD)</th>
                     </tr>
                 </thead>
                 <tbody id="detalle-comprobante-table-body">

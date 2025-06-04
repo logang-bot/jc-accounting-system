@@ -73,6 +73,7 @@ class ComprobantesController extends Controller
             'fecha' => 'required|date',
             'tipo' => 'required|in:ingreso,egreso,traspaso,ajuste',
             'descripcion' => 'nullable|string',
+            'tasa_cambio' => 'required|numeric|min:0.0001',
             'detalles' => 'required|array|min:2',
             'detalles.*.cuenta_id' => 'required|exists:cuentas,id_cuenta',
             'detalles.*.descripcion' => 'nullable|string',
@@ -112,6 +113,7 @@ class ComprobantesController extends Controller
                     'tipo' => $validated['tipo'],
                     'descripcion' => $validated['descripcion'] ?? '',
                     'total' => $totalDebe,
+                    'tasa_cambio' => $validated['tasa_cambio'],
                     'user_id' => Auth::id(),
                 ]);
 
@@ -137,6 +139,7 @@ class ComprobantesController extends Controller
             'fecha' => 'required|date',
             'tipo' => 'required|string|in:ingreso,egreso,traspaso,ajuste',
             'descripcion' => 'nullable|string',
+            'tasa_cambio' => 'required|numeric|min:0.0001',
             'detalles' => 'required|array|min:1',
             'detalles.*.cuenta_id' => 'required|exists:cuentas,id_cuenta',
             'detalles.*.descripcion' => 'nullable|string',
@@ -174,6 +177,7 @@ class ComprobantesController extends Controller
                 'fecha' => $request->fecha,
                 'tipo' => $request->tipo,
                 'descripcion' => $request->descripcion,
+                'tasa_cambio' => $request['tasa_cambio'],
             ]);
 
             // Remove existing detalles and recreate them

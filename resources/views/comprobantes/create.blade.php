@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="max-w-2xl mx-auto p-6 m-6 bg-white shadow-md rounded-xl">
+    <div class="max-w-5xl mx-auto p-6 m-6 bg-white shadow-md rounded-xl">
         <h2 class="text-2xl font-semibold mb-6">
             {{ $editMode ? 'Editar Comprobante' : 'Crear Comprobante' }}
         </h2>
@@ -49,15 +49,24 @@
 
             <h3 class="text-lg font-semibold mb-2">Detalle del Comprobante</h3>
 
+            <div class="flex items-center mb-4">
+                <label for="tasa-cambio" class="mr-2 font-medium">Tasa de Cambio (Bs/USD):</label>
+                <input type="number" step="0.0001" min="0.0001" id="tasa-cambio" name="tasa_cambio"
+                    class="border rounded px-3 py-1 w-32" oninput="actualizarConversiones()"
+                    value="{{ old('tasa_cambio', $editMode ? $comprobante->tasa_cambio : '') }}" required>
+            </div>
+
             <div class="overflow-x-auto mb-6">
                 <table class="min-w-full border rounded text-sm text-left">
                     <thead class="bg-gray-100">
                         <tr>
                             <th class="px-3 py-2">Cuenta Contable</th>
                             <th class="px-3 py-2">Descripción</th>
-                            <th class="px-3 py-2 text-right">Debe</th>
-                            <th class="px-3 py-2 text-right">Haber</th>
-                            <th class="px-3 py-2 text-center">Acciones</th>
+                            <th class="px-3 py-2">Debe Bs.</th>
+                            <th class="px-3 py-2">Haber Bs.</th>
+                            <th class="px-3 py-2">Debe (USD)</th>
+                            <th class="px-3 py-2">Haber (USD)</th>
+                            <th class="px-3 py-2">Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="detalle-rows">
@@ -89,6 +98,14 @@
                                             class="w-full text-right border rounded px-2 py-1"
                                             value="{{ $detalle->haber }}">
                                     </td>
+                                    <td class="px-3 py-2 text-right us-debe">
+                                        <input type="text" readonly
+                                            class="w-full text-right bg-gray-100 border rounded px-2 py-1" value="0.00">
+                                    </td>
+                                    <td class="px-3 py-2 text-right us-haber">
+                                        <input type="text" readonly
+                                            class="w-full text-right bg-gray-100 border rounded px-2 py-1" value="0.00">
+                                    </td>
                                     <td class="px-3 py-2 text-center">
                                         <button type="button" onclick="removeRow(this)"
                                             class="text-red-600 hover:underline">Eliminar</button>
@@ -116,6 +133,14 @@
                                 <td class="px-3 py-2">
                                     <input type="number" step="0.01" name="detalles[0][haber]"
                                         class="w-full text-right border rounded px-2 py-1">
+                                </td>
+                                <td class="px-3 py-2 text-right us-debe">
+                                    <input type="text" readonly
+                                        class="w-full text-right bg-gray-100 border rounded px-2 py-1" value="0.00">
+                                </td>
+                                <td class="px-3 py-2 text-right us-haber">
+                                    <input type="text" readonly
+                                        class="w-full text-right bg-gray-100 border rounded px-2 py-1" value="0.00">
                                 </td>
                                 <td class="px-3 py-2 text-center">
                                     <button type="button" onclick="removeRow(this)"
@@ -179,5 +204,31 @@
                 updateSubmitButtonState();
             }
         }
+
+        function actualizarConversiones() {
+            const tasa = parseFloat(document.getElementById('tasa-cambio').value);
+            if (!tasa || tasa <= 0) return;
+
+            const filas = document.querySelectorAll('#detalle-rows tr');
+            filas.forEach(fila => {
+                const inputDebe = fila.querySelector('input[name*="[debe]"]');
+                const inputHaber = fila.querySelector('input[name*="[haber]"]');
+                const usDebe = fila.querySelector('.us-debe input');
+                const usHaber = fila.querySelector('.us-haber input');
+
+                const debe = parseFloat(inputDebe.value) || 0;
+                const haber = parseFloat(inputHaber.value) || 0;
+
+                usDebe.value = (debe / tasa).toFixed(2);
+                usHaber.value = (haber / tasa).toFixed(2);
+            });
+        }
+
+        // Dispara actualización cada vez que se cambien valores en Bs
+        document.addEventListener('input', function(e) {
+            if (e.target.name?.includes('[debe]') || e.target.name?.includes('[haber]')) {
+                actualizarConversiones();
+            }
+        });
     </script>
 @endsection

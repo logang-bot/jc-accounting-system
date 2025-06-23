@@ -20,7 +20,8 @@ class CuentasContables extends Model
         'nivel',
         'parent_id',
         'es_movimiento',
-        'estado'
+        'estado',
+        'moneda_principal'
     ];
 
     protected $attributes = [
@@ -30,13 +31,19 @@ class CuentasContables extends Model
     protected $casts = [
         'nivel' => 'integer',
         'es_movimiento' => 'boolean',
-        'estado' => 'boolean'
+        'estado' => 'boolean',
+        'moneda_principal' => 'string'
     ];
 
     
     public function hasChildren(): bool
     {
         return $this->children()->exists();
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class);
     }
 
     // Relación jerárquica
@@ -73,6 +80,15 @@ class CuentasContables extends Model
             };
 
             $cuenta->estado = $cuenta->estado ?? true;
+            if (!in_array($cuenta->nivel, [4, 5])) {
+                $cuenta->moneda_principal = null;
+            }
+        });
+
+        static::updating(function ($cuenta) {
+            if (!in_array($cuenta->nivel, [4, 5])) {
+                $cuenta->moneda_principal = null;
+            }
         });
     }
 

@@ -1,7 +1,10 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="max-w-2xl mx-auto p-6 m-6 bg-white rounded-xl shadow">
+    <div class="max-w-2xl mx-auto p-6 m-6 bg-white rounded-xl shadow" x-data="{
+        esMovimiento: {{ old('es_movimiento', $cuenta->es_movimiento ?? false) ? 'true' : 'false' }},
+        isNivelValido: {{ isset($cuenta) && in_array($cuenta->nivel, [4, 5]) ? 'true' : 'false' }}
+    }">
         <h2 class="text-2xl font-bold mb-4">{{ $modo === 'editar' ? 'Editar cuenta' : 'Crear Cuenta Contable' }}</h2>
 
         @if ($errors->any())
@@ -60,12 +63,46 @@
                 </select>
             </div>
 
-            {{-- Es movimiento --}}
-            <div class="flex items-center gap-3">
-                <input type="checkbox" name="es_movimiento" id="es_movimiento" value="1"
-                    {{ old('es_movimiento', $cuenta->es_movimiento ?? false) ? 'checked' : '' }}
-                    {{ isset($cuenta) && $cuenta->hasChildren() ? 'disabled' : '' }}>
-                <label for="es_movimiento" class="text-sm font-medium text-gray-700">Es cuenta de movimiento</label>
+            {{-- Checkbox: Es Movimiento --}}
+            <div class="mb-4">
+                <label class="inline-flex items-center">
+                    <input type="checkbox" name="es_movimiento" value="1"
+                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                        x-model="esMovimiento">
+                    <span class="ml-2 text-sm text-gray-700">¿Es cuenta de movimiento?</span>
+                </label>
+                @error('es_movimiento')
+                    <span class="text-sm text-red-600">{{ $message }}</span>
+                @enderror
+            </div>
+
+
+            {{-- Moneda Principal --}}
+            <div class="mb-4">
+                <label for="moneda_principal" class="block text-sm font-medium text-gray-700">Moneda Principal</label>
+
+                @if (isset($cuenta) && in_array($cuenta->nivel, [4, 5]))
+                    {{-- Dropdown shown only in edit + nivel 4/5 --}}
+                    <select name="moneda_principal" id="moneda_principal" :disabled="!esMovimiento"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-100 disabled:text-gray-500">
+                        <option value="">Selecciona una moneda</option>
+                        <option value="BOB" @selected(old('moneda_principal', $cuenta->moneda_principal) === 'BOB')>BOB</option>
+                        <option value="USD" @selected(old('moneda_principal', $cuenta->moneda_principal) === 'USD')>USD</option>
+                    </select>
+                    {{-- Conditional help message when disabled --}}
+                    <div class="mt-2 text-xs text-gray-500" x-show="!esMovimiento">
+                        ⚠️ Marca esta cuenta como de movimiento para seleccionar una moneda.
+                    </div>
+                @else
+                    {{-- Fallback info for create mode or nivel 1-3 --}}
+                    <div class="mt-1 text-sm text-gray-600 bg-gray-100 p-3 rounded-md border border-gray-300">
+                        Este campo podrá ser seleccionado al editar la cuenta si pertenece al nivel 4 o 5.
+                    </div>
+                @endif
+
+                @error('moneda_principal')
+                    <span class="text-sm text-red-600">{{ $message }}</span>
+                @enderror
             </div>
 
             <div>
@@ -74,6 +111,7 @@
                 </button>
             </div>
         </form>
+
     </div>
 
 
@@ -84,6 +122,7 @@
             const parentSelect = document.getElementById('parent_id');
             const checkboxMovimiento = document.getElementById('es_movimiento');
             const originalOptions = Array.from(parentSelect.options);
+            const monedaSelect = document.querySelector('#moneda_principal');
 
             function filtrarOpciones() {
                 const tipoSeleccionado = tipoCuentaSelect.value;
@@ -128,6 +167,27 @@
                 }
             }
 
+            function validarMonedaPrincipal() {
+                const parentId = this.value;
+
+                if (!parentId) {
+                    monedaSelect.disabled = true;
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`/api/cuentas/${parentId}`);
+                    const data = await res.json();
+                    const nivelPadre = data.nivel ?? 1;
+                    const nuevoNivel = nivelPadre + 1;
+
+                    monedaSelect.disabled = !(nuevoNivel === 4 || nuevoNivel === 5);
+                } catch (e) {
+                    monedaSelect.disabled = true;
+                }
+            }
+
+            parentSelect.addEventListener('change', evaluarCheckboxMovimiento);
             parentSelect.addEventListener('change', evaluarCheckboxMovimiento);
             evaluarCheckboxMovimiento();
             tipoCuentaSelect.addEventListener('change', filtrarOpciones);

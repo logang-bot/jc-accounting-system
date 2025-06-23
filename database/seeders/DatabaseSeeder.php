@@ -16,8 +16,9 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $this->call([
-            CuentasSeeder::class,
-            ComprobantesSeeder::class
+            // CuentasSeeder::class,
+            // ComprobantesSeeder::class,
+            EmpresaSeeder::class
         ]);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CuentasContables;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class CuentaController extends Controller
@@ -70,11 +71,12 @@ class CuentaController extends Controller
     // Guardar una nueva cuenta
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nombre_cuenta' => 'required|string|max:255',
             'tipo_cuenta' => 'required|in:Activo,Pasivo,Patrimonio,Ingresos,Egresos',
             'parent_id' => 'nullable|exists:cuentas,id_cuenta',
             'es_movimiento' => 'sometimes|boolean',
+            'moneda_principal' => ['nullable', Rule::in(['BOB', 'USD'])],
         ]);
 
         $this->validarCuentaRaiz($request);
@@ -102,8 +104,32 @@ class CuentaController extends Controller
             }
         }
 
+
+        // $codigoFuturo = null;
+        // $nivel = 1;
+
+        // if (!empty($request->parent_id)) {
+        //     $parent = CuentasContables::find($request->parent_id);
+        //     $codigoFuturo = CuentasContables::generarCodigoCuenta(new CuentasContables([
+        //         'parent_id' => $request->parent_id,
+        //         'tipo_cuenta' => $request->tipo_cuenta,
+        //     ]));
+        //     $nivel = CuentasContables::calcularNivel($codigoFuturo);
+        // }
+
+        // if (in_array($nivel, [4, 5])) {
+        //     if (empty($request->moneda_principal)) {
+        //         return back()
+        //             ->withErrors(['moneda_principal' => 'La moneda principal es obligatoria para cuentas de nivel 4 o 5.'])
+        //             ->withInput();
+        //     }
+        //     $validated['moneda_principal'] = $request->moneda_principal;
+        // } else {
+        //     $validated['moneda_principal'] = null;
+        // }
+
         // Inicializar datos
-        $data = $request->only(['nombre_cuenta', 'tipo_cuenta', 'parent_id', 'es_movimiento']);
+        $data = $request->only(['nombre_cuenta', 'tipo_cuenta', 'parent_id', 'es_movimiento', 'moneda_principal']);
 
         // Si tiene padre y este es de movimiento, lo desactivamos
         if ($request->filled('parent_id')) {
@@ -151,11 +177,12 @@ class CuentaController extends Controller
     public function update(Request $request, $id)
     {
         // Validar los datos del formulario
-        $request->validate([
+        $validated = $request->validate([
             'nombre_cuenta' => 'required|string|max:255',
             'tipo_cuenta' => 'required|string',
             'parent_id' => 'nullable|exists:cuentas,id_cuenta',
-            'es_movimiento' => 'sometimes|boolean'
+            'es_movimiento' => 'sometimes|boolean',
+            'moneda_principal' => ['nullable', Rule::in(['BOB', 'USD'])],
         ]);
 
         // Buscar la cuenta por ID
@@ -197,6 +224,18 @@ class CuentaController extends Controller
 
         // Actualizar los campos de la cuenta
         $cuenta->nombre_cuenta = $request->input('nombre_cuenta');
+
+        // Manejar moneda_principal según nivel
+        if (in_array($cuenta->nivel, [4, 5])) {
+            if (empty($validated['moneda_principal'])) {
+                return back()
+                    ->withErrors(['moneda_principal' => 'La moneda principal es obligatoria para cuentas de nivel 4 o 5.'])
+                    ->withInput();
+            }
+            $cuenta->moneda_principal = $validated['moneda_principal'];
+        } else {
+            $cuenta->moneda_principal = null;
+        }
 
         // Validar si puede ser marcada como cuenta de movimiento
         if ($request->boolean('es_movimiento') && $hasChildren) {

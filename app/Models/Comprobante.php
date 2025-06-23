@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comprobante extends Model
 {
-    protected $fillable = ['numero', 'fecha', 'tipo', 'descripcion', 'total', 'user_id'];
+    protected $fillable = ['numero', 'fecha', 'tipo', 'descripcion', 'total', 'tasa_cambio', 'user_id'];
 
     public function detalles()
     {
@@ -16,6 +16,11 @@ class Comprobante extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class);
     }
 
     public static function booted()

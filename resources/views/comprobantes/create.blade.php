@@ -47,14 +47,14 @@
                 </div>
             </div>
 
-            <h3 class="text-lg font-semibold mb-2">Detalle del Comprobante</h3>
-
             <div class="flex items-center mb-4">
                 <label for="tasa-cambio" class="mr-2 font-medium">Tasa de Cambio (Bs/USD):</label>
                 <input type="number" step="0.0001" min="0.0001" id="tasa-cambio" name="tasa_cambio"
                     class="border rounded px-3 py-1 w-32" oninput="actualizarConversiones()"
                     value="{{ old('tasa_cambio', $editMode ? $comprobante->tasa_cambio : '') }}" required>
             </div>
+
+            <h3 class="text-lg font-semibold mb-2">Detalle del Comprobante</h3>
 
             <div class="overflow-x-auto mb-6">
                 <table class="min-w-full border rounded text-sm text-left">

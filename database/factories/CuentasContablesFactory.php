@@ -29,13 +29,17 @@ class CuentasContablesFactory extends Factory
 
     public function definition(): array
     {
+        // Simulate a level (1–5)
+        $nivel = $this->faker->numberBetween(1, 5);
+
         return [
-            'codigo_cuenta' => null, // It will be auto-generated
+            'codigo_cuenta' => null, // auto-generated
             'nombre_cuenta' => $this->faker->words(3, true),
             'tipo_cuenta' => $this->faker->randomElement(['Activo', 'Pasivo', 'Patrimonio', 'Ingresos', 'Egresos']),
-            'nivel' => null, // auto-calculated
-            'parent_id' => null, // allow setting manually
-            'es_movimiento' => $this->faker->boolean(50),
+            'nivel' => $nivel,
+            'parent_id' => null,
+            'es_movimiento' => $nivel >= 4 ? $this->faker->boolean(70) : false,
+            'moneda_principal' => in_array($nivel, [4, 5]) ? $this->faker->randomElement(['BOB', 'USD']) : null,
         ];
     }
 

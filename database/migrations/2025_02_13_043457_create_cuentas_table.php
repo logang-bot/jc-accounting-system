@@ -24,6 +24,7 @@ return new class extends Migration
 
             // Indica si es una cuenta de movimiento
             $table->boolean('es_movimiento')->default(false);
+            $table->foreignId('empresa_id')->constrained('empresas')->onDelete('cascade');
 
             $table->timestamps();
         });

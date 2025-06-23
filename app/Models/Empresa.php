@@ -9,10 +9,26 @@ class Empresa extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = [
+        'name',
+        'nit',
+        'direccion',
+        'ciudad',
+        'provincia',
+        'telefono',
+        'celular',
+        'correo_electronico',
+        'periodo',
+        'gestion'
+    ];
 
-    public function datoEmpresa()
+    public function cuentasContables()
     {
-        return $this->hasOne(DatoEmpresa::class);
+        return $this->hasMany(CuentasContables::class);
+    }
+
+    public function comprobantes()
+    {
+        return $this->hasMany(Comprobante::class);
     }
 }

@@ -1,6 +1,6 @@
 <div class="{{ $cuenta->children->isNotEmpty() ? 'hs-accordion' : '' }}" data-row-id={{ $cuenta->id_cuenta }}>
 
-    <div class="grid grid-cols-6 items-center text-sm cursor-pointer hover:bg-gray-100 px-2 py-2 w-full"
+    <div class="grid grid-cols-7 items-center text-sm cursor-pointer hover:bg-gray-100 px-2 py-2 w-full"
         id="cuenta-{{ $cuenta->id_cuenta }}">
         <div class="font-mono">
             {{ $cuenta->codigo_cuenta }}
@@ -13,6 +13,15 @@
                 <span class="inline-block bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded">Si</span>
             @else
                 <span class="inline-block bg-gray-500 text-white text-xs font-semibold px-2 py-1 rounded">No</span>
+            @endif
+        </div>
+        <div>
+            @if ($cuenta->es_movimiento && in_array($cuenta->nivel, [4, 5]))
+                <span class="text-xs font-medium px-2 py-1 rounded bg-blue-100 text-blue-700">
+                    {{ $cuenta->moneda_principal }}
+                </span>
+            @else
+                <span class="text-xs text-gray-400">—</span>
             @endif
         </div>
         <div class="flex gap-2">

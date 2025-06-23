@@ -27,12 +27,13 @@
                             data-hs-accordion-always-open>
 
                             <!-- Header row -->
-                            <div class="grid grid-cols-6 bg-gray-800 text-white text-sm font-semibold">
+                            <div class="grid grid-cols-7 bg-gray-800 text-white text-sm font-semibold">
                                 <div class="px-4 py-2 border-r">Código</div>
                                 <div class="px-4 py-2 border-r">Nombre</div>
                                 <div class="px-4 py-2 border-r">Tipo</div>
                                 <div class="px-4 py-2 border-r">Nivel</div>
                                 <div class="px-4 py-2 border-r">Movimiento</div>
+                                <div class="px-4 py-2 border-r">Moneda</div>
                                 <div class="px-4 py-2">Acciones</div>
                             </div>
 
@@ -40,7 +41,7 @@
                             @forelse ($cuentas as $cuenta)
                                 <div class="hs-accordion" id="cuenta-{{ $cuenta->id_cuenta }}"
                                     data-row-id={{ $cuenta->id_cuenta }}>
-                                    <div class="grid grid-cols-6 items-center text-sm cursor-pointer hover:bg-gray-100">
+                                    <div class="grid grid-cols-7 items-center text-sm cursor-pointer hover:bg-gray-100">
                                         <div class="font-mono px-4 py-3">{{ $cuenta->codigo_cuenta }}</div>
                                         <div>
                                             {{ str_repeat('— ', min($cuenta->nivel - 1, 4)) . $cuenta->nombre_cuenta }}
@@ -54,6 +55,16 @@
                                             @else
                                                 <span
                                                     class="inline-block bg-gray-500 text-white text-xs font-semibold px-2 py-1 rounded">No</span>
+                                            @endif
+                                        </div>
+                                        <div>
+                                            @if ($cuenta->es_movimiento && in_array($cuenta->nivel, [4, 5]))
+                                                <span
+                                                    class="text-xs font-medium px-2 py-1 rounded bg-blue-100 text-blue-700">
+                                                    {{ $cuenta->moneda_principal }}
+                                                </span>
+                                            @else
+                                                <span class="text-xs text-gray-400">—</span>
                                             @endif
                                         </div>
                                         <div class="flex gap-2">

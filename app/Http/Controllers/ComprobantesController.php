@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ComprobantesController extends Controller
 {
@@ -136,6 +137,7 @@ class ComprobantesController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
+            'numero' => ['required', 'string', 'max:255', Rule::unique('comprobantes')->ignore($id)],
             'fecha' => 'required|date',
             'tipo' => 'required|string|in:ingreso,egreso,traspaso,ajuste',
             'descripcion' => 'nullable|string',
@@ -174,13 +176,14 @@ class ComprobantesController extends Controller
             $comprobante = Comprobante::findOrFail($id);
 
             $comprobante->update([
+                'numero' => $request->numero,
                 'fecha' => $request->fecha,
                 'tipo' => $request->tipo,
                 'descripcion' => $request->descripcion,
                 'tasa_cambio' => $request['tasa_cambio'],
             ]);
 
-            // Remove existing detalles and recreate them
+            // Eliminar detalles existentes y recrearlos
             $comprobante->detalles()->delete();
 
             foreach ($request->detalles as $detalle) {

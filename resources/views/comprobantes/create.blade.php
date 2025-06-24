@@ -24,6 +24,15 @@
             @endif
 
             <div class="grid grid-cols-1 gap-4 mb-6">
+                @if ($editMode)
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Número de Comprobante</label>
+                        <input type="text" name="numero" class="w-full border rounded px-3 py-2"
+                            value="{{ old('numero', $comprobante->numero) }}" required>
+                        <small class="text-gray-500 text-sm">Puedes editar este número si es necesario. Asegúrate de que sea
+                            único.</small>
+                    </div>
+                @endif
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
                     <input type="date" name="fecha" class="w-full border rounded px-3 py-2"
@@ -60,7 +69,8 @@
                 <table class="min-w-full border rounded text-sm text-left">
                     <thead class="bg-gray-100">
                         <tr>
-                            <th class="px-3 py-2">Cuenta Contable</th>
+                            <th class="px-3 py-2"># Cuenta Contable</th>
+                            <th class="px-3 py-2">Nombre de cuenta</th>
                             <th class="px-3 py-2">Descripción</th>
                             <th class="px-3 py-2">Debe Bs.</th>
                             <th class="px-3 py-2">Haber Bs.</th>
@@ -74,12 +84,21 @@
                             @foreach ($comprobante->detalles as $i => $detalle)
                                 <tr>
                                     <td class="px-3 py-2">
+                                        <input type="text" name="detalles[{{ $i }}][codigo_cuenta]"
+                                            value="{{ $detalle->cuenta->codigo_cuenta }}"
+                                            class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly>
+                                    </td>
+
+                                    <!-- Columna: Nombre de cuenta (select) -->
+                                    <td class="px-3 py-2">
                                         <select name="detalles[{{ $i }}][cuenta_id]"
-                                            class="w-full border rounded px-2 py-1" required>
+                                            class="w-full border rounded px-2 py-1 cuenta-nombre-select"
+                                            data-index="{{ $i }}" required>
                                             @foreach ($cuentas as $cuenta)
                                                 <option value="{{ $cuenta->id_cuenta }}"
+                                                    data-codigo="{{ $cuenta->codigo_cuenta }}"
                                                     {{ $detalle->cuenta_id == $cuenta->id_cuenta ? 'selected' : '' }}>
-                                                    {{ $cuenta->codigo_cuenta }} - {{ $cuenta->nombre_cuenta }}
+                                                    {{ $cuenta->nombre_cuenta }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -229,6 +248,22 @@
             if (e.target.name?.includes('[debe]') || e.target.name?.includes('[haber]')) {
                 actualizarConversiones();
             }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.cuenta-nombre-select').forEach(select => {
+                select.addEventListener('change', function() {
+                    const selectedOption = this.options[this.selectedIndex];
+                    const codigo = selectedOption.getAttribute('data-codigo');
+                    const index = this.dataset.index;
+
+                    const inputCodigo = this.closest('tr').querySelector(
+                        `input[name="detalles[${index}][codigo_cuenta]"]`);
+                    if (inputCodigo) {
+                        inputCodigo.value = codigo;
+                    }
+                });
+            });
         });
     </script>
 @endsection

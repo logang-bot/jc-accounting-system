@@ -12,14 +12,103 @@
                     @csrf
                     @method('PUT')
 
-                    <div class="mb-4">
-                        <label for="name" class="block text-sm font-medium text-gray-700">Nombre</label>
-                        <input type="text" name="name" id="name" value="{{ old('name', $empresa->name) }}"
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm disabled:bg-gray-100"
-                            disabled>
-                    </div>
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm text-gray-700">
+                        {{-- Nombre --}}
+                        <div>
+                            <dt class="font-medium">Nombre</dt>
+                            <dd>
+                                <input type="text" name="name" value="{{ old('name', $empresa->name) }}"
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                            </dd>
+                        </div>
 
-                    <!-- Puedes agregar más campos de empresa aquí -->
+                        {{-- NIT --}}
+                        <div>
+                            <dt class="font-medium">NIT</dt>
+                            <dd>
+                                <input type="text" name="nit" value="{{ old('nit', $empresa->nit) }}"
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                            </dd>
+                        </div>
+
+                        {{-- Dirección --}}
+                        <div>
+                            <dt class="font-medium">Dirección</dt>
+                            <dd>
+                                <input type="text" name="direccion" value="{{ old('direccion', $empresa->direccion) }}"
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                            </dd>
+                        </div>
+
+                        {{-- Ciudad --}}
+                        <div>
+                            <dt class="font-medium">Ciudad</dt>
+                            <dd>
+                                <input type="text" name="ciudad" value="{{ old('ciudad', $empresa->ciudad) }}"
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                            </dd>
+                        </div>
+
+                        {{-- Provincia --}}
+                        <div>
+                            <dt class="font-medium">Provincia</dt>
+                            <dd>
+                                <input type="text" name="provincia" value="{{ old('provincia', $empresa->provincia) }}"
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                            </dd>
+                        </div>
+
+                        {{-- Teléfono --}}
+                        <div>
+                            <dt class="font-medium">Teléfono</dt>
+                            <dd>
+                                <input type="text" name="telefono" value="{{ old('telefono', $empresa->telefono) }}"
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                            </dd>
+                        </div>
+
+                        {{-- Celular --}}
+                        <div>
+                            <dt class="font-medium">Celular</dt>
+                            <dd>
+                                <input type="text" name="celular" value="{{ old('celular', $empresa->celular) }}"
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                            </dd>
+                        </div>
+
+                        {{-- Correo Electrónico --}}
+                        <div>
+                            <dt class="font-medium">Correo Electrónico</dt>
+                            <dd>
+                                <input type="email" name="correo_electronico"
+                                    value="{{ old('correo_electronico', $empresa->correo_electronico) }}"
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                            </dd>
+                        </div>
+
+                        {{-- Periodo --}}
+                        <div>
+                            <dt class="font-medium">Periodo</dt>
+                            <dd>
+                                <select name="periodo"
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled>
+                                    <option value="Mineria" @selected(old('periodo', $empresa->periodo) == 'Mineria')>Mineria</option>
+                                    <option value="Comercial" @selected(old('periodo', $empresa->periodo) == 'Comercial')>Comercial</option>
+                                    <option value="Agropecuaria" @selected(old('periodo', $empresa->periodo) == 'Agropecuaria')>Agropecuaria</option>
+                                    <option value="Industrial" @selected(old('periodo', $empresa->periodo) == 'Industrial')>Industrial</option>
+                                </select>
+                            </dd>
+                        </div>
+
+                        {{-- Gestión --}}
+                        <div>
+                            <dt class="font-medium">Gestión</dt>
+                            <dd>
+                                <input type="text" name="gestion" value="{{ old('gestion', $empresa->gestion) }}"
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                            </dd>
+                        </div>
+                    </dl>
 
                     <div class="flex justify-end space-x-2 mt-6">
                         <button type="button" id="editBtn"
@@ -45,7 +134,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('empresaForm');
-            const inputs = form.querySelectorAll('input');
+            const inputs = form.querySelectorAll('input, select');
             const editBtn = document.getElementById('editBtn');
             const saveBtn = document.getElementById('saveBtn');
             const cancelBtn = document.getElementById('cancelBtn');

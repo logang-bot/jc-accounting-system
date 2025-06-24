@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Empresa;
-use App\Models\DatoEmpresa;
 
 class EmpresasController extends Controller
 {
@@ -19,35 +18,33 @@ class EmpresasController extends Controller
     {
         return view('empresas.create', ['empresas' => Empresa::all()]);
     }
-    
-    public function show($id)
-    {
-        session(['empresa_id' => $id]);
-        $empresa = Empresa::with('datoEmpresa')->findOrFail($id);
-        return view('empresas.company', compact('empresa'));
-    }
-    
-    public function edit($id)
-    {
-        session(['empresa_id' => $id]);
-        $empresa = Empresa::with('datoEmpresa')->findOrFail($id);
-        return view('empresas.company', compact('empresa'));
-    }
 
     public function store(Request $request)
     {
-        $request->validate(['name' => 'required|string|max:255']);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'nit' => 'nullable|string|max:20',
+            'direccion' => 'nullable|string|max:255',
+            'ciudad' => 'nullable|string|max:100',
+            'provincia' => 'nullable|string|max:100',
+            'telefono' => 'nullable|string|max:20',
+            'celular' => 'nullable|string|max:20',
+            'correo_electronico' => 'nullable|email|max:255',
+            'periodo' => 'required|in:Mineria,Comercial,Agropecuaria,Industrial',
+            'gestion' => 'required|integer|min:1900|max:' . (now()->year + 1),
+        ]);
 
-        $empresa = Empresa::create(['name' => $request->name]);
-
-        DatoEmpresa::create([
-            'empresa_id' => $empresa->id,
-            'nit' => '',
-            'direccion' => '',
-            'ciudad' => '',
-            'telefono' => '',
-            'periodo' => 'Enero - Diciembre (Comercial)',
-            'gestion' => now()->year,
+        Empresa::create([
+            'name' => $request->name,
+            'nit' => $request->nit,
+            'direccion' => $request->direccion,
+            'ciudad' => $request->ciudad,
+            'provincia' => $request->provincia,
+            'telefono' => $request->telefono,
+            'celular' => $request->celular,
+            'correo_electronico' => $request->correo_electronico,
+            'periodo' => $request->periodo,
+            'gestion' => $request->gestion,
         ]);
 
         return redirect()->route('show.empresas.create')->with('success', 'Empresa creada correctamente.');
@@ -57,27 +54,33 @@ class EmpresasController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'nit' => 'required|string|max:255',
-            'direccion' => 'required|string|max:255',
-            'ciudad' => 'required|string|max:255',
+            'nit' => 'nullable|string|max:255',
+            'direccion' => 'nullable|string|max:255',
+            'ciudad' => 'nullable|string|max:255',
             'provincia' => 'nullable|string|max:100',
-            'telefono' => 'required|string|max:255',
+            'telefono' => 'nullable|string|max:255',
             'celular' => 'nullable|string|max:20',
             'correo_electronico' => 'nullable|email|max:100',
-            'periodo' => 'required|string|max:255',
-            'gestion' => 'required|string|max:255',
+            'periodo' => 'required|in:Mineria,Comercial,Agropecuaria,Industrial',
+            'gestion' => 'required|integer|min:1900|max:' . (now()->year + 1),
         ]);
 
-        // Actualizar el nombre de la empresa
-        Empresa::findOrFail($id)->update(['name' => $request->name]);
+        $empresa = Empresa::findOrFail($id);
 
-        // Actualizar o crear los datos de la empresa
-        DatoEmpresa::updateOrCreate(
-            ['empresa_id' => $id],
-            $request->only(['nit', 'direccion', 'ciudad', 'provincia', 'telefono', 'celular', 'correo_electronico', 'periodo', 'gestion'])
-        );
+        $empresa->update([
+            'name' => $request->name,
+            'nit' => $request->nit,
+            'direccion' => $request->direccion,
+            'ciudad' => $request->ciudad,
+            'provincia' => $request->provincia,
+            'telefono' => $request->telefono,
+            'celular' => $request->celular,
+            'correo_electronico' => $request->correo_electronico,
+            'periodo' => $request->periodo,
+            'gestion' => $request->gestion,
+        ]);
 
-        return redirect()->route('empresa.show', $id)->with('success', 'Datos actualizados correctamente.');
+        return redirect()->route('show.empresas.home', $id)->with('success', 'Datos actualizados correctamente.');
     }
 
     public function destroy($id)

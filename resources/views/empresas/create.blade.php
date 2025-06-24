@@ -115,16 +115,92 @@
                     <div class="p-6">
                         <form id="crearEmpresaForm" method="POST" action="{{ route('empresas.store') }}">
                             @csrf
+
+                            {{-- Nombre --}}
                             <div class="mb-4">
-                                <label for="empresaName" class="block text-sm font-medium text-gray-700 mb-1">
-                                    {{ __('Nombre') }}
-                                </label>
+                                <label for="empresaName" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
                                 <input id="empresaName" name="name" type="text" required
                                     class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
                             </div>
+
+                            {{-- NIT --}}
+                            <div class="mb-4">
+                                <label for="nit" class="block text-sm font-medium text-gray-700 mb-1">NIT</label>
+                                <input id="nit" name="nit" type="text"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
+                            </div>
+
+                            {{-- Dirección --}}
+                            <div class="mb-4">
+                                <label for="direccion"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+                                <input id="direccion" name="direccion" type="text"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
+                            </div>
+
+                            {{-- Ciudad --}}
+                            <div class="mb-4">
+                                <label for="ciudad" class="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
+                                <input id="ciudad" name="ciudad" type="text"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
+                            </div>
+
+                            {{-- Provincia --}}
+                            <div class="mb-4">
+                                <label for="provincia"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Provincia</label>
+                                <input id="provincia" name="provincia" type="text"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
+                            </div>
+
+                            {{-- Teléfono --}}
+                            <div class="mb-4">
+                                <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                                <input id="telefono" name="telefono" type="text"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
+                            </div>
+
+                            {{-- Celular --}}
+                            <div class="mb-4">
+                                <label for="celular" class="block text-sm font-medium text-gray-700 mb-1">Celular</label>
+                                <input id="celular" name="celular" type="text"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
+                            </div>
+
+                            {{-- Correo Electrónico --}}
+                            <div class="mb-4">
+                                <label for="correo_electronico"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+                                <input id="correo_electronico" name="correo_electronico" type="email"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
+                            </div>
+
+                            {{-- Periodo --}}
+                            <div class="mb-4">
+                                <label for="periodo" class="block text-sm font-medium text-gray-700 mb-1">Periodo</label>
+                                <select id="periodo" name="periodo" required
+                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none">
+                                    <option value="">Selecciona un periodo</option>
+                                    <option value="Mineria">Minería</option>
+                                    <option value="Comercial">Comercial</option>
+                                    <option value="Agropecuaria">Agropecuaria</option>
+                                    <option value="Industrial">Industrial</option>
+                                </select>
+                            </div>
+
+                            {{-- Gestión --}}
+                            <div class="mb-6">
+                                <label for="gestion" class="block text-sm font-medium text-gray-700 mb-1">Gestión</label>
+                                <input id="gestion" name="gestion" type="number" min="1900"
+                                    max="{{ now()->year + 1 }}" value="{{ now()->year }}"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none"
+                                    required />
+                            </div>
+
+                            {{-- Botón de Envío --}}
                             <button type="submit"
                                 class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
-                                {{ __('Crear') }}
+                                Crear Empresa
                             </button>
                         </form>
                     </div>

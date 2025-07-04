@@ -1,7 +1,5 @@
 "use strict";
 
-import axios from "axios";
-
 // document.addEventListener("DOMContentLoaded", () => {
 document.querySelectorAll(".delete-btn").forEach((button) => {
     button.addEventListener("click", () => {

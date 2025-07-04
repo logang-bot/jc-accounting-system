@@ -12,10 +12,15 @@ class CuentaController extends Controller
     // Mostrar todas las cuentas
     public function home()
     {
-        // Obtener todas las cuentas principales con sus subcuentas
+        $empresaId = session('empresa_id'); // o auth()->user()->empresa_id si usas auth
+
         $cuentas = CuentasContables::whereNull('parent_id') // Solo las cuentas principales
             ->where('estado', true)
-            ->with('children')
+            ->where('empresa_id', $empresaId) // ✅ Filtrar por empresa
+            ->with(['children' => function ($query) use ($empresaId) {
+                $query->where('estado', true)
+                    ->where('empresa_id', $empresaId); // ✅ también en los hijos
+            }])
             ->orderByRaw("
                 CASE
                     WHEN tipo_cuenta = 'Activo' THEN 1        
@@ -29,7 +34,16 @@ class CuentaController extends Controller
             ")
             ->get();
 
-        return view('cuentas.index', compact('cuentas'));
+        $cuentasPadre = CuentasContables::where('es_movimiento', false)
+            ->where('nivel', '<', 5)
+            ->where('empresa_id', $empresaId)
+            ->get();
+
+        
+        return view('cuentas.index', [
+            'cuentas' => $cuentas,
+            'cuentasPadre' => $cuentasPadre,
+        ]);
     }
 
     public function create()
@@ -185,8 +199,12 @@ class CuentaController extends Controller
             'moneda_principal' => ['nullable', Rule::in(['BOB', 'USD'])],
         ]);
 
-        // Buscar la cuenta por ID
-        $cuenta = CuentasContables::find($id);
+        $empresaId = session('empresa_id');
+        
+        // Buscar la cuenta y verificar que pertenezca a la empresa actual
+        $cuenta = CuentasContables::where('id_cuenta', $id)
+            ->where('empresa_id', $empresaId)
+            ->first();
 
         // Validar si no se encuentra la cuenta
         if (!$cuenta) {

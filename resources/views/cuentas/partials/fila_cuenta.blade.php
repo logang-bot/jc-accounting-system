@@ -35,11 +35,13 @@
             @endif
 
             @if ($cuenta->nivel === 4 || $cuenta->nivel === 5)
-                <a href="{{ route('show.cuentas.edit', ['id' => $cuenta->id_cuenta]) }}"
-                    class="hover:bg-yellow-500 px-3 py-1 rounded hs-accordion-toggle cursor-pointer flex flex-row gap-1 text-yellow-500 items-center hover:text-white">
+                <button
+                    class="hover:bg-yellow-500 px-3 py-1 rounded hs-accordion-toggle cursor-pointer flex flex-row gap-1 text-yellow-500 items-center hover:text-white"
+                    aria-controls="edit-cuenta-modal-{{ $cuenta->id_cuenta }}"
+                    data-hs-overlay="#edit-cuenta-modal-{{ $cuenta->id_cuenta }}">
                     <x-carbon-edit class="w-4 h-4 ms-auto" />
                     Editar
-                </a>
+                </button>
             @endif
 
             @if ($cuenta->children->isEmpty())
@@ -67,4 +69,16 @@
             </div>
         </div>
     @endif
+
+
+    <x-modal id="edit-cuenta-modal-{{ $cuenta->id_cuenta }}">
+        <div class="relative w-full max-w-2xl mx-auto mt-10 bg-white p-6 rounded shadow-xl">
+            @php
+                $modo = 'editar';
+                $cuenta = $cuenta;
+            @endphp
+
+            @include('cuentas.create')
+        </div>
+    </x-modal>
 </div>

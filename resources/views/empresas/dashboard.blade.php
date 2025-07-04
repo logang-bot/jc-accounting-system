@@ -18,7 +18,7 @@
                             <dt class="font-medium">Nombre</dt>
                             <dd>
                                 <input type="text" name="name" value="{{ old('name', $empresa->name) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
                             </dd>
                         </div>
 
@@ -27,7 +27,7 @@
                             <dt class="font-medium">NIT</dt>
                             <dd>
                                 <input type="text" name="nit" value="{{ old('nit', $empresa->nit) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
                             </dd>
                         </div>
 
@@ -36,7 +36,7 @@
                             <dt class="font-medium">Dirección</dt>
                             <dd>
                                 <input type="text" name="direccion" value="{{ old('direccion', $empresa->direccion) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
                             </dd>
                         </div>
 
@@ -45,7 +45,7 @@
                             <dt class="font-medium">Ciudad</dt>
                             <dd>
                                 <input type="text" name="ciudad" value="{{ old('ciudad', $empresa->ciudad) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
                             </dd>
                         </div>
 
@@ -54,7 +54,7 @@
                             <dt class="font-medium">Provincia</dt>
                             <dd>
                                 <input type="text" name="provincia" value="{{ old('provincia', $empresa->provincia) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
                             </dd>
                         </div>
 
@@ -63,7 +63,7 @@
                             <dt class="font-medium">Teléfono</dt>
                             <dd>
                                 <input type="text" name="telefono" value="{{ old('telefono', $empresa->telefono) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
                             </dd>
                         </div>
 
@@ -72,7 +72,7 @@
                             <dt class="font-medium">Celular</dt>
                             <dd>
                                 <input type="text" name="celular" value="{{ old('celular', $empresa->celular) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
                             </dd>
                         </div>
 
@@ -82,7 +82,7 @@
                             <dd>
                                 <input type="email" name="correo_electronico"
                                     value="{{ old('correo_electronico', $empresa->correo_electronico) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
                             </dd>
                         </div>
 
@@ -91,7 +91,7 @@
                             <dt class="font-medium">Periodo</dt>
                             <dd>
                                 <select name="periodo"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled>
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled>
                                     <option value="Mineria" @selected(old('periodo', $empresa->periodo) == 'Mineria')>Mineria</option>
                                     <option value="Comercial" @selected(old('periodo', $empresa->periodo) == 'Comercial')>Comercial</option>
                                     <option value="Agropecuaria" @selected(old('periodo', $empresa->periodo) == 'Agropecuaria')>Agropecuaria</option>
@@ -105,7 +105,7 @@
                             <dt class="font-medium">Gestión</dt>
                             <dd>
                                 <input type="text" name="gestion" value="{{ old('gestion', $empresa->gestion) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" disabled />
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
                             </dd>
                         </div>
                     </dl>

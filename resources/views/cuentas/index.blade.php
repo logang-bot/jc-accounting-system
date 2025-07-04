@@ -13,14 +13,15 @@
                 <!-- Table -->
                 <div class="px-6 flex flex-row w-full gap-4">
                     <div class="flex gap-2 flex-col w-[10%]">
-                        <a href="{{ route('show.cuentas.create') }}" type="button"
-                            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-center">
-                            Adicionar
-                        </a>
-                        <button type="button" class="bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-700"
+                        <button type="button"
+                            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-center"
+                            aria-controls="create-cuenta-modal" data-hs-overlay="#create-cuenta-modal">
+                            Crear
+                        </button>
+                        {{-- <button type="button" class="bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-700"
                             aria-controls="cuentas-report" data-hs-overlay="#cuentas-report">
                             Reporte
-                        </button>
+                        </button> --}}
                     </div>
                     <div class="overflow-y-auto max-h-[560px] w-[90%]">
                         <div class="hs-accordion-group border border-gray-300 divide-y divide-gray-300"
@@ -79,11 +80,13 @@
                                             @endif
 
                                             @if ($cuenta->es_movimiento)
-                                                <a href="{{ route('show.cuentas.edit', ['id' => $cuenta->id_cuenta]) }}"
-                                                    class="hover:bg-yellow-500 px-3 py-1 rounded hs-accordion-toggle cursor-pointer flex flex-row gap-1 text-yellow-500 items-center hover:text-white">
+                                                <button
+                                                    class="hover:bg-yellow-500 px-3 py-1 rounded hs-accordion-toggle cursor-pointer flex flex-row gap-1 text-yellow-500 items-center hover:text-white"
+                                                    aria-controls="edit-cuenta-modal-{{ $cuenta->id_cuenta }}"
+                                                    data-hs-overlay="#edit-cuenta-modal-{{ $cuenta->id_cuenta }}">
                                                     <x-carbon-edit class="w-4 h-4 ms-auto" />
                                                     Editar
-                                                </a>
+                                                </button>
                                             @endif
 
                                             @if ($cuenta->children->isEmpty())
@@ -131,6 +134,27 @@
             <x-modal id="cuentas-report">
                 @include('cuentas.report')
             </x-modal>
+
+            <x-modal id="create-cuenta-modal">
+                @php
+                    $modo = 'crear';
+                    $cuenta = null;
+                @endphp
+                @include('cuentas.create')
+            </x-modal>
+
+            @foreach ($cuentas as $cuenta)
+                <x-modal id="edit-cuenta-modal-{{ $cuenta->id_cuenta }}">
+                    <div class="relative w-full max-w-2xl mx-auto mt-10 bg-white p-6 rounded shadow-xl">
+                        @php
+                            $modo = 'editar';
+                            $cuenta = $cuenta;
+                        @endphp
+
+                        @include('cuentas.create')
+                    </div>
+                </x-modal>
+            @endforeach
 
         </div>
 

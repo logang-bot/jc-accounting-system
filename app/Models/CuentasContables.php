@@ -21,7 +21,8 @@ class CuentasContables extends Model
         'parent_id',
         'es_movimiento',
         'estado',
-        'moneda_principal'
+        'moneda_principal',
+        'empresa_id'
     ];
 
     protected $attributes = [

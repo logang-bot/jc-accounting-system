@@ -12,7 +12,7 @@ class CuentaController extends Controller
     // Mostrar todas las cuentas
     public function home()
     {
-        $empresaId = session('empresa_id'); // o auth()->user()->empresa_id si usas auth
+        $empresaId = session('empresa_id'); 
 
         $cuentas = CuentasContables::whereNull('parent_id') // Solo las cuentas principales
             ->where('estado', true)
@@ -48,7 +48,10 @@ class CuentaController extends Controller
 
     public function create()
     {
-        $cuentasPadre = CuentasContables::where('es_movimiento', false)
+        $empresaId = session('empresa_id');
+
+        $cuentasPadre = CuentasContables::where('empresa_id', $empresaId)
+            ->where('es_movimiento', false)
             ->where('nivel', '<', 5)
             ->get();
             
@@ -70,7 +73,10 @@ class CuentaController extends Controller
             return response()->json(['error' => 'Cuenta no encontrada'], 404);
         }
         
-        $cuentasPadre = CuentasContables::where('es_movimiento', false)
+        $empresaId = session('empresa_id');
+
+        $cuentasPadre = CuentasContables::where('empresa_id', $empresaId)
+            ->where('es_movimiento', false)
             ->where('nivel', '<', 5)
             ->where('id_cuenta', '!=', $id) // No puede ser su propio padre
             ->get();
@@ -95,10 +101,16 @@ class CuentaController extends Controller
 
         $this->validarCuentaRaiz($request);
 
-        // ✅ Validación: Solo una cuenta raíz por tipo
+        $empresaId = session('empresa_id');
+        if (!$empresaId) {
+            return back()->withErrors(['error' => 'No se ha seleccionado una empresa.'])->withInput();
+        }
+
+        // Validación: Solo una cuenta raíz por tipo
         if (empty($request->parent_id)) {
             $existe = CuentasContables::where('tipo_cuenta', $request->tipo_cuenta)
                 ->whereNull('parent_id')
+                ->where('empresa_id', $empresaId)
                 ->exists();
 
             if ($existe) {
@@ -118,32 +130,9 @@ class CuentaController extends Controller
             }
         }
 
-
-        // $codigoFuturo = null;
-        // $nivel = 1;
-
-        // if (!empty($request->parent_id)) {
-        //     $parent = CuentasContables::find($request->parent_id);
-        //     $codigoFuturo = CuentasContables::generarCodigoCuenta(new CuentasContables([
-        //         'parent_id' => $request->parent_id,
-        //         'tipo_cuenta' => $request->tipo_cuenta,
-        //     ]));
-        //     $nivel = CuentasContables::calcularNivel($codigoFuturo);
-        // }
-
-        // if (in_array($nivel, [4, 5])) {
-        //     if (empty($request->moneda_principal)) {
-        //         return back()
-        //             ->withErrors(['moneda_principal' => 'La moneda principal es obligatoria para cuentas de nivel 4 o 5.'])
-        //             ->withInput();
-        //     }
-        //     $validated['moneda_principal'] = $request->moneda_principal;
-        // } else {
-        //     $validated['moneda_principal'] = null;
-        // }
-
         // Inicializar datos
         $data = $request->only(['nombre_cuenta', 'tipo_cuenta', 'parent_id', 'es_movimiento', 'moneda_principal']);
+        $data['empresa_id'] = (int) $empresaId;
 
         // Si tiene padre y este es de movimiento, lo desactivamos
         if ($request->filled('parent_id')) {

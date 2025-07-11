@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CuentasContables;
 use Illuminate\Http\Request;
 use App\Models\Empresa;
 
@@ -34,7 +35,7 @@ class EmpresasController extends Controller
             'gestion' => 'required|integer|min:1900|max:' . (now()->year + 1),
         ]);
 
-        Empresa::create([
+        $empresa = Empresa::create([
             'name' => $request->name,
             'nit' => $request->nit,
             'direccion' => $request->direccion,
@@ -47,7 +48,39 @@ class EmpresasController extends Controller
             'gestion' => $request->gestion,
         ]);
 
+        // Crear cuentas raíz para la empresa
+        $tipos = ['Activo', 'Pasivo', 'Patrimonio', 'Ingresos', 'Egresos'];
+        foreach ($tipos as $tipo) {
+            $existe = CuentasContables::where('empresa_id', $empresa->id)
+                ->whereNull('parent_id')
+                ->where('tipo_cuenta', $tipo)
+                ->exists();
+
+            if (!$existe) {
+                CuentasContables::create([
+                    'nombre_cuenta' => $tipo,
+                    'tipo_cuenta' => $tipo,
+                    'codigo_cuenta' => self::generarCodigoRaiz($tipo), // puedes usar una lógica tipo "1", "2", etc.
+                    'nivel' => 1,
+                    'es_movimiento' => false,
+                    'empresa_id' => $empresa->id,
+                ]);
+            }
+        }
+
         return redirect()->route('show.empresas.create')->with('success', 'Empresa creada correctamente.');
+    }
+
+    public static function generarCodigoRaiz($tipo)
+    {
+        return match ($tipo) {
+            'Activo' => '1000000000',
+            'Pasivo' => '2000000000',
+            'Patrimonio' => '3000000000',
+            'Ingresos' => '4000000000',
+            'Egresos' => '5000000000',
+            default => '-1',
+        };
     }
 
     public function update(Request $request, $id)
@@ -94,17 +127,4 @@ class EmpresasController extends Controller
         session()->forget('empresa_id');
         return redirect('/empresas/crear');
     }
-
-    // public function index()
-    // {
-    //     $empresa_id = session('empresa_id');
-
-    //     if (!$empresa_id) {
-    //         return redirect()->route('empresas')->with('error', 'Debe seleccionar una empresa primero.');
-    //     }
-
-    //     $empresa = Empresa::with('datoEmpresa')->findOrFail($empresa_id);
-    //     return view('empresas.company', compact('empresa'));
-    // }
-
 }

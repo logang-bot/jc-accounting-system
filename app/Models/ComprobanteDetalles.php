@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ComprobanteDetalles extends Model
 {
     protected $table = 'comprobante_detalles';
-    protected $fillable = ['comprobante_id', 'cuenta_contable_id', 'debe', 'haber', 'descripcion'];
+    protected $fillable = ['comprobante_id', 'cuenta_contable_id', 'debe', 'haber', 'descripcion', 'iva'];
 
     public function comprobante()
     {

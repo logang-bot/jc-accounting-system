@@ -32,8 +32,17 @@ class Comprobante extends Model
 
     public static function generateNumero()
     {
+        $empresaId = session('empresa_id');
         $year = now()->format('Y');
-        $last = static::whereYear('fecha', $year)->max('id') ?? 0;
-        return sprintf("COMP-%s-%04d", $year, $last + 1);
+
+        do {
+            $lastId = static::where('empresa_id', $empresaId)
+                ->whereYear('fecha', $year)
+                ->max('id') ?? 0;
+
+            $numero = sprintf("COMP-%s-%04d", $year, $lastId + 1);
+        } while (static::where('numero', $numero)->exists());
+
+        return $numero;
     }
 }

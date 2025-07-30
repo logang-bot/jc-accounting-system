@@ -12,7 +12,7 @@ class CuentaController extends Controller
     // Mostrar todas las cuentas
     public function home()
     {
-        $empresaId = session('empresa_id'); 
+        $empresaId = session('empresa_id');
 
         $cuentas = CuentasContables::whereNull('parent_id') // Solo las cuentas principales
             ->where('estado', true)

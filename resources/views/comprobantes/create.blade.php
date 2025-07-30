@@ -1,10 +1,17 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="max-w-5xl mx-auto p-6 m-6 bg-white shadow-md rounded-xl">
+    <div class="max-w-7xl mx-auto p-6 m-6 bg-white shadow-md rounded-xl">
         <h2 class="text-2xl font-semibold mb-6">
             {{ $editMode ? 'Editar Comprobante' : 'Crear Comprobante' }}
         </h2>
+
+        @if (isset($empresa))
+            <div class="mb-4 text-sm text-gray-600">
+                Empresa actual: <strong>{{ $empresa->name }}</strong><br>
+                NIT: <strong>{{ $empresa->nit }}</strong>
+            </div>
+        @endif
 
         <form method="POST"
             action="{{ $editMode ? route('comprobantes.update', $comprobante->id) : route('comprobantes.store') }}">
@@ -76,6 +83,7 @@
                             <th class="px-3 py-2">Haber Bs.</th>
                             <th class="px-3 py-2">Debe (USD)</th>
                             <th class="px-3 py-2">Haber (USD)</th>
+                            <th class="px-3 py-2">IVA</th>
                             <th class="px-3 py-2">Acciones</th>
                         </tr>
                     </thead>
@@ -125,6 +133,13 @@
                                         <input type="text" readonly
                                             class="w-full text-right bg-gray-100 border rounded px-2 py-1" value="0.00">
                                     </td>
+
+                                    <td class="px-3 py-2 text-right iva">
+                                        <input type="number" step="0.01" min="0" max="100"
+                                            name="detalles[{{ $i }}][iva]"
+                                            class="w-20 text-right border rounded px-2 py-1" placeholder="0.00">
+                                    </td>
+
                                     <td class="px-3 py-2 text-center">
                                         <button type="button" onclick="removeRow(this)"
                                             class="text-red-600 hover:underline">Eliminar</button>
@@ -134,10 +149,19 @@
                         @else
                             <tr>
                                 <td class="px-3 py-2">
-                                    <select name="detalles[0][cuenta_id]" class="w-full border rounded px-2 py-1" required>
+                                    <input type="text" name="detalles[0][codigo_cuenta]"
+                                        value="{{ $cuentas[0]->codigo_cuenta }}"
+                                        class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly>
+                                </td>
+
+                                <td class="px-3 py-2">
+                                    <select name="detalles[0][cuenta_id]"
+                                        class="w-full border rounded px-2 py-1 cuenta-nombre-select" data-index="0"
+                                        required>
                                         @foreach ($cuentas as $cuenta)
-                                            <option value="{{ $cuenta->id_cuenta }}">{{ $cuenta->codigo_cuenta }} -
-                                                {{ $cuenta->nombre_cuenta }}</option>
+                                            <option value="{{ $cuenta->id_cuenta }}"
+                                                data-codigo="{{ $cuenta->codigo_cuenta }}">{{ $cuenta->nombre_cuenta }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </td>
@@ -160,6 +184,12 @@
                                 <td class="px-3 py-2 text-right us-haber">
                                     <input type="text" readonly
                                         class="w-full text-right bg-gray-100 border rounded px-2 py-1" value="0.00">
+                                </td>
+
+                                <td class="px-3 py-2 text-right iva">
+                                    <input type="number" step="0.01" min="0" max="100"
+                                        name="detalles[0][iva]" class="w-full text-right border rounded px-2 py-1"
+                                        placeholder="0.00">
                                 </td>
                                 <td class="px-3 py-2 text-center">
                                     <button type="button" onclick="removeRow(this)"

@@ -67,18 +67,39 @@
                                         </thead>
                                         <tbody class="text-white">
                                             @foreach ($empresas as $empresa)
-                                                <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100 dark:odd:bg-transparent dark:even:bg-neutral-600/50 dark:hover:bg-neutral-700"
+                                                <tr class="odd:bg-white even:bg-gray-100/25 hover:bg-gray-100 dark:odd:bg-transparent dark:even:bg-neutral-600/25 dark:hover:bg-neutral-700/25"
                                                     data-empresa-id="{{ $empresa->id }}">
                                                     <td
-                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200 flex flex-row items-center gap-1">
                                                         {{ $empresa->name }}
+                                                        @if ($empresa->activa)
+                                                            <span
+                                                                class="inline-flex items-center px-2 py-1 text-sm font-semibold text-green-800 bg-green-300 rounded-full">
+                                                                Activa
+                                                            </span>
+                                                        @else
+                                                            <span
+                                                                class="inline-flex items-center px-2 py-1 text-sm font-semibold text-white bg-red-800 rounded-full">
+                                                                Archivada
+                                                            </span>
+                                                        @endif
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                                        <a href="{{ route('show.empresas.home', $empresa->id) }}"
-                                                            class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400">Ingresar</a>
+                                                        @if ($empresa->activa)
+                                                            <a href="{{ route('show.empresas.home', $empresa->id) }}"
+                                                                class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-500 dark:hover:text-blue-400 dark:focus:text-blue-400">Ingresar</a>
+                                                        @endif
+                                                        <button type="button" data-empresa-id="{{ $empresa->id }}"
+                                                            class="archive-btn inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-500 dark:hover:text-blue-400 dark:focus:text-blue-400 cursor-pointer">{{ $empresa->activa ? 'Archivar' : 'Activar' }}</button>
+                                                        <form id="archive-form-{{ $empresa->id }}"
+                                                            action="{{ route('empresas.archive', $empresa->id) }}"
+                                                            method="POST" class="hidden">
+                                                            @csrf
+                                                            @method('POST')
+                                                        </form>
 
                                                         <button type="button" data-empresa-id="{{ $empresa->id }}"
-                                                            class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400">Eliminar</button>
+                                                            class="delete-btn inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-red-500 dark:hover:text-blue-400 dark:focus:text-blue-400 cursor-pointer">Eliminar</button>
                                                         <form id="delete-form-{{ $empresa->id }}"
                                                             action="{{ route('empresas.destroy', $empresa->id) }}"
                                                             method="POST" class="hidden">
@@ -128,73 +149,6 @@
                                 <label for="nit" class="block text-sm font-medium text-gray-700 mb-1">NIT</label>
                                 <input id="nit" name="nit" type="text"
                                     class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
-                            </div>
-
-                            {{-- Dirección --}}
-                            <div class="mb-4">
-                                <label for="direccion"
-                                    class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
-                                <input id="direccion" name="direccion" type="text"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
-                            </div>
-
-                            {{-- Ciudad --}}
-                            <div class="mb-4">
-                                <label for="ciudad" class="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
-                                <input id="ciudad" name="ciudad" type="text"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
-                            </div>
-
-                            {{-- Provincia --}}
-                            <div class="mb-4">
-                                <label for="provincia"
-                                    class="block text-sm font-medium text-gray-700 mb-1">Provincia</label>
-                                <input id="provincia" name="provincia" type="text"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
-                            </div>
-
-                            {{-- Teléfono --}}
-                            <div class="mb-4">
-                                <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-                                <input id="telefono" name="telefono" type="text"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
-                            </div>
-
-                            {{-- Celular --}}
-                            <div class="mb-4">
-                                <label for="celular" class="block text-sm font-medium text-gray-700 mb-1">Celular</label>
-                                <input id="celular" name="celular" type="text"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
-                            </div>
-
-                            {{-- Correo Electrónico --}}
-                            <div class="mb-4">
-                                <label for="correo_electronico"
-                                    class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
-                                <input id="correo_electronico" name="correo_electronico" type="email"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
-                            </div>
-
-                            {{-- Periodo --}}
-                            <div class="mb-4">
-                                <label for="periodo" class="block text-sm font-medium text-gray-700 mb-1">Periodo</label>
-                                <select id="periodo" name="periodo" required
-                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none">
-                                    <option value="">Selecciona un periodo</option>
-                                    <option value="Mineria">Minería</option>
-                                    <option value="Comercial">Comercial</option>
-                                    <option value="Agropecuaria">Agropecuaria</option>
-                                    <option value="Industrial">Industrial</option>
-                                </select>
-                            </div>
-
-                            {{-- Gestión --}}
-                            <div class="mb-6">
-                                <label for="gestion" class="block text-sm font-medium text-gray-700 mb-1">Gestión</label>
-                                <input id="gestion" name="gestion" type="number" min="1900"
-                                    max="{{ now()->year + 1 }}" value="{{ now()->year }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none"
-                                    required />
                             </div>
 
                             {{-- Botón de Envío --}}

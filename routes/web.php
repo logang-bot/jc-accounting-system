@@ -38,6 +38,7 @@ Route::middleware('auth')->controller(EmpresasController::class)->group(function
         Route::post('/', 'store')->name('empresas.store');
         Route::put('/{id}', 'update')->name('empresas.update');
         Route::delete('/{id}', 'destroy')->name('empresas.destroy');
+        Route::post('/{id}', 'archive')->name('empresas.archive');
         Route::post('/exit', 'exit')->name('empresas.exit');
     });
 });

@@ -19,7 +19,8 @@ class Empresa extends Model
         'celular',
         'correo_electronico',
         'periodo',
-        'gestion'
+        'gestion',
+        'activa'
     ];
 
     public function cuentasContables()

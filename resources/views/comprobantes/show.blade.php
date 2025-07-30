@@ -8,6 +8,13 @@
                 <a href="" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Imprimir</a>
             </div>
             <div class="mb-6">
+
+                @if (isset($empresa))
+                    <div class="mb-4 text-sm text-gray-600">
+                        Empresa actual: <strong>{{ $empresa->name }}</strong><br>
+                        NIT: <strong>{{ $empresa->nit }}</strong>
+                    </div>
+                @endif
                 <p><strong>Número:</strong> {{ $comprobante->numero }}</p>
                 <p><strong>Fecha:</strong> {{ $comprobante->fecha }}</p>
                 <p><strong>Tipo:</strong> {{ ucfirst($comprobante->tipo) }}</p>

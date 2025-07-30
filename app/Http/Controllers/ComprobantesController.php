@@ -6,6 +6,7 @@ use App\Models\Comprobante;
 use App\Models\Comprobantes;
 use App\Models\CuentasContables;
 use App\Models\DetalleComprobantes;
+use App\Models\Empresa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,9 @@ class ComprobantesController extends Controller
 {
     public function home(Request $request)
     {
-        $query = Comprobante::query();
+         $empresaId = session('empresa_id');
+
+        $query = Comprobante::where('empresa_id', $empresaId);
 
         // Filtro por fecha exacta
         if ($request->filled('fecha')) {
@@ -33,6 +36,7 @@ class ComprobantesController extends Controller
             $query->where('descripcion', 'ILIKE', '%' . $request->glosa_general . '%');
         }
 
+        $empresaId = session('empresa_id');
         $comprobantes = $query->latest()->paginate(15)->appends($request->query());
 
         return view('comprobantes.index', compact('comprobantes'));
@@ -41,10 +45,15 @@ class ComprobantesController extends Controller
     // Muestra el formulario para crear un nuevo comprobante
     public function create()
     {
-        // Aquí podrías pasar las cuentas o cualquier otro dato necesario
-        // $cuentas = CuentasContables::all();
-        $cuentas = CuentasContables::where('es_movimiento', true)->get();
+        $empresaId = session('empresa_id');
+        $empresa = Empresa::findOrFail($empresaId);
+        $cuentas = CuentasContables::where('es_movimiento', true)
+            ->where('estado', true)
+            ->where('empresa_id', $empresaId)
+            ->get();
+
         return view('comprobantes.create', [
+            'empresa' => $empresa,
             'editMode' => false,
             'cuentas' => $cuentas,
             'comprobante' => null // or new Comprobante if you prefer
@@ -54,13 +63,22 @@ class ComprobantesController extends Controller
     public function show($id)
     {
         $comprobante = Comprobante::with(['detalles.cuenta', 'user'])->findOrFail($id);
-        return view('comprobantes.show', compact('comprobante'));
+        $empresaId = session('empresa_id');
+        $empresa = Empresa::findOrFail($empresaId);
+        return view('comprobantes.show', compact('comprobante', 'empresa'));
     }
 
     public function edit($id) {
-        $cuentas = CuentasContables::where('es_movimiento', true)->get();
         $comprobante = Comprobante::with('detalles')->findOrFail($id);
+        $empresaId = session('empresa_id');
+        $empresa = Empresa::findOrFail($empresaId);
+        $cuentas = CuentasContables::where('es_movimiento', true)
+            ->where('estado', true)
+            ->where('empresa_id', $empresaId)
+            ->get();
+
         return view('comprobantes.create', [
+            'empresa' => $empresa,
             'editMode' => true,
             'comprobante' => $comprobante,
             'cuentas' => $cuentas
@@ -124,6 +142,7 @@ class ComprobantesController extends Controller
                         'descripcion' => $detalle['descripcion'] ?? '',
                         'debe' => $detalle['debe'],
                         'haber' => $detalle['haber'],
+                        'iva' => $detalle['iva'] ?? 0,
                     ]);
                 }
             });
@@ -192,6 +211,7 @@ class ComprobantesController extends Controller
                     'descripcion' => $detalle['descripcion'] ?? null,
                     'debe' => $detalle['debe'] ?? 0,
                     'haber' => $detalle['haber'] ?? 0,
+                    'iva' => $detalle['iva'] ?? 0,
                 ]);
             }
         });

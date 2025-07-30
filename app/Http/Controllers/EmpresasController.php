@@ -25,27 +25,27 @@ class EmpresasController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'nit' => 'nullable|string|max:20',
-            'direccion' => 'nullable|string|max:255',
-            'ciudad' => 'nullable|string|max:100',
-            'provincia' => 'nullable|string|max:100',
-            'telefono' => 'nullable|string|max:20',
-            'celular' => 'nullable|string|max:20',
-            'correo_electronico' => 'nullable|email|max:255',
-            'periodo' => 'required|in:Mineria,Comercial,Agropecuaria,Industrial',
-            'gestion' => 'required|integer|min:1900|max:' . (now()->year + 1),
+            // 'direccion' => 'nullable|string|max:255',
+            // 'ciudad' => 'nullable|string|max:100',
+            // 'provincia' => 'nullable|string|max:100',
+            // 'telefono' => 'nullable|string|max:20',
+            // 'celular' => 'nullable|string|max:20',
+            // 'correo_electronico' => 'nullable|email|max:255',
+            // 'periodo' => 'required|in:Mineria,Comercial,Agropecuaria,Industrial',
+            // 'gestion' => 'required|integer|min:1900|max:' . (now()->year + 1),
         ]);
 
         $empresa = Empresa::create([
             'name' => $request->name,
             'nit' => $request->nit,
-            'direccion' => $request->direccion,
-            'ciudad' => $request->ciudad,
-            'provincia' => $request->provincia,
-            'telefono' => $request->telefono,
-            'celular' => $request->celular,
-            'correo_electronico' => $request->correo_electronico,
-            'periodo' => $request->periodo,
-            'gestion' => $request->gestion,
+            // 'direccion' => $request->direccion,
+            // 'ciudad' => $request->ciudad,
+            // 'provincia' => $request->provincia,
+            // 'telefono' => $request->telefono,
+            // 'celular' => $request->celular,
+            // 'correo_electronico' => $request->correo_electronico,
+            // 'periodo' => $request->periodo,
+            // 'gestion' => $request->gestion,
         ]);
 
         // Crear cuentas raíz para la empresa
@@ -120,6 +120,16 @@ class EmpresasController extends Controller
     {
         Empresa::findOrFail($id)->delete();
         return redirect()->route('show.empresas.create')->with('success', 'Empresa eliminada correctamente.');
+    }
+
+    
+    public function archive($id)
+    {
+        $empresa = Empresa::findOrFail($id);
+        $empresa->activa = !$empresa->activa;
+        $empresa->save();
+
+        return redirect()->back()->with('status', $empresa->activa ? 'Empresa activada' : 'Empresa archivada');
     }
 
     public function exit()

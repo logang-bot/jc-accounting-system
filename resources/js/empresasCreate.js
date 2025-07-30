@@ -7,6 +7,13 @@ document.querySelectorAll(".delete-btn").forEach((button) => {
         confirmDelete(id);
     });
 });
+
+document.querySelectorAll(".archive-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+        const id = button.getAttribute("data-empresa-id");
+        confirmArchive(id);
+    });
+});
 // });
 
 function confirmDelete(id) {
@@ -24,4 +31,8 @@ function confirmDelete(id) {
             document.getElementById(`delete-form-${id}`).submit();
         }
     });
+}
+
+function confirmArchive(id) {
+    document.getElementById(`archive-form-${id}`).submit();
 }

@@ -150,7 +150,12 @@ class CuentasContables extends Model
         }
 
         // Armar el nuevo código
-        $nuevoCodigo = substr_replace($codigoPadre, $nuevoSegmento, $rangos[$nivelHijo][0], $rangos[$nivelHijo][1]);
+        $inicio = $rangos[$nivelHijo][0];
+
+        $codigoBase = substr($codigoPadre, 0, $inicio) . $nuevoSegmento;
+        $codigoFinal = str_pad($codigoBase, 10, '0', STR_PAD_RIGHT);
+
+        return substr($codigoFinal, 0, 10);
 
         // Asegurar que tenga 10 dígitos rellenando con ceros
         return str_pad($nuevoCodigo, 10, '0', STR_PAD_RIGHT);
@@ -162,10 +167,10 @@ class CuentasContables extends Model
         $codigo = str_pad($codigo, 10, '0', STR_PAD_RIGHT);
     
         // Verificar desde el nivel más profundo al más superficial
-        if (substr($codigo, 6, 4) !== '0000') return 5;
-        if (substr($codigo, 4, 2) !== '00') return 4;
-        if (substr($codigo, 2, 2) !== '00') return 3;
-        if (substr($codigo, 1, 1) !== '0') return 2;
+        if (substr($codigo, 7, 3) !== '000') return 5;
+        if (substr($codigo, 5, 2) !== '00') return 4;
+        if (substr($codigo, 3, 2) !== '00') return 3;
+        if (substr($codigo, 1, 2) !== '00') return 2;
         
         return 1; // Nivel raíz
     }

@@ -73,57 +73,119 @@
             <h3 class="text-lg font-semibold mb-2">Detalle del Comprobante</h3>
 
             <div class="overflow-x-auto mb-6">
-                <table class="min-w-full border rounded text-sm text-left">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="px-3 py-2"># Cuenta Contable</th>
-                            <th class="px-3 py-2">Nombre de cuenta</th>
-                            <th class="px-3 py-2">Descripción</th>
-                            <th class="px-3 py-2">Debe Bs.</th>
-                            <th class="px-3 py-2">Haber Bs.</th>
-                            <th class="px-3 py-2">Debe (USD)</th>
-                            <th class="px-3 py-2">Haber (USD)</th>
-                            <th class="px-3 py-2">IVA</th>
-                            <th class="px-3 py-2">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="detalle-rows">
-                        @if ($editMode)
-                            @foreach ($comprobante->detalles as $i => $detalle)
+                @if (!count($cuentas))
+                    <p colspan="5" class="border p-2 text-center text-gray-500 italic">
+                        No hay cuentas de movimiento registradas.
+                    </p>
+                @else
+                    <table id="table-detalles" class="min-w-full border rounded text-sm text-left">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-3 py-2"># Cuenta Contable</th>
+                                <th class="px-3 py-2">Nombre de cuenta</th>
+                                <th class="px-3 py-2">Descripción</th>
+                                <th class="px-3 py-2">Debe Bs.</th>
+                                <th class="px-3 py-2">Haber Bs.</th>
+                                <th class="px-3 py-2">Debe (USD)</th>
+                                <th class="px-3 py-2">Haber (USD)</th>
+                                <th class="px-3 py-2">IVA</th>
+                                <th class="px-3 py-2">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detalle-rows">
+                            @if ($editMode)
+                                @foreach ($comprobante->detalles as $i => $detalle)
+                                    <tr>
+                                        <td class="px-3 py-2">
+                                            <input type="text" name="detalles[{{ $i }}][codigo_cuenta]"
+                                                value="{{ $detalle->cuenta->codigo_cuenta }}"
+                                                class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly>
+                                        </td>
+
+                                        <!-- Columna: Nombre de cuenta (select) -->
+                                        <td class="px-3 py-2">
+                                            <select name="detalles[{{ $i }}][cuenta_id]"
+                                                class="w-full border rounded px-2 py-1 cuenta-nombre-select"
+                                                data-index="{{ $i }}" required>
+                                                @foreach ($cuentas as $cuenta)
+                                                    <option value="{{ $cuenta->id_cuenta }}"
+                                                        data-codigo="{{ $cuenta->codigo_cuenta }}"
+                                                        {{ $detalle->cuenta_id == $cuenta->id_cuenta ? 'selected' : '' }}>
+                                                        {{ $cuenta->nombre_cuenta }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td class="px-3 py-2">
+                                            <input type="text" name="detalles[{{ $i }}][descripcion]"
+                                                class="w-full border rounded px-2 py-1"
+                                                value="{{ $detalle->descripcion }}">
+                                        </td>
+                                        <td class="px-3 py-2">
+                                            <input type="number" step="0.01" name="detalles[{{ $i }}][debe]"
+                                                class="w-full text-right border rounded px-2 py-1"
+                                                value="{{ $detalle->debe }}">
+                                        </td>
+                                        <td class="px-3 py-2">
+                                            <input type="number" step="0.01"
+                                                name="detalles[{{ $i }}][haber]"
+                                                class="w-full text-right border rounded px-2 py-1"
+                                                value="{{ $detalle->haber }}">
+                                        </td>
+                                        <td class="px-3 py-2 text-right us-debe">
+                                            <input type="text" readonly
+                                                class="w-full text-right bg-gray-100 border rounded px-2 py-1"
+                                                value="0.00">
+                                        </td>
+                                        <td class="px-3 py-2 text-right us-haber">
+                                            <input type="text" readonly
+                                                class="w-full text-right bg-gray-100 border rounded px-2 py-1"
+                                                value="0.00">
+                                        </td>
+
+                                        <td class="px-3 py-2 text-right iva">
+                                            <input type="number" step="0.01" min="0" max="100"
+                                                name="detalles[{{ $i }}][iva]"
+                                                class="w-20 text-right border rounded px-2 py-1" placeholder="0.00">
+                                        </td>
+
+                                        <td class="px-3 py-2 text-center">
+                                            <button type="button" onclick="removeRow(this)"
+                                                class="text-red-600 hover:underline">Eliminar</button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
                                 <tr>
                                     <td class="px-3 py-2">
-                                        <input type="text" name="detalles[{{ $i }}][codigo_cuenta]"
-                                            value="{{ $detalle->cuenta->codigo_cuenta }}"
+                                        <input type="text" name="detalles[0][codigo_cuenta]"
+                                            value="{{ $cuentas[0]->codigo_cuenta }}"
                                             class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly>
                                     </td>
 
-                                    <!-- Columna: Nombre de cuenta (select) -->
                                     <td class="px-3 py-2">
-                                        <select name="detalles[{{ $i }}][cuenta_id]"
-                                            class="w-full border rounded px-2 py-1 cuenta-nombre-select"
-                                            data-index="{{ $i }}" required>
+                                        <select name="detalles[0][cuenta_id]"
+                                            class="w-full border rounded px-2 py-1 cuenta-nombre-select" data-index="0"
+                                            required>
                                             @foreach ($cuentas as $cuenta)
                                                 <option value="{{ $cuenta->id_cuenta }}"
-                                                    data-codigo="{{ $cuenta->codigo_cuenta }}"
-                                                    {{ $detalle->cuenta_id == $cuenta->id_cuenta ? 'selected' : '' }}>
+                                                    data-codigo="{{ $cuenta->codigo_cuenta }}">
                                                     {{ $cuenta->nombre_cuenta }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     </td>
                                     <td class="px-3 py-2">
-                                        <input type="text" name="detalles[{{ $i }}][descripcion]"
-                                            class="w-full border rounded px-2 py-1" value="{{ $detalle->descripcion }}">
+                                        <input type="text" name="detalles[0][descripcion]"
+                                            class="w-full border rounded px-2 py-1">
                                     </td>
                                     <td class="px-3 py-2">
-                                        <input type="number" step="0.01" name="detalles[{{ $i }}][debe]"
-                                            class="w-full text-right border rounded px-2 py-1"
-                                            value="{{ $detalle->debe }}">
+                                        <input type="number" step="0.01" name="detalles[0][debe]"
+                                            class="w-full text-right border rounded px-2 py-1">
                                     </td>
                                     <td class="px-3 py-2">
-                                        <input type="number" step="0.01" name="detalles[{{ $i }}][haber]"
-                                            class="w-full text-right border rounded px-2 py-1"
-                                            value="{{ $detalle->haber }}">
+                                        <input type="number" step="0.01" name="detalles[0][haber]"
+                                            class="w-full text-right border rounded px-2 py-1">
                                     </td>
                                     <td class="px-3 py-2 text-right us-debe">
                                         <input type="text" readonly
@@ -136,79 +198,27 @@
 
                                     <td class="px-3 py-2 text-right iva">
                                         <input type="number" step="0.01" min="0" max="100"
-                                            name="detalles[{{ $i }}][iva]"
-                                            class="w-20 text-right border rounded px-2 py-1" placeholder="0.00">
+                                            name="detalles[0][iva]" class="w-full text-right border rounded px-2 py-1"
+                                            placeholder="0.00">
                                     </td>
-
                                     <td class="px-3 py-2 text-center">
                                         <button type="button" onclick="removeRow(this)"
                                             class="text-red-600 hover:underline">Eliminar</button>
                                     </td>
                                 </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td class="px-3 py-2">
-                                    <input type="text" name="detalles[0][codigo_cuenta]"
-                                        value="{{ $cuentas[0]->codigo_cuenta }}"
-                                        class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly>
-                                </td>
-
-                                <td class="px-3 py-2">
-                                    <select name="detalles[0][cuenta_id]"
-                                        class="w-full border rounded px-2 py-1 cuenta-nombre-select" data-index="0"
-                                        required>
-                                        @foreach ($cuentas as $cuenta)
-                                            <option value="{{ $cuenta->id_cuenta }}"
-                                                data-codigo="{{ $cuenta->codigo_cuenta }}">{{ $cuenta->nombre_cuenta }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </td>
-                                <td class="px-3 py-2">
-                                    <input type="text" name="detalles[0][descripcion]"
-                                        class="w-full border rounded px-2 py-1">
-                                </td>
-                                <td class="px-3 py-2">
-                                    <input type="number" step="0.01" name="detalles[0][debe]"
-                                        class="w-full text-right border rounded px-2 py-1">
-                                </td>
-                                <td class="px-3 py-2">
-                                    <input type="number" step="0.01" name="detalles[0][haber]"
-                                        class="w-full text-right border rounded px-2 py-1">
-                                </td>
-                                <td class="px-3 py-2 text-right us-debe">
-                                    <input type="text" readonly
-                                        class="w-full text-right bg-gray-100 border rounded px-2 py-1" value="0.00">
-                                </td>
-                                <td class="px-3 py-2 text-right us-haber">
-                                    <input type="text" readonly
-                                        class="w-full text-right bg-gray-100 border rounded px-2 py-1" value="0.00">
-                                </td>
-
-                                <td class="px-3 py-2 text-right iva">
-                                    <input type="number" step="0.01" min="0" max="100"
-                                        name="detalles[0][iva]" class="w-full text-right border rounded px-2 py-1"
-                                        placeholder="0.00">
-                                </td>
-                                <td class="px-3 py-2 text-center">
-                                    <button type="button" onclick="removeRow(this)"
-                                        class="text-red-600 hover:underline">Eliminar</button>
-                                </td>
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
-
-                <button type="button" onclick="addRow()"
-                    class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                    Agregar Línea
-                </button>
+                            @endif
+                        </tbody>
+                    </table>
+                    <button type="button" onclick="addRow()"
+                        class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                        Agregar Línea
+                    </button>
+                @endif
             </div>
 
             <div class="text-right">
-                <button type="submit"
-                    class="px-6 py-2 {{ $editMode ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-green-600 hover:bg-green-700' }} text-white rounded">
+                <button id="submit-button" type="submit"
+                    class="px-6 py-2 {{ $editMode ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-green-600 hover:bg-green-700' }} text-white rounded disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed">
                     {{ $editMode ? 'Actualizar Comprobante' : 'Guardar Comprobante' }}
                 </button>
             </div>
@@ -239,8 +249,14 @@
                     const newName = name.replace(/\[\d+\]/, `[${rowCount}]`);
                     el.setAttribute('name', newName);
                 }
+
+                const dataIndex = el.getAttribute('data-index');
+                if (dataIndex) {
+                    el.setAttribute('data-index', rowCount);
+                }
             });
             tbody.appendChild(newRow);
+            calculateAccountNumber(newRow.querySelector('.cuenta-nombre-select'))
             rowCount++;
             updateSubmitButtonState();
         }
@@ -281,19 +297,28 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.cuenta-nombre-select').forEach(select => {
-                select.addEventListener('change', function() {
-                    const selectedOption = this.options[this.selectedIndex];
-                    const codigo = selectedOption.getAttribute('data-codigo');
-                    const index = this.dataset.index;
+            updateSubmitButtonState()
+            const table = document.querySelector('#table-detalles'); // Asegúrate de que tu tabla tenga este ID
 
-                    const inputCodigo = this.closest('tr').querySelector(
-                        `input[name="detalles[${index}][codigo_cuenta]"]`);
-                    if (inputCodigo) {
-                        inputCodigo.value = codigo;
-                    }
+            if (table)
+                table.addEventListener('change', function(event) {
+                    calculateAccountNumber(event.target)
                 });
-            });
         });
+
+        const calculateAccountNumber = (target) => {
+            if (target && target.classList.contains('cuenta-nombre-select')) {
+                const selectedOption = target.options[target.selectedIndex];
+                const codigo = selectedOption.getAttribute('data-codigo');
+                const index = target.dataset.index;
+
+                const inputCodigo = target.closest('tr').querySelector(
+                    `input[name="detalles[${index}][codigo_cuenta]"]`
+                );
+                if (inputCodigo) {
+                    inputCodigo.value = codigo;
+                }
+            }
+        }
     </script>
 @endsection

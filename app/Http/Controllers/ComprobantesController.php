@@ -56,7 +56,7 @@ class ComprobantesController extends Controller
             'empresa' => $empresa,
             'editMode' => false,
             'cuentas' => $cuentas,
-            'comprobante' => null // or new Comprobante if you prefer
+            'comprobante' => null
         ]);
     }
 

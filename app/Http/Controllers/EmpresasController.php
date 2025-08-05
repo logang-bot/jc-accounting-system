@@ -63,7 +63,7 @@ class EmpresasController extends Controller
         return redirect()->route('show.empresas.create')->with('success', 'Empresa creada correctamente.');
     }
 
-    private function crearCuentasActivos(Empresa $empresa) 
+    public static function crearCuentasActivos(Empresa $empresa) 
     {
         $activo = CuentasContables::create([
             'nombre_cuenta' => 'ACTIVO',

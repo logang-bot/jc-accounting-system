@@ -74,7 +74,7 @@ Route::middleware('auth')->controller(ComprobantesController::class)->group(func
         Route::get('/edit/{id}', 'edit')->name('show.comprobantes.edit');
 
         // Rutas de funcionalidades
-        Route::get('generate-comprobante-pdf', [PDFController::class, 'generatePDF']);
+        Route::get('/{id}/pdf', 'generatePDF')->name('comprobantes.pdf');
         Route::post('/', 'store')->name('comprobantes.store');
         Route::put('/{id}', 'update')->name('comprobantes.update');
         Route::delete('/delete/{id}', 'destroy')->name('comprobantes.destroy');

@@ -7,6 +7,8 @@ use App\Models\Comprobantes;
 use App\Models\CuentasContables;
 use App\Models\DetalleComprobantes;
 use App\Models\Empresa;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Barryvdh\DomPDF\PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +19,7 @@ class ComprobantesController extends Controller
 {
     public function home(Request $request)
     {
-         $empresaId = session('empresa_id');
+        $empresaId = session('empresa_id');
 
         $query = Comprobante::where('empresa_id', $empresaId);
 
@@ -232,5 +234,21 @@ class ComprobantesController extends Controller
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Error al eliminar el comprobante: ' . $e->getMessage()]);
         }
+    }
+
+    public function generatePDF($id) 
+    {
+        $data = [
+            'title' => 'Detalle Comprobante',
+            'date' => date('m/d/Y')
+        ];
+
+        $comprobante = Comprobante::with(['detalles.cuenta', 'user'])->findOrFail($id);
+        $empresaId = session('empresa_id');
+        $empresa = Empresa::findOrFail($empresaId);
+
+        $pdf = FacadePdf::loadView('comprobantePDF', compact('comprobante', 'empresa'));
+
+        return $pdf->download('comprobante-'. $comprobante->numero. '.pdf');
     }
 }

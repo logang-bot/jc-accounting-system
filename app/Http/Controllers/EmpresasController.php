@@ -111,24 +111,6 @@ class EmpresasController extends Controller
             'empresa_id' => $empresa->id,
         ]);
 
-        CuentasContables::create([
-            'nombre_cuenta' => 'BANCOS MONEDA NACIONAL',
-            'tipo_cuenta' => 'Activo',
-            'nivel' => 3,
-            'es_movimiento' => true,
-            'parent_id' => $activoCorriente->id_cuenta,
-            'empresa_id' => $empresa->id,
-        ]);
-
-        CuentasContables::create([
-            'nombre_cuenta' => 'BANCOS MONEDA EXTRANJERA',
-            'tipo_cuenta' => 'Activo',
-            'nivel' => 3,
-            'es_movimiento' => true,
-            'parent_id' => $activoCorriente->id_cuenta,
-            'empresa_id' => $empresa->id,
-        ]);
-
         $activoExigible = CuentasContables::create([
             'nombre_cuenta' => 'ACTIVO EXIGIBLE',
             'tipo_cuenta' => 'Activo',
@@ -165,7 +147,7 @@ class EmpresasController extends Controller
             'empresa_id' => $empresa->id,
         ]);
 
-        $inventarios = CuentasContables::create([
+        CuentasContables::create([
             'nombre_cuenta' => 'INVENTARIOS',
             'tipo_cuenta' => 'Activo',
             'nivel' => 4,
@@ -177,27 +159,45 @@ class EmpresasController extends Controller
         CuentasContables::create([
             'nombre_cuenta' => 'MERCADERÍAS',
             'tipo_cuenta' => 'Activo',
-            'nivel' => 5,
+            'nivel' => 4,
             'es_movimiento' => true,
-            'parent_id' => $inventarios->id_cuenta,
+            'parent_id' => $activoRealizable->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
         CuentasContables::create([
             'nombre_cuenta' => 'PRODUCTOS TERMINADOS',
             'tipo_cuenta' => 'Activo',
-            'nivel' => 5,
+            'nivel' => 4,
             'es_movimiento' => true,
-            'parent_id' => $inventarios->id_cuenta,
+            'parent_id' => $activoRealizable->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
         CuentasContables::create([
             'nombre_cuenta' => 'PRODUCTOS EN PROCESO',
             'tipo_cuenta' => 'Activo',
-            'nivel' => 5,
+            'nivel' => 4,
             'es_movimiento' => true,
-            'parent_id' => $inventarios->id_cuenta,
+            'parent_id' => $activoRealizable->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+        
+        CuentasContables::create([
+            'nombre_cuenta' => 'BANCOS MONEDA NACIONAL',
+            'tipo_cuenta' => 'Activo',
+            'nivel' => 4,
+            'es_movimiento' => true,
+            'parent_id' => $activoRealizable->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        CuentasContables::create([
+            'nombre_cuenta' => 'BANCOS MONEDA EXTRANJERA',
+            'tipo_cuenta' => 'Activo',
+            'nivel' => 4,
+            'es_movimiento' => true,
+            'parent_id' => $activoRealizable->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
@@ -976,7 +976,6 @@ class EmpresasController extends Controller
             ]);
         }
     }
-
 
     public static function generarCodigoRaiz($tipo)
     {

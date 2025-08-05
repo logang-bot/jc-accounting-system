@@ -117,10 +117,10 @@ class CuentasContables extends Model
         // Definimos los rangos de dígitos por nivel
         $rangos = [
             1 => [0, 1],     // 1er dígito
-            2 => [1, 1],     // 2do dígito
-            3 => [2, 2],     // dígitos 3-4
-            4 => [4, 2],     // dígitos 5-6
-            5 => [6, 4],     // dígitos 7-10
+            2 => [1, 2],     // digitos 2-3
+            3 => [3, 2],     // dígitos 4-5
+            4 => [5, 2],     // dígitos 6-7
+            5 => [7, 3],     // dígitos 8-10
         ];
 
         if (!isset($rangos[$nivelPadre]) || !isset($rangos[$nivelHijo])) {

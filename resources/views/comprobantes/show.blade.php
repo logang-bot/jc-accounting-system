@@ -5,7 +5,8 @@
         <div class="bg-white p-6 rounded-lg shadow">
             <div class="flex flex-row justify-between items-center mb-4">
                 <h2 class="text-2xl font-bold">Detalles del Comprobante</h2>
-                <a href="" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Imprimir</a>
+                <a href="{{ route('comprobantes.pdf', $comprobante->id) }}"
+                    class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Imprimir</a>
             </div>
             <div class="mb-6">
 

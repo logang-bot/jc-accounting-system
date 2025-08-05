@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmpresasController;
 use App\Http\Controllers\CuentaController;
 use App\Http\Controllers\ComprobantesController;
+use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -73,6 +74,7 @@ Route::middleware('auth')->controller(ComprobantesController::class)->group(func
         Route::get('/edit/{id}', 'edit')->name('show.comprobantes.edit');
 
         // Rutas de funcionalidades
+        Route::get('generate-comprobante-pdf', [PDFController::class, 'generatePDF']);
         Route::post('/', 'store')->name('comprobantes.store');
         Route::put('/{id}', 'update')->name('comprobantes.update');
         Route::delete('/delete/{id}', 'destroy')->name('comprobantes.destroy');

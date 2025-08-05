@@ -22,7 +22,7 @@
                             Reporte
                         </button>
                     </div>
-                    <div class="overflow-y-auto max-h-[560px] w-[90%]">
+                    <div class="overflow-y-auto max-h-[760px] w-[90%]">
                         <div class="hs-accordion-group border border-gray-300 divide-y divide-gray-300"
                             data-hs-accordion-always-open>
 
@@ -39,7 +39,7 @@
 
                             <!-- Content rows -->
                             @forelse ($cuentas as $cuenta)
-                                <div class="hs-accordion" id="cuenta-{{ $cuenta->id_cuenta }}"
+                                <div class="hs-accordion active" id="cuenta-{{ $cuenta->id_cuenta }}"
                                     data-row-id={{ $cuenta->id_cuenta }}>
                                     <div class="grid grid-cols-7 items-center text-sm cursor-pointer hover:bg-gray-100">
                                         <div class="font-mono px-4 py-3">{{ $cuenta->codigo_cuenta }}</div>
@@ -100,7 +100,7 @@
 
                                     @if ($cuenta->children->isNotEmpty())
                                         <div id="cuenta-accordion-{{ $cuenta->id_cuenta }}"
-                                            class="hs-accordion-content hidden pl-4 border-t border-gray-200"
+                                            class="hs-accordion-content pl-4 border-t border-gray-200"
                                             aria-labelledby="cuenta-{{ $cuenta->id_cuenta }}">
                                             <div class="hs-accordion-group" data-hs-accordion-always-open>
                                                 @foreach ($cuenta->children as $child)

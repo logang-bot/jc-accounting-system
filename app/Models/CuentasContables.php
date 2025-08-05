@@ -96,7 +96,6 @@ class CuentasContables extends Model
     // Generar código jerárquico
     public static function generarCodigoCuenta($cuenta)
     {
-        
         $prefijos = [
             'Activo' => '1',
             'Pasivo' => '2',

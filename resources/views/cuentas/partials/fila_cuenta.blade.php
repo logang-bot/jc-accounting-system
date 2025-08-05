@@ -1,4 +1,4 @@
-<div class="{{ $cuenta->children->isNotEmpty() ? 'hs-accordion' : '' }}" data-row-id={{ $cuenta->id_cuenta }}>
+<div class="{{ $cuenta->children->isNotEmpty() ? 'hs-accordion active' : '' }}" data-row-id={{ $cuenta->id_cuenta }}>
 
     <div class="grid grid-cols-7 items-center text-sm cursor-pointer hover:bg-gray-100 px-2 py-2 w-full"
         id="cuenta-{{ $cuenta->id_cuenta }}">
@@ -54,8 +54,7 @@
         </div>
     </div>
     @if ($cuenta->children->isNotEmpty())
-        <div id="cuenta-accordion-{{ $cuenta->id_cuenta }}"
-            class="hs-accordion-content hidden pl-4 border-t border-gray-200"
+        <div id="cuenta-accordion-{{ $cuenta->id_cuenta }}" class="hs-accordion-content pl-4 border-t border-gray-200"
             aria-labelledby="cuenta-{{ $cuenta->id_cuenta }}">
             <div class="hs-accordion-group" data-hs-accordion-always-open>
                 @foreach ($cuenta->children as $child)

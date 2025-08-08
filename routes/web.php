@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmpresasController;
 use App\Http\Controllers\CuentaController;
 use App\Http\Controllers\ComprobantesController;
+use App\Http\Controllers\LibroDiarioController;
 use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 
@@ -63,7 +64,7 @@ Route::middleware('auth')->controller(CuentaController::class)->group(function()
 
 Route::get('/cuentas/reporte', [CuentaController::class, 'reporte'])->name('cuentas.reporte');
 
-//Comprobantes////////////////////////////////////////////////
+// Comprobantes////////////////////////////////////////////////
 Route::middleware('auth')->controller(ComprobantesController::class)->group(function() {
     Route::prefix('/comprobantes')->group(function() {
         
@@ -79,5 +80,9 @@ Route::middleware('auth')->controller(ComprobantesController::class)->group(func
         Route::put('/{id}', 'update')->name('comprobantes.update');
         Route::delete('/delete/{id}', 'destroy')->name('comprobantes.destroy');
     });
+});
+
+Route::middleware('auth')->controller(ComprobantesController::class)->group(function() {
+    Route::get('libro-diario', [LibroDiarioController::class, 'index'])->name('libro-diario.index');
 });
 

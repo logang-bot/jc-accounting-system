@@ -1,4 +1,17 @@
 @extends('layouts.admin')
+@php
+    function getLevelClasses($nivel)
+    {
+        return match ($nivel) {
+            1 => 'font-extrabold text-gray-900 text-base',
+            2 => 'font-bold text-gray-800 text-sm',
+            3 => 'font-medium text-gray-700 text-sm',
+            4 => 'font-normal text-gray-600 text-xs',
+            5 => 'font-light text-gray-500 text-xs',
+            default => 'text-gray-500 text-xs',
+        };
+    }
+@endphp
 
 @section('content')
     <div class="bg-white h-screen">
@@ -39,35 +52,34 @@
 
                             <!-- Content rows -->
                             @forelse ($cuentas as $cuenta)
-                                <div class="hs-accordion active" id="cuenta-{{ $cuenta->id_cuenta }}"
-                                    data-row-id={{ $cuenta->id_cuenta }}>
-                                    <div class="grid grid-cols-7 items-center text-sm cursor-pointer hover:bg-gray-100">
-                                        <div class="font-mono px-4 py-3">{{ $cuenta->codigo_cuenta }}</div>
-                                        <div>
-                                            {{ str_repeat('— ', min($cuenta->nivel - 1, 4)) . $cuenta->nombre_cuenta }}
+                                <div class="hs-accordion active {{ getLevelClasses($cuenta->nivel) }}"
+                                    id="cuenta-{{ $cuenta->id_cuenta }}" data-row-id={{ $cuenta->id_cuenta }}>
+                                    <div class="grid grid-cols-7 items-center cursor-pointer hover:bg-gray-100">
+                                        <div class="font-mono px-4 py-4">{{ $cuenta->codigo_cuenta }}</div>
+                                        <div class="px-4">
+                                            {{ $cuenta->nombre_cuenta }}
                                         </div>
-                                        <div>{{ $cuenta->tipo_cuenta }}</div>
-                                        <div>Nivel {{ $cuenta->nivel }}</div>
-                                        <div>
+                                        <div class="px-4">{{ $cuenta->tipo_cuenta }}</div>
+                                        <div class="px-4">Nivel {{ $cuenta->nivel }}</div>
+                                        <div class="px-4">
                                             @if ($cuenta->es_movimiento)
                                                 <span
-                                                    class="inline-block bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded">Sí</span>
+                                                    class="inline-block bg-green-600 text-white px-2 py-1 rounded">Sí</span>
                                             @else
                                                 <span
-                                                    class="inline-block bg-gray-500 text-white text-xs font-semibold px-2 py-1 rounded">No</span>
+                                                    class="inline-block bg-gray-500 text-white px-2 py-1 rounded">No</span>
                                             @endif
                                         </div>
-                                        <div>
+                                        <div class="px-4">
                                             @if ($cuenta->es_movimiento && in_array($cuenta->nivel, [4, 5]))
-                                                <span
-                                                    class="text-xs font-medium px-2 py-1 rounded bg-blue-100 text-blue-700">
+                                                <span class="px-2 py-1 rounded bg-blue-100 text-blue-700">
                                                     {{ $cuenta->moneda_principal }}
                                                 </span>
                                             @else
-                                                <span class="text-xs text-gray-400">—</span>
+                                                <span class="text-gray-400">—</span>
                                             @endif
                                         </div>
-                                        <div class="flex gap-2">
+                                        <div class="flex gap-2 px-4">
                                             @if ($cuenta->children->isNotEmpty())
                                                 <button type="button"
                                                     class="hover:bg-blue-700 px-3 py-1 rounded hs-accordion-toggle cursor-pointer flex flex-row gap-1 text-blue-500 items-center hover:text-white"
@@ -100,7 +112,7 @@
 
                                     @if ($cuenta->children->isNotEmpty())
                                         <div id="cuenta-accordion-{{ $cuenta->id_cuenta }}"
-                                            class="hs-accordion-content pl-4 border-t border-gray-200"
+                                            class="hs-accordion-content border-t border-gray-200"
                                             aria-labelledby="cuenta-{{ $cuenta->id_cuenta }}">
                                             <div class="hs-accordion-group" data-hs-accordion-always-open>
                                                 @foreach ($cuenta->children as $child)

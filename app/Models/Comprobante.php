@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comprobante extends Model
 {
-    protected $fillable = ['numero', 'fecha', 'tipo', 'descripcion', 'total', 'tasa_cambio', 'user_id'];
+    protected $fillable = ['numero', 'fecha', 'tipo', 'descripcion', 'destinatario',
+    'lugar', 'total', 'tasa_cambio', 'user_id'];
 
     public function detalles()
     {

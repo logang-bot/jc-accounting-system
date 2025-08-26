@@ -5,10 +5,8 @@ namespace Database\Seeders;
 use App\Models\Comprobante;
 use App\Models\ComprobanteDetalles;
 use App\Models\CuentasContables;
-use App\Models\DetalleComprobante;
 use App\Models\Empresa;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ComprobantesSeeder extends Seeder
@@ -39,6 +37,8 @@ class ComprobantesSeeder extends Seeder
                 'numero' => 'COMP-' . now()->format('Y') . '-' . str_pad($i, 4, '0', STR_PAD_LEFT),
                 'fecha' => $fecha,
                 'tipo' => fake()->randomElement(['ingreso', 'egreso', 'traspaso']),
+                'destinatario' => fake()->name(),
+                'lugar' => fake()->city(),
                 'descripcion' => fake()->sentence(),
                 'total' => 0,
                 'user_id' => $user->id,
@@ -97,6 +97,8 @@ class ComprobantesSeeder extends Seeder
             $comprobante = Comprobante::create([
                 'empresa_id' => $empresa->id, // ✅ relación con empresa
                 'numero' => 'COMP-' . now()->format('Y') . '-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                'destinatario' => fake()->name(),
+                'lugar' => fake()->city(),
                 'fecha' => $fecha,
                 'tipo' => fake()->randomElement(['ingreso', 'egreso', 'traspaso']),
                 'descripcion' => fake()->sentence(),

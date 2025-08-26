@@ -3,12 +3,12 @@
     function getLevelClasses($nivel)
     {
         return match ($nivel) {
-            1 => 'font-extrabold text-gray-900 text-base',
+            1 => 'font-bold text-gray-900 text-xl',
             2 => 'font-bold text-gray-800 text-sm',
             3 => 'font-medium text-gray-700 text-sm',
-            4 => 'font-normal text-gray-600 text-xs',
-            5 => 'font-light text-gray-500 text-xs',
-            default => 'text-gray-500 text-xs',
+            4 => 'font-normal text-gray-600 text-sm',
+            5 => 'font-light text-gray-500 text-sm',
+            default => 'text-gray-500 text-sm',
         };
     }
 @endphp

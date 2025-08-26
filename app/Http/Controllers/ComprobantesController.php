@@ -7,13 +7,13 @@ use App\Models\Comprobantes;
 use App\Models\CuentasContables;
 use App\Models\DetalleComprobantes;
 use App\Models\Empresa;
-use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
-use Barryvdh\DomPDF\PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+
+use function Spatie\LaravelPdf\Support\pdf;
 
 class ComprobantesController extends Controller
 {
@@ -91,6 +91,8 @@ class ComprobantesController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'destinatario' => 'required|string|max:255',
+            'lugar' => 'required|string|max:255',
             'fecha' => 'required|date',
             'tipo' => 'required|in:ingreso,egreso,traspaso,ajuste',
             'descripcion' => 'nullable|string',
@@ -159,6 +161,8 @@ class ComprobantesController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'numero' => ['required', 'string', 'max:255', Rule::unique('comprobantes')->ignore($id)],
+            'destinatario' => 'required|string|max:255',
+            'lugar' => 'required|string|max:255',
             'fecha' => 'required|date',
             'tipo' => 'required|string|in:ingreso,egreso,traspaso,ajuste',
             'descripcion' => 'nullable|string',
@@ -247,8 +251,9 @@ class ComprobantesController extends Controller
         $empresaId = session('empresa_id');
         $empresa = Empresa::findOrFail($empresaId);
 
-        $pdf = FacadePdf::loadView('comprobantePDF', compact('comprobante', 'empresa'));
+        // $pdf = FacadePdf::loadView('comprobantePDF', compact('comprobante', 'empresa'));
+        $pdf = pdf()->view('comprobantePDF', compact('comprobante', 'empresa'));
 
-        return $pdf->download('comprobante-'. $comprobante->numero. '.pdf');
+        return $pdf->name('comprobante-'. $comprobante->numero. '.pdf');
     }
 }

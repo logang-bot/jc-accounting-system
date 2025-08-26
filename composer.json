@@ -10,12 +10,12 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "barryvdh/laravel-dompdf": "^3.1",
         "blade-ui-kit/blade-icons": "^1.8",
         "codeat3/blade-carbon-icons": "^2.34",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "laravolt/avatar": "^6.2"
+        "laravolt/avatar": "^6.2",
+        "spatie/laravel-pdf": "^1.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

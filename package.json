@@ -20,6 +20,7 @@
         "@tailwindcss/postcss": "^4.1.6",
         "autoprefixer": "^10.4.21",
         "preline": "^3.0.1",
+        "puppeteer": "^24.17.0",
         "vanilla-calendar-pro": "^3.0.4"
     }
 }

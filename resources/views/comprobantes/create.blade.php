@@ -41,6 +41,17 @@
                     </div>
                 @endif
                 <div>
+                    <label for="destinatario" class="block text-sm font-medium text-gray-700 mb-1">Destinatario</label>
+                    <input type="text" name="destinatario" id="destinatario" class="w-full border rounded px-3 py-2"
+                        value="{{ old('destinatario', $comprobante->destinatario ?? '') }}" required>
+                </div>
+
+                <div>
+                    <label for="lugar" class="block text-sm font-medium text-gray-700 mb-1">Lugar</label>
+                    <input type="text" name="lugar" id="lugar" class="w-full border rounded px-3 py-2"
+                        value="{{ old('lugar', $comprobante->lugar ?? '') }}" required>
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
                     <input type="date" name="fecha" class="w-full border rounded px-3 py-2"
                         value="{{ old('fecha', $editMode ? $comprobante->fecha : '') }}" required>

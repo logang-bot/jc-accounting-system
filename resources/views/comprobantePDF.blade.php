@@ -1,3 +1,13 @@
+@php
+    $f = new NumberFormatter('spa', NumberFormatter::SPELLOUT);
+    $text_debe_bs_debe = $f->format(number_format($comprobante->detalles->sum('debe'), 2));
+    $text_debe_bs_haber = $f->format(number_format($comprobante->detalles->sum('haber'), 2));
+    $text_debe_sus_debe = $f->format(number_format($comprobante->detalles->sum('debe') * $comprobante->tasa_cambio, 2));
+    $text_debe_sus_haber = $f->format(
+        number_format($comprobante->detalles->sum('haber') * $comprobante->tasa_cambio, 2),
+    );
+@endphp
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -59,6 +69,7 @@
 
         .tc .value {
             padding: 5px;
+            text-align: center
         }
 
         .comprobante-main-info .top-info .fecha .fecha-detalles-container {
@@ -77,6 +88,7 @@
             width: 100%;
             margin-bottom: 10px;
             border: 1px solid black;
+            border-radius: 10px;
         }
 
         .empresa-info td,
@@ -88,18 +100,52 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
+            border-radius: 10px;
         }
 
         .detalles-table th,
         .detalles-table td {
             border: 1px solid #000;
             padding: 5px;
+            text-align: center;
+        }
+
+        .detalles-table .nombre_cuenta {
             text-align: left;
         }
 
         .totales {
+            border: 1px solid #000;
             margin-top: 10px;
-            text-align: right;
+            padding: 1em;
+            border-radius: 10px;
+        }
+
+        .signatures * {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .signatures {
+            display: flex;
+            border: 1px solid black;
+            justify-content: space-around;
+        }
+
+        .signatures div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .signatures p {
+            text-align: center;
+            padding: 1em;
+        }
+
+        .signatures section {
+            height: 7em;
         }
     </style>
 </head>
@@ -108,7 +154,7 @@
 
     <section class="header">
         <div class="comprobante-location-info">
-            <p>{{ $comprobante->empresa->nombre }}</p>
+            <p>{{ $comprobante->empresa->name }}</p>
             <p>{{ $comprobante->empresa->provincia }}</p>
         </div>
         <h2 class="comprobante-title">COMPROBANTE DE {{ $comprobante->tipo }}</h2>
@@ -152,7 +198,7 @@
         </tr>
         <tr>
             <td><strong>PAGADO A:</strong></td>
-            <td></td>
+            <td>{{ $comprobante->destinatario }}</td>
         </tr>
         <tr>
             <td><strong>CONCEPTO</strong></td>
@@ -165,7 +211,7 @@
         <thead>
             <tr>
                 <th rowspan="2">Código</th>
-                <th rowspan="2">Nombre cuenta</th>
+                <th rowspan="2">Nombre cuenta y Referencia</th>
                 <th colspan="2">Bolivianos</th>
                 <th colspan="2">Dolares</th>
             </tr>
@@ -180,7 +226,10 @@
             @foreach ($comprobante->detalles as $detalle)
                 <tr>
                     <td>{{ $detalle->cuenta->codigo_cuenta }}</td>
-                    <td>{{ $detalle->cuenta->nombre_cuenta }}</td>
+                    <td class="nombre_cuenta">
+                        <p>{{ $detalle->cuenta->nombre_cuenta }}</p>
+                        <p>REF. --> {{ $detalle->descripcion }}</p>
+                    </td>
                     <td style="text-align: right">
                         {{ number_format($detalle->debe, 2) }}
                     </td>
@@ -195,22 +244,49 @@
                     </td>
                 </tr>
             @endforeach
+            <tr>
+                <td colspan="2">TOTALES</td>
+                <td>{{ number_format($comprobante->detalles->sum('debe'), 2) }}</td>
+                <td>{{ number_format($comprobante->detalles->sum('haber'), 2) }}</td>
+                <td>
+                    {{ number_format($comprobante->detalles->sum('debe') * $comprobante->tasa_cambio, 2) }}
+                </td>
+                <td>
+                    {{ number_format($comprobante->detalles->sum('haber') * $comprobante->tasa_cambio, 2) }}
+                </td>
+            </tr>
         </tbody>
     </table>
 
     <div class="totales">
-        <p><strong>Total Debe:</strong> {{ number_format($comprobante->detalles->sum('debe'), 2) }}</p>
-        <p><strong>Total Haber:</strong> {{ number_format($comprobante->detalles->sum('haber'), 2) }}</p>
+        <p>
+            <strong>SON:</strong> {{ $text_debe_bs_debe }} Bolivianos
+        </p>
+        <p>
+            <strong>SON:</strong> {{ $text_debe_sus_debe }} Dolares Americanos
+        </p>
     </div>
 
-    <br><br><br>
-    <table style="width: 100%; margin-top: 40px;">
-        <tr>
-            <td style="text-align: center;">_______________________<br>Elaborado por</td>
-            <td style="text-align: center;">_______________________<br>Revisado por</td>
-            <td style="text-align: center;">_______________________<br>Aprobado por</td>
-        </tr>
-    </table>
+    <br />
+    <div class="signatures">
+        <div>
+            <section></section>
+            <hr />
+            <p>Preparado por</p>
+        </div>
+        <hr />
+        <div>
+            <section></section>
+            <hr />
+            <p>Revisado por</p>
+        </div>
+        <hr />
+        <div>
+            <section></section>
+            <hr />
+            <p>Recibi conforme</p>
+        </div>
+    </div>
 
 </body>
 

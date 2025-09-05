@@ -63,6 +63,7 @@
                             <th class="px-4 py-2 text-left font-semibold">Cuenta</th>
                             <th class="px-4 py-2 text-right font-semibold">Debe</th>
                             <th class="px-4 py-2 text-right font-semibold">Haber</th>
+                            <th class="px-4 py-2 text-right font-semibold">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -72,6 +73,11 @@
                                 <td class="px-4 py-2">{{ $comp->numero }}</td>
                                 <td class="px-4 py-2 capitalize">{{ $comp->tipo }}</td>
                                 <td class="px-4 py-2" colspan="4">{{ $comp->descripcion }}</td>
+                                <td class="px-4 py-2" colspan="4">
+
+                                    <a href="{{ route('libro-diario.pdf', $comp->id) }}"
+                                        class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Imprimir</a>
+                                </td>
                             </tr>
                             @foreach ($comp->detalles as $det)
                                 <tr class="border-b">
@@ -97,10 +103,5 @@
                 </table>
             @endif
         </div>
-
-        {{-- <div class="mt-4">
-            {{ $comprobantes->links() }}
-        </div> --}}
-
     </div>
 @endsection

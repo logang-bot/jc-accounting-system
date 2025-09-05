@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comprobante;
+use App\Models\Empresa;
 use Illuminate\Http\Request;
+
+use function Spatie\LaravelPdf\Support\pdf;
 
 class LibroDiarioController extends Controller
 {
@@ -43,5 +46,22 @@ class LibroDiarioController extends Controller
         }
 
         return view('libroDiario.index', compact('comprobantes', 'totales', 'hayFiltros'));
+    }
+
+    
+    public function generatePDF($id) 
+    {
+        $data = [
+            'title' => 'Detalle Comprobante',
+            'date' => date('m/d/Y')
+        ];
+
+        $comprobante = Comprobante::with(['detalles.cuenta', 'user'])->findOrFail($id);
+        $empresaId = session('empresa_id');
+        $empresa = Empresa::findOrFail($empresaId);
+
+        $pdf = pdf()->view('libroDiarioComprobantePDF', compact('comprobante', 'empresa'));
+
+        return $pdf->name('comprobante-'. $comprobante->numero. '.pdf');
     }
 }

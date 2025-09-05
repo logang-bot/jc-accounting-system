@@ -67,6 +67,7 @@ class CuentasContables extends Model
         parent::boot();
 
         static::creating(function ($cuenta) {
+            
             if (!$cuenta->codigo_cuenta) {
                 $cuenta->codigo_cuenta = self::generarCodigoCuenta($cuenta);
             }
@@ -113,6 +114,7 @@ class CuentasContables extends Model
         $codigoPadre = $parent->codigo_cuenta;
         $nivelPadre = self::calcularNivel($codigoPadre);
         $nivelHijo = $nivelPadre + 1;
+        
 
         // Definimos los rangos de dígitos por nivel
         $rangos = [
@@ -139,6 +141,10 @@ class CuentasContables extends Model
             ->first();
 
         $nuevoSegmento = $nivelHijo === 5 ? '0001' : '01';
+        $nuevoSegmento = $nivelHijo === 2 ? '1' : '01';
+
+        if ($nivelHijo == 5)
+            error_log("nivel cinco");
 
         if ($hijoMasAlto) {
             $inicioSegmento = $rangos[$nivelHijo][0];
@@ -155,9 +161,6 @@ class CuentasContables extends Model
         $codigoFinal = str_pad($codigoBase, 10, '0', STR_PAD_RIGHT);
 
         return substr($codigoFinal, 0, 10);
-
-        // Asegurar que tenga 10 dígitos rellenando con ceros
-        return str_pad($nuevoCodigo, 10, '0', STR_PAD_RIGHT);
     }
 
     // Calcular nivel a partir del código

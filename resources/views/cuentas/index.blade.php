@@ -3,7 +3,7 @@
     function getLevelClasses($nivel)
     {
         return match ($nivel) {
-            1 => 'font-bold text-gray-900 text-xl',
+            1 => 'font-bold text-gray-900 text-sm',
             2 => 'font-bold text-gray-800 text-sm',
             3 => 'font-medium text-gray-700 text-sm',
             4 => 'font-normal text-gray-600 text-sm',

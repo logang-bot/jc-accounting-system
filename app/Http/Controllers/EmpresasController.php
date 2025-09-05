@@ -93,8 +93,8 @@ class EmpresasController extends Controller
             'empresa_id' => $empresa->id,
         ]);
 
-        CuentasContables::create([
-            'nombre_cuenta' => 'CAJA MONEDA NACIONAL',
+        $caja = CuentasContables::create([
+            'nombre_cuenta' => 'CAJA',
             'tipo_cuenta' => 'Activo',
             'nivel' => 4,
             'es_movimiento' => true,
@@ -103,11 +103,51 @@ class EmpresasController extends Controller
         ]);
 
         CuentasContables::create([
+            'nombre_cuenta' => 'CAJA MONEDA NACIONAL',
+            'tipo_cuenta' => 'Activo',
+            'nivel' => 5,
+            'moneda_principal' => "BOB",
+            'es_movimiento' => true,
+            'parent_id' => $caja->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        CuentasContables::create([
             'nombre_cuenta' => 'CAJA MONEDA EXTRANJERA',
+            'tipo_cuenta' => 'Activo',
+            'nivel' => 5,
+            'moneda_principal' => "USD",
+            'es_movimiento' => true,
+            'parent_id' => $caja->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        $bancos = CuentasContables::create([
+            'nombre_cuenta' => 'BANCOS',
             'tipo_cuenta' => 'Activo',
             'nivel' => 4,
             'es_movimiento' => true,
             'parent_id' => $disponibilidades->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        CuentasContables::create([
+            'nombre_cuenta' => 'BANCO MONEDA NACIONAL',
+            'tipo_cuenta' => 'Activo',
+            'nivel' => 5,
+            'moneda_principal' => "BOB",
+            'es_movimiento' => true,
+            'parent_id' => $bancos->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        CuentasContables::create([
+            'nombre_cuenta' => 'BANCO MONEDA EXTRANJERA',
+            'tipo_cuenta' => 'Activo',
+            'nivel' => 5,
+            'moneda_principal' => "USD",
+            'es_movimiento' => true,
+            'parent_id' => $bancos->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
@@ -120,7 +160,7 @@ class EmpresasController extends Controller
             'empresa_id' => $empresa->id,
         ]);
 
-        CuentasContables::create([
+        $cuentasPorCobrar = CuentasContables::create([
             'nombre_cuenta' => 'CUENTAS POR COBRAR',
             'tipo_cuenta' => 'Activo',
             'nivel' => 4,
@@ -130,11 +170,51 @@ class EmpresasController extends Controller
         ]);
 
         CuentasContables::create([
+            'nombre_cuenta' => 'CUENTAS POR COBRAR M/N',
+            'tipo_cuenta' => 'Activo',
+            'nivel' => 5,
+            'moneda_principal' => "BOB",
+            'es_movimiento' => true,
+            'parent_id' => $cuentasPorCobrar->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        CuentasContables::create([
+            'nombre_cuenta' => 'CUENTAS POR COBRAR M/E',
+            'tipo_cuenta' => 'Activo',
+            'nivel' => 5,
+            'moneda_principal' => "USD",
+            'es_movimiento' => true,
+            'parent_id' => $cuentasPorCobrar->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        $documentosPorCobrar = CuentasContables::create([
             'nombre_cuenta' => 'DOCUMENTOS POR COBRAR',
             'tipo_cuenta' => 'Activo',
             'nivel' => 4,
             'es_movimiento' => true,
             'parent_id' => $activoExigible->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        CuentasContables::create([
+            'nombre_cuenta' => 'DOCUMENTOS POR COBRAR M/N',
+            'tipo_cuenta' => 'Activo',
+            'nivel' => 5,
+            'moneda_principal' => "BOB",
+            'es_movimiento' => true,
+            'parent_id' => $documentosPorCobrar->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        CuentasContables::create([
+            'nombre_cuenta' => 'DOCUMENTOS POR COBRAR M/E',
+            'tipo_cuenta' => 'Activo',
+            'nivel' => 5,
+            'moneda_principal' => "USD",
+            'es_movimiento' => true,
+            'parent_id' => $documentosPorCobrar->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
@@ -147,7 +227,7 @@ class EmpresasController extends Controller
             'empresa_id' => $empresa->id,
         ]);
 
-        CuentasContables::create([
+        $inventarios = CuentasContables::create([
             'nombre_cuenta' => 'INVENTARIOS',
             'tipo_cuenta' => 'Activo',
             'nivel' => 4,
@@ -159,48 +239,33 @@ class EmpresasController extends Controller
         CuentasContables::create([
             'nombre_cuenta' => 'MERCADERÍAS',
             'tipo_cuenta' => 'Activo',
-            'nivel' => 4,
+            'nivel' => 5,
+            'moneda_principal' => "BOB",
             'es_movimiento' => true,
-            'parent_id' => $activoRealizable->id_cuenta,
+            'parent_id' => $inventarios->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
         CuentasContables::create([
             'nombre_cuenta' => 'PRODUCTOS TERMINADOS',
             'tipo_cuenta' => 'Activo',
-            'nivel' => 4,
+            'nivel' => 5,
+            'moneda_principal' => "BOB",
             'es_movimiento' => true,
-            'parent_id' => $activoRealizable->id_cuenta,
+            'parent_id' => $inventarios->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
         CuentasContables::create([
             'nombre_cuenta' => 'PRODUCTOS EN PROCESO',
             'tipo_cuenta' => 'Activo',
-            'nivel' => 4,
+            'nivel' => 5,
+            'moneda_principal' => "BOB",
             'es_movimiento' => true,
-            'parent_id' => $activoRealizable->id_cuenta,
+            'parent_id' => $inventarios->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
         
-        CuentasContables::create([
-            'nombre_cuenta' => 'BANCOS MONEDA NACIONAL',
-            'tipo_cuenta' => 'Activo',
-            'nivel' => 4,
-            'es_movimiento' => true,
-            'parent_id' => $activoRealizable->id_cuenta,
-            'empresa_id' => $empresa->id,
-        ]);
-
-        CuentasContables::create([
-            'nombre_cuenta' => 'BANCOS MONEDA EXTRANJERA',
-            'tipo_cuenta' => 'Activo',
-            'nivel' => 4,
-            'es_movimiento' => true,
-            'parent_id' => $activoRealizable->id_cuenta,
-            'empresa_id' => $empresa->id,
-        ]);
-
         // -------------------- ACTIVO NO CORRIENTE --------------------
 
         $activoNoCorriente = CuentasContables::create([
@@ -265,6 +330,7 @@ class EmpresasController extends Controller
                 'tipo_cuenta' => 'Activo',
                 'nivel' => 4,
                 'es_movimiento' => true,
+                'moneda_principal' => "BOB",
                 'parent_id' => $activoFijo->id_cuenta,
                 'empresa_id' => $empresa->id,
             ]);
@@ -295,6 +361,7 @@ class EmpresasController extends Controller
                 'tipo_cuenta' => 'Activo',
                 'nivel' => 4,
                 'es_movimiento' => true,
+                'moneda_principal' => "BOB",
                 'parent_id' => $depreciacion->id_cuenta,
                 'empresa_id' => $empresa->id,
             ]);
@@ -314,10 +381,10 @@ class EmpresasController extends Controller
             'tipo_cuenta' => 'Activo',
             'nivel' => 4,
             'es_movimiento' => true,
+            'moneda_principal' => "BOB",
             'parent_id' => $activoDiferido->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-
     }
 
     private function crearCuentasPasivos(Empresa $empresa)
@@ -350,42 +417,207 @@ class EmpresasController extends Controller
             'empresa_id' => $empresa->id,
         ]);
 
-        $cuentasExigibles = [
-            'CUENTAS POR PAGAR M/N',
-            'CUENTAS POR PAGAR M/E',
-            'DOCUMENTOS POR COBRAR M/N',
-            'DOCUMENTOS POR COBRAR M/E',
-            'CUENTAS POR PAGAR AL PERSONAL M/N',
+        $cuentasPorPagar = CuentasContables::create([
+            'nombre_cuenta' => 'CUENTAS POR PAGAR',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $pasivoExigible->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+        
+        CuentasContables::create([
+            'nombre_cuenta' => 'CUENTAS POR PAGAR M/N',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 5,
+            'moneda_principal' => "BOB",
+            'es_movimiento' => false,
+            'parent_id' => $cuentasPorPagar->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+        
+        CuentasContables::create([
+            'nombre_cuenta' => 'CUENTAS POR PAGAR M/E',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 5,
+            'moneda_principal' => "USD",
+            'es_movimiento' => false,
+            'parent_id' => $cuentasPorPagar->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        $documentosPorPagar = CuentasContables::create([
+            'nombre_cuenta' => 'DOCUMENTOS POR PAGAR',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $pasivoExigible->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+        
+        CuentasContables::create([
+            'nombre_cuenta' => 'DOCUMENTOS POR COBRAR M/N',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 5,
+            'es_movimiento' => false,
+            'moneda_principal' => "BOB",
+            'parent_id' => $documentosPorPagar->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+        
+        CuentasContables::create([
+            'nombre_cuenta' => 'DOCUMENTOS POR COBRAR M/E',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 5,
+            'es_movimiento' => false,
+            'moneda_principal' => "USD",
+            'parent_id' => $documentosPorPagar->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        $cuentasPorPagarAlPersonal = CuentasContables::create([
+            'nombre_cuenta' => 'CUENTAS POR PAGAR AL PERSONAL',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $pasivoExigible->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        CuentasContables::create([
+            'nombre_cuenta' => 'CUENTAS POR PAGAR AL PERSONAL M/N',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 5,
+            'es_movimiento' => false,
+            'moneda_principal' => "BOB",
+            'parent_id' => $cuentasPorPagarAlPersonal->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+        
+        $obligacionesLaborales = CuentasContables::create([
+            'nombre_cuenta' => 'OBLIGACIONES LABORALES',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $pasivoExigible->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        $cuentasObligacionesLaborales = [
             'HONORARIOS PROFESIONALES POR PAGAR',
             'SUELDOS POR PAGAR',
             'AGUINALDOS POR PAGAR',
             'BENEFICIOS SOCIALES POR PAGAR',
+        ];
+
+        foreach ($cuentasObligacionesLaborales as $nombreCuenta) {
+            CuentasContables::create([
+                'nombre_cuenta' => $nombreCuenta,
+                'tipo_cuenta' => 'Pasivo',
+                'nivel' => 5,
+                'es_movimiento' => true,
+                'moneda_principal' => "BOB",
+                'parent_id' => $obligacionesLaborales->id_cuenta,
+                'empresa_id' => $empresa->id,
+            ]);
+        }
+        
+        $proveedoresPorPagar = CuentasContables::create([
+            'nombre_cuenta' => 'PROVEEDORES POR PAGAR',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $pasivoExigible->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        $cuentasproveedoresPorPagar = [
             'PROVEEDORES LOCALES POR PAGAR M/N',
             'PROVEEDORES LOCALES POR PAGAR M/E',
             'PROVEEDORES INTERIOR POR PAGAR M/N',
             'PROVEEDORES INTERIOR POR PAGAR M/E',
             'PROVEEDORES EXTERIOR POR PAGAR M/E',
+        ];
+
+        foreach ($cuentasproveedoresPorPagar as $nombreCuenta) {
+            CuentasContables::create([
+                'nombre_cuenta' => $nombreCuenta,
+                'tipo_cuenta' => 'Pasivo',
+                'nivel' => 5,
+                'es_movimiento' => true,
+                'moneda_principal' => "BOB",
+                'parent_id' => $proveedoresPorPagar->id_cuenta,
+                'empresa_id' => $empresa->id,
+            ]);
+        }
+
+        $impuestosYRetencionesPorPagar = CuentasContables::create([
+            'nombre_cuenta' => 'IMPUESTOS Y RETENCIONES POR PAGAR',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 3,
+            'es_movimiento' => false,
+            'parent_id' => $pasivoCorriente->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+        
+        $impuestosDirectos = CuentasContables::create([
+            'nombre_cuenta' => 'IMPUESTOS DIRECTOS',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $impuestosYRetencionesPorPagar->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        $cuentasimpuestosDirectos = [
             'I.U.E. POR PAGAR',
             'I.V.A. - DÉBITO FISCAL',
             'I.T. - TRANSACCIONES POR PAGAR',
             'R.C. - I.V.A. RÉGIMEN COMPLEMENTARIO IVA',
             'I.C.E. - CONSUMO ESPECÍFICO FIJO POR PAGAR',
             'I.C.E. - CONSUMO ESPECÍFICO VARIABLE POR PAGAR',
-            'IMPUESTOS Y RETENCIONES POR PAGAR',
-            'LIQUIDACIÓN DE IMPUESTOS',
-            'PATENTES MUNICIPALES',
         ];
 
-        foreach ($cuentasExigibles as $nombreCuenta) {
+        foreach ($cuentasimpuestosDirectos as $nombreCuenta) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombreCuenta,
                 'tipo_cuenta' => 'Pasivo',
-                'nivel' => 4,
+                'nivel' => 5,
                 'es_movimiento' => true,
-                'parent_id' => $pasivoExigible->id_cuenta,
+                'moneda_principal' => "BOB",
+                'parent_id' => $impuestosDirectos->id_cuenta,
                 'empresa_id' => $empresa->id,
             ]);
         }
+
+        $impuestosMunicipales = CuentasContables::create([
+            'nombre_cuenta' => 'IMPUESTOS MUNICIPALES',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $impuestosYRetencionesPorPagar->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        CuentasContables::create([
+            'nombre_cuenta' => 'LIQUIDACIÓN DE IMPUESTOS',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 5,
+            'es_movimiento' => false,
+            'moneda_principal' => "BOB",
+            'parent_id' => $impuestosMunicipales->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        CuentasContables::create([
+            'nombre_cuenta' => 'PATENTES MUNICIPALES',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 5,
+            'es_movimiento' => false,
+            'moneda_principal' => "BOB",
+            'parent_id' => $impuestosMunicipales->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
 
         // -------------------- PASIVO NO CORRIENTE --------------------
         $pasivoNoCorriente = CuentasContables::create([
@@ -406,12 +638,32 @@ class EmpresasController extends Controller
             'empresa_id' => $empresa->id,
         ]);
 
-        CuentasContables::create([
+        $prestamosBancarios = CuentasContables::create([
             'nombre_cuenta' => 'PRÉSTAMOS BANCARIOS',
             'tipo_cuenta' => 'Pasivo',
             'nivel' => 4,
             'es_movimiento' => true,
             'parent_id' => $deudasLargoPlazo->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        CuentasContables::create([
+            'nombre_cuenta' => 'PRÉSTAMOS BANCARIOS M/N',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 5,
+            'es_movimiento' => true,
+            'moneda_principal' => "BOB",
+            'parent_id' => $prestamosBancarios->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        CuentasContables::create([
+            'nombre_cuenta' => 'PRÉSTAMOS BANCARIOS M/E',
+            'tipo_cuenta' => 'Pasivo',
+            'nivel' => 5,
+            'es_movimiento' => true,
+            'moneda_principal' => "USD",
+            'parent_id' => $prestamosBancarios->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
     }
@@ -451,6 +703,7 @@ class EmpresasController extends Controller
             'tipo_cuenta' => 'Patrimonio',
             'nivel' => 4,
             'es_movimiento' => true,
+            'moneda_principal' => "BOB",
             'parent_id' => $capitalPagado->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
@@ -460,6 +713,7 @@ class EmpresasController extends Controller
             'tipo_cuenta' => 'Patrimonio',
             'nivel' => 4,
             'es_movimiento' => true,
+            'moneda_principal' => "BOB",
             'parent_id' => $capitalPagado->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
@@ -467,45 +721,65 @@ class EmpresasController extends Controller
         $reservas = CuentasContables::create([
             'nombre_cuenta' => 'RESERVAS',
             'tipo_cuenta' => 'Patrimonio',
+            'nivel' => 2,
+            'es_movimiento' => false,
+            'parent_id' => $patrimonio->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+        
+        $reservasContables = CuentasContables::create([
+            'nombre_cuenta' => 'RESERVAS',
+            'tipo_cuenta' => 'Patrimonio',
             'nivel' => 3,
             'es_movimiento' => false,
-            'parent_id' => $capitalSocial->id_cuenta,
+            'parent_id' => $reservas->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
-        $reservasHijas = [
+        $cuentasReservasContables = [
             'RESERVA LEGAL',
             'RESERVA ESTATUTARIA',
             'RESERVA OCASIONAL',
             'RESERVA POR REVALUACIÓN',
         ];
 
-        foreach ($reservasHijas as $nombre) {
+        foreach ($cuentasReservasContables as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
                 'tipo_cuenta' => 'Patrimonio',
                 'nivel' => 4,
                 'es_movimiento' => true,
-                'parent_id' => $reservas->id_cuenta,
+                'moneda_principal' => "BOB",
+                'parent_id' => $reservasContables->id_cuenta,
                 'empresa_id' => $empresa->id,
             ]);
         }
 
-        $resultados = CuentasContables::create([
+        $resultadosAcumulados = CuentasContables::create([
             'nombre_cuenta' => 'RESULTADOS ACUMULADOS',
             'tipo_cuenta' => 'Patrimonio',
-            'nivel' => 3,
+            'nivel' => 2,
             'es_movimiento' => false,
-            'parent_id' => $capitalSocial->id_cuenta,
+            'parent_id' => $patrimonio->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
+        $resultadosDeEjerciciosAnterios = CuentasContables::create([
+            'nombre_cuenta' => 'RESULTADOS DE EJERCICIOS ANTERIORES',
+            'tipo_cuenta' => 'Patrimonio',
+            'nivel' => 3,
+            'es_movimiento' => true,
+            'parent_id' => $resultadosAcumulados->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+        
         CuentasContables::create([
             'nombre_cuenta' => 'RESULTADOS DE EJERCICIOS ANTERIORES',
             'tipo_cuenta' => 'Patrimonio',
             'nivel' => 4,
             'es_movimiento' => true,
-            'parent_id' => $resultados->id_cuenta,
+            'moneda_principal' => "BOB",
+            'parent_id' => $resultadosDeEjerciciosAnterios->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
@@ -519,102 +793,165 @@ class EmpresasController extends Controller
             'empresa_id' => $empresa->id,
         ]);
 
-        $capitalSocial2 = CuentasContables::create([
-            'nombre_cuenta' => 'CAPITAL SOCIAL',
+        $aportesDeCapital = CuentasContables::create([
+            'nombre_cuenta' => 'APORTES DE CAPITAL',
             'tipo_cuenta' => 'Patrimonio',
             'nivel' => 3,
             'es_movimiento' => false,
             'parent_id' => $patrimonioAportado->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+        
+        $componentesDeCapital = CuentasContables::create([
+            'nombre_cuenta' => 'COMPONENTES DE CAPITAL',
+            'tipo_cuenta' => 'Patrimonio',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $aportesDeCapital->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
         CuentasContables::create([
             'nombre_cuenta' => 'CAPITAL SUSCRITO',
             'tipo_cuenta' => 'Patrimonio',
-            'nivel' => 4,
+            'nivel' => 5,
             'es_movimiento' => true,
-            'parent_id' => $capitalSocial2->id_cuenta,
+            'moneda_principal' => "BOB",
+            'parent_id' => $componentesDeCapital->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
         CuentasContables::create([
             'nombre_cuenta' => 'CAPITAL INTEGRADO',
             'tipo_cuenta' => 'Patrimonio',
-            'nivel' => 4,
+            'nivel' => 5,
             'es_movimiento' => true,
-            'parent_id' => $capitalSocial2->id_cuenta,
+            'moneda_principal' => "BOB",
+            'parent_id' => $componentesDeCapital->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
-        $primasEmision = CuentasContables::create([
+        CuentasContables::create([
             'nombre_cuenta' => 'PRIMAS DE EMISIÓN',
             'tipo_cuenta' => 'Patrimonio',
-            'nivel' => 3,
+            'nivel' => 5,
             'es_movimiento' => false,
-            'parent_id' => $patrimonioAportado->id_cuenta,
+            'moneda_principal' => "BOB",
+            'parent_id' => $componentesDeCapital->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
         CuentasContables::create([
             'nombre_cuenta' => 'PRIMAS DE SUSCRIPCIÓN',
             'tipo_cuenta' => 'Patrimonio',
-            'nivel' => 4,
+            'nivel' => 5,
             'es_movimiento' => true,
-            'parent_id' => $primasEmision->id_cuenta,
+            'moneda_principal' => "BOB",
+            'parent_id' => $componentesDeCapital->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
         $excedentes = CuentasContables::create([
-            'nombre_cuenta' => 'EXCEDENTES ACUMULADOS',
+            'nombre_cuenta' => 'EXCEDENTES',
+            'tipo_cuenta' => 'Patrimonio',
+            'nivel' => 2,
+            'es_movimiento' => false,
+            'parent_id' => $patrimonio->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        $excedentesContables = CuentasContables::create([
+            'nombre_cuenta' => 'EXCEDENTES CONTABLES',
             'tipo_cuenta' => 'Patrimonio',
             'nivel' => 3,
             'es_movimiento' => false,
-            'parent_id' => $patrimonioAportado->id_cuenta,
+            'parent_id' => $excedentes->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        $componentesDeExcedentes = CuentasContables::create([
+            'nombre_cuenta' => 'COMPONENTES DE EXCEDENTES',
+            'tipo_cuenta' => 'Patrimonio',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $excedentesContables->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+        
+        CuentasContables::create([
+            'nombre_cuenta' => 'EXCEDENTES ACUMULADOS',
+            'tipo_cuenta' => 'Patrimonio',
+            'nivel' => 5,
+            'es_movimiento' => true,
+            'moneda_principal' => "BOB",
+            'parent_id' => $componentesDeExcedentes->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
         CuentasContables::create([
             'nombre_cuenta' => 'EXCEDENTES DEL EJERCICIO',
             'tipo_cuenta' => 'Patrimonio',
-            'nivel' => 4,
+            'nivel' => 5,
             'es_movimiento' => true,
-            'parent_id' => $excedentes->id_cuenta,
+            'moneda_principal' => "BOB",
+            'parent_id' => $componentesDeExcedentes->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
         CuentasContables::create([
             'nombre_cuenta' => 'EXCEDENTES NO DISTRIBUIDOS',
             'tipo_cuenta' => 'Patrimonio',
-            'nivel' => 4,
+            'nivel' => 5,
             'es_movimiento' => true,
-            'parent_id' => $excedentes->id_cuenta,
+            'moneda_principal' => "BOB",
+            'parent_id' => $componentesDeExcedentes->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
-        $aportes = CuentasContables::create([
+        $aportesDeSocios = CuentasContables::create([
             'nombre_cuenta' => 'APORTES DE SOCIOS',
+            'tipo_cuenta' => 'Patrimonio',
+            'nivel' => 2,
+            'es_movimiento' => false,
+            'parent_id' => $patrimonio->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+        
+        $aportesDirectos = CuentasContables::create([
+            'nombre_cuenta' => 'APORTES DIRECTOS',
             'tipo_cuenta' => 'Patrimonio',
             'nivel' => 3,
             'es_movimiento' => false,
-            'parent_id' => $patrimonioAportado->id_cuenta,
+            'parent_id' => $aportesDeSocios->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+        
+        $componentesDeAportes = CuentasContables::create([
+            'nombre_cuenta' => 'COMPONENTES DE APORTES',
+            'tipo_cuenta' => 'Patrimonio',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $aportesDirectos->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
         CuentasContables::create([
             'nombre_cuenta' => 'APORTES DE CAPITAL',
             'tipo_cuenta' => 'Patrimonio',
-            'nivel' => 4,
+            'nivel' => 5,
             'es_movimiento' => true,
-            'parent_id' => $aportes->id_cuenta,
+            'moneda_principal' => "BOB",
+            'parent_id' => $componentesDeAportes->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
         CuentasContables::create([
             'nombre_cuenta' => 'APORTES ADICIONALES',
             'tipo_cuenta' => 'Patrimonio',
-            'nivel' => 4,
+            'nivel' => 5,
             'es_movimiento' => true,
-            'parent_id' => $aportes->id_cuenta,
+            'moneda_principal' => "BOB",
+            'parent_id' => $componentesDeAportes->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
     }
@@ -649,23 +986,51 @@ class EmpresasController extends Controller
             'empresa_id' => $empresa->id,
         ]);
 
-        $ventasHijas = [
+        $ventasPorProductos = CuentasContables::create([
+            'nombre_cuenta' => 'VENTAS POR PRODUCTOS',
+            'tipo_cuenta' => 'Ingresos',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $ventas->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        $cuentasVentasPorProductos = [
             'VENTAS PRODUCTOS TERMINADOS',
             'VENTAS MERCADERÍAS',
             'VENTAS SERVICIOS',
-            'DEVOLUCIONES SOBRE VENTAS',
         ];
 
-        foreach ($ventasHijas as $nombre) {
+        foreach ($cuentasVentasPorProductos as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
                 'tipo_cuenta' => 'Ingresos',
-                'nivel' => 4,
+                'nivel' => 5,
                 'es_movimiento' => true,
-                'parent_id' => $ventas->id_cuenta,
+                'moneda_principal' => "BOB",
+                'parent_id' => $ventasPorProductos->id_cuenta,
                 'empresa_id' => $empresa->id,
             ]);
         }
+
+        $devoluciones = CuentasContables::create([
+            'nombre_cuenta' => 'DEVOLUCIONES',
+            'tipo_cuenta' => 'Ingresos',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $ventas->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+        
+        CuentasContables::create([
+            'nombre_cuenta' => 'DEVOLUCIONES SOBRE VENTAS',
+            'tipo_cuenta' => 'Ingresos',
+            'nivel' => 5,
+            'es_movimiento' => false,
+            'moneda_principal' => "BOB",
+            'parent_id' => $devoluciones->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
 
         // -------------------- INGRESOS NO OPERATIVOS --------------------
         $ingresosNoOperativos = CuentasContables::create([
@@ -686,18 +1051,28 @@ class EmpresasController extends Controller
             'empresa_id' => $empresa->id,
         ]);
 
-        $ingresosFinancierosHijos = [
+        $ingresosPorInteresYRentas = CuentasContables::create([
+            'nombre_cuenta' => 'INGRESOS POR INTERES Y RENTAS',
+            'tipo_cuenta' => 'Ingresos',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $ingresosFinancieros->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        $cuentasIngresosPorInteresYRentas = [
             'INTERESES BANCARIOS',
             'RENTAS SOBRE INVERSIONES',
         ];
 
-        foreach ($ingresosFinancierosHijos as $nombre) {
+        foreach ($cuentasIngresosPorInteresYRentas as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
                 'tipo_cuenta' => 'Ingresos',
-                'nivel' => 4,
+                'nivel' => 5,
                 'es_movimiento' => true,
-                'parent_id' => $ingresosFinancieros->id_cuenta,
+                'moneda_principal' => "BOB",
+                'parent_id' => $ingresosPorInteresYRentas->id_cuenta,
                 'empresa_id' => $empresa->id,
             ]);
         }
@@ -711,18 +1086,28 @@ class EmpresasController extends Controller
             'empresa_id' => $empresa->id,
         ]);
 
-        $ingresosExtraordinariosHijos = [
+        $ingresosNoRecurrentes = CuentasContables::create([
+            'nombre_cuenta' => 'INGRESOS NO RECURRENTES',
+            'tipo_cuenta' => 'Ingresos',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $ingresosExtraordinarios->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        $cuentasIngresosNoRecurrentes = [
             'VENTA DE ACTIVOS FIJOS',
             'RENTAS EXTRAORDINARIAS',
         ];
 
-        foreach ($ingresosExtraordinariosHijos as $nombre) {
+        foreach ($cuentasIngresosNoRecurrentes as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
                 'tipo_cuenta' => 'Ingresos',
-                'nivel' => 4,
+                'nivel' => 5,
                 'es_movimiento' => true,
-                'parent_id' => $ingresosExtraordinarios->id_cuenta,
+                'moneda_principal' => "BOB",
+                'parent_id' => $ingresosNoRecurrentes->id_cuenta,
                 'empresa_id' => $empresa->id,
             ]);
         }
@@ -757,6 +1142,7 @@ class EmpresasController extends Controller
                 'tipo_cuenta' => 'Ingresos',
                 'nivel' => 4,
                 'es_movimiento' => true,
+                'moneda_principal' => "BOB",
                 'parent_id' => $donaciones->id_cuenta,
                 'empresa_id' => $empresa->id,
             ]);
@@ -771,18 +1157,27 @@ class EmpresasController extends Controller
             'empresa_id' => $empresa->id,
         ]);
 
-        $serviciosHijos = [
+        $serviciosPrestados = CuentasContables::create([
+            'nombre_cuenta' => 'SERVICIOS PRESTADOS',
+            'tipo_cuenta' => 'Ingresos',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $ingresosServicios->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        $cuentasServiciosPrestados = [
             'HONORARIOS POR SERVICIOS',
             'COMISIONES POR SERVICIOS',
         ];
 
-        foreach ($serviciosHijos as $nombre) {
+        foreach ($cuentasServiciosPrestados as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
                 'tipo_cuenta' => 'Ingresos',
-                'nivel' => 4,
+                'nivel' => 5,
                 'es_movimiento' => true,
-                'parent_id' => $ingresosServicios->id_cuenta,
+                'parent_id' => $serviciosPrestados->id_cuenta,
                 'empresa_id' => $empresa->id,
             ]);
         }
@@ -817,20 +1212,30 @@ class EmpresasController extends Controller
             'parent_id' => $costoVentas->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
+        
+        $componentesDelCosto = CuentasContables::create([
+            'nombre_cuenta' => 'COSTO DE PRODUCTOS VENDIDOS',
+            'tipo_cuenta' => 'Egresos',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $costoProductosVendidos->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
 
-        $cuentasCostoProductos = [
+        $cuentasComponentesDelCosto = [
             'MATERIALES DIRECTOS',
             'MANO DE OBRA DIRECTA',
             'COSTOS INDIRECTOS DE FABRICACIÓN',
         ];
 
-        foreach ($cuentasCostoProductos as $nombre) {
+        foreach ($cuentasComponentesDelCosto as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
                 'tipo_cuenta' => 'Egresos',
-                'nivel' => 4,
+                'nivel' => 5,
                 'es_movimiento' => true,
-                'parent_id' => $costoProductosVendidos->id_cuenta,
+                'moneda_principal' => "BOB",
+                'parent_id' => $componentesDelCosto->id_cuenta,
                 'empresa_id' => $empresa->id,
             ]);
         }
@@ -854,19 +1259,29 @@ class EmpresasController extends Controller
             'empresa_id' => $empresa->id,
         ]);
 
-        $cuentasAdministracion = [
+        $componentesAdministrativos = CuentasContables::create([
+            'nombre_cuenta' => 'COMPONENTES ADMINISTRATIVOS',
+            'tipo_cuenta' => 'Egresos',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $gastosAdministracion->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        $cuentasComponentesAdministrativos = [
             'SUELDOS Y SALARIOS',
             'ARRENDAMIENTOS',
             'GASTOS DE OFICINA',
         ];
 
-        foreach ($cuentasAdministracion as $nombre) {
+        foreach ($cuentasComponentesAdministrativos as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
                 'tipo_cuenta' => 'Egresos',
-                'nivel' => 4,
+                'nivel' => 5,
                 'es_movimiento' => true,
-                'parent_id' => $gastosAdministracion->id_cuenta,
+                'moneda_principal' => "BOB",
+                'parent_id' => $componentesAdministrativos->id_cuenta,
                 'empresa_id' => $empresa->id,
             ]);
         }
@@ -875,36 +1290,50 @@ class EmpresasController extends Controller
         $gastosVenta = CuentasContables::create([
             'nombre_cuenta' => 'GASTOS DE VENTA',
             'tipo_cuenta' => 'Egresos',
-            'nivel' => 2,
+            'nivel' => 3,
             'es_movimiento' => false,
-            'parent_id' => $egresos->id_cuenta,
+            'parent_id' => $gastosOperativos->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
-        $publicidadPromocion = CuentasContables::create([
-            'nombre_cuenta' => 'PUBLICIDAD Y PROMOCIÓN',
+        $componentesDeVenta = CuentasContables::create([
+            'nombre_cuenta' => 'COMPONENTES DE VENTA',
             'tipo_cuenta' => 'Egresos',
-            'nivel' => 3,
+            'nivel' => 4,
             'es_movimiento' => false,
             'parent_id' => $gastosVenta->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
 
-        $cuentasPublicidad = [
-            'ANUNCIOS PUBLICITARIOS',
-            'GASTOS DE PROMOCIÓN',
-        ];
+        CuentasContables::create([
+            'nombre_cuenta' => 'PUBLICIDAD Y PROMOCIÓN',
+            'tipo_cuenta' => 'Egresos',
+            'nivel' => 5,
+            'es_movimiento' => false,
+            'moneda_principal' => "BOB",
+            'parent_id' => $componentesDeVenta->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+        
+        CuentasContables::create([
+            'nombre_cuenta' => 'ANUNCIOS PUBLICITARIOS',
+            'tipo_cuenta' => 'Egresos',
+            'nivel' => 5,
+            'es_movimiento' => false,
+            'moneda_principal' => "BOB",
+            'parent_id' => $componentesDeVenta->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
 
-        foreach ($cuentasPublicidad as $nombre) {
-            CuentasContables::create([
-                'nombre_cuenta' => $nombre,
-                'tipo_cuenta' => 'Egresos',
-                'nivel' => 4,
-                'es_movimiento' => true,
-                'parent_id' => $publicidadPromocion->id_cuenta,
-                'empresa_id' => $empresa->id,
-            ]);
-        }
+        CuentasContables::create([
+            'nombre_cuenta' => 'GASTOS DE PROMOCIÓN',
+            'tipo_cuenta' => 'Egresos',
+            'nivel' => 5,
+            'es_movimiento' => false,
+            'moneda_principal' => "BOB",
+            'parent_id' => $componentesDeVenta->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
 
         // -------------------- GASTOS FINANCIEROS --------------------
         $gastosFinancieros = CuentasContables::create([
@@ -916,27 +1345,38 @@ class EmpresasController extends Controller
             'empresa_id' => $empresa->id,
         ]);
 
-        $interesesPagados = CuentasContables::create([
-            'nombre_cuenta' => 'INTERESES PAGADOS',
+        $interesesYCargosFinancieros = CuentasContables::create([
+            'nombre_cuenta' => 'INTERESES Y CARGOS FINANCIEROS',
             'tipo_cuenta' => 'Egresos',
             'nivel' => 3,
             'es_movimiento' => false,
             'parent_id' => $gastosFinancieros->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
+        
+        $componentesDeInteres = CuentasContables::create([
+            'nombre_cuenta' => 'COMPONENTES DE INTERES',
+            'tipo_cuenta' => 'Egresos',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $interesesYCargosFinancieros->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
 
-        $cuentasIntereses = [
+        $cuentasComponentesDeInteres = [
+            'INTERESES PAGADOS',
             'INTERESES BANCARIOS',
             'INTERESES DE DOCUMENTOS POR PAGAR',
         ];
 
-        foreach ($cuentasIntereses as $nombre) {
+        foreach ($cuentasComponentesDeInteres as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
                 'tipo_cuenta' => 'Egresos',
-                'nivel' => 4,
+                'nivel' => 5,
                 'es_movimiento' => true,
-                'parent_id' => $interesesPagados->id_cuenta,
+                'moneda_principal' => "BOB",
+                'parent_id' => $componentesDeInteres->id_cuenta,
                 'empresa_id' => $empresa->id,
             ]);
         }
@@ -960,18 +1400,28 @@ class EmpresasController extends Controller
             'empresa_id' => $empresa->id,
         ]);
 
-        $cuentasPerdidas = [
+        $componentesDePerdida = CuentasContables::create([
+            'nombre_cuenta' => 'PÉRDIDAS EXTRAORDINARIAS',
+            'tipo_cuenta' => 'Egresos',
+            'nivel' => 4,
+            'es_movimiento' => false,
+            'parent_id' => $perdidasExtraordinarias->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        $cuentasComponentesDePerdida = [
             'PÉRDIDAS POR VENTA DE ACTIVOS FIJOS',
             'PÉRDIDAS POR ROBO O DAÑOS',
         ];
 
-        foreach ($cuentasPerdidas as $nombre) {
+        foreach ($cuentasComponentesDePerdida as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
                 'tipo_cuenta' => 'Egresos',
-                'nivel' => 4,
+                'nivel' => 5,
                 'es_movimiento' => true,
-                'parent_id' => $perdidasExtraordinarias->id_cuenta,
+                'moneda_principal' => "BOB",
+                'parent_id' => $componentesDePerdida->id_cuenta,
                 'empresa_id' => $empresa->id,
             ]);
         }
@@ -986,7 +1436,7 @@ class EmpresasController extends Controller
             'Ingresos' => '4000000000',
             'Egresos' => '5000000000',
             default => '-1',
-        };
+        };  
     }
 
     public function update(Request $request, $id)

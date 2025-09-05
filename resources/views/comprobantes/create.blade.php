@@ -309,7 +309,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             updateSubmitButtonState()
-            const table = document.querySelector('#table-detalles'); // Asegúrate de que tu tabla tenga este ID
+            const table = document.querySelector('#table-detalles');
 
             if (table)
                 table.addEventListener('change', function(event) {

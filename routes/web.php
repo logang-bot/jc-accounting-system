@@ -1,11 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmpresasController;
 use App\Http\Controllers\CuentaController;
 use App\Http\Controllers\ComprobantesController;
 use App\Http\Controllers\LibroDiarioController;
-use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -13,16 +13,24 @@ Route::get('/', function () {
 })->name('home');
 
 // Rutas para autenticacion
-Route::get('/login', [AuthController::class, 'showLogin'])->name('show.login');
-Route::get('/register', [AuthController::class, 'showRegister'])->name('show.register');
-Route::middleware('guest')->controller(AuthController::class)->group(function() {
-    
-    // Rutas para vistas
+// Route::get('/login', [AuthController::class, 'showLogin'])->name('show.login');
+// Route::get('/register', [AuthController::class, 'showRegister'])->name('show.register');
 
-    // Rutas de funcionalidades
-    Route::post('/register', 'register')->name('register');
+Route::middleware('guest')->controller(AuthController::class)->group(function() {
+    // Route::post('/register', 'register')->name('register');
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('show.login');
     Route::post('/login', 'login')->name('login');
 });
+
+// --- User management (admins only) ---
+Route::middleware(['auth', 'role:Administrator'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/users/crear', [UserController::class, 'create'])->name('show.users.create');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::get('/users', [UserController::class, 'index'])->name('show.users.index');
+    });
 
 Route::middleware('auth')->controller(EmpresasController::class)->group(function() {
     
@@ -40,7 +48,10 @@ Route::middleware('auth')->controller(EmpresasController::class)->group(function
         Route::post('/', 'store')->name('empresas.store');
         Route::put('/{id}', 'update')->name('empresas.update');
         Route::delete('/{id}', 'destroy')->name('empresas.destroy');
-        Route::post('/{id}', 'archive')->name('empresas.archive');
+
+        Route::middleware('role:Administrator')->group(function() {
+            Route::post('/{id}', 'archive')->name('empresas.archive');
+        });
         Route::post('/exit', 'exit')->name('empresas.exit');
     });
 });

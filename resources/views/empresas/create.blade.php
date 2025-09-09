@@ -41,6 +41,22 @@
                                         Crear Empresa
                                     </button>
 
+                                    @role('Administrator')
+                                        <!-- Button: Ver Usuarios -->
+                                        <a href="{{ route('admin.show.users.index') }}"
+                                            class="bg-white/20 hover:bg-blue-600/60 text-white font-semibold py-2 px-4 rounded w-full flex flex-row items-center gap-2">
+                                            <x-carbon-user-avatar class="w-5 h-5" />
+                                            Ver Usuarios
+                                        </a>
+
+                                        <!-- Button: Crear Usuario -->
+                                        <a href="{{ route('admin.show.users.create') }}"
+                                            class="bg-white/20 hover:bg-purple-600/60 text-white font-semibold py-2 px-4 rounded w-full flex flex-row items-center gap-2">
+                                            <x-carbon-user-follow class="w-5 h-5" />
+                                            Crear Usuario
+                                        </a>
+                                    @endrole
+
                                     <!-- Logout Button -->
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
@@ -89,23 +105,25 @@
                                                             <a href="{{ route('show.empresas.home', $empresa->id) }}"
                                                                 class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-500 dark:hover:text-blue-400 dark:focus:text-blue-400">Ingresar</a>
                                                         @endif
-                                                        <button type="button" data-empresa-id="{{ $empresa->id }}"
-                                                            class="archive-btn inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-500 dark:hover:text-blue-400 dark:focus:text-blue-400 cursor-pointer">{{ $empresa->activa ? 'Archivar' : 'Activar' }}</button>
-                                                        <form id="archive-form-{{ $empresa->id }}"
-                                                            action="{{ route('empresas.archive', $empresa->id) }}"
-                                                            method="POST" class="hidden">
-                                                            @csrf
-                                                            @method('POST')
-                                                        </form>
+                                                        @role('Administrator')
+                                                            <button type="button" data-empresa-id="{{ $empresa->id }}"
+                                                                class="archive-btn inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-500 dark:hover:text-blue-400 dark:focus:text-blue-400 cursor-pointer">{{ $empresa->activa ? 'Archivar' : 'Activar' }}</button>
+                                                            <form id="archive-form-{{ $empresa->id }}"
+                                                                action="{{ route('empresas.archive', $empresa->id) }}"
+                                                                method="POST" class="hidden">
+                                                                @csrf
+                                                                @method('POST')
+                                                            </form>
 
-                                                        <button type="button" data-empresa-id="{{ $empresa->id }}"
-                                                            class="delete-btn inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-red-500 dark:hover:text-blue-400 dark:focus:text-blue-400 cursor-pointer">Eliminar</button>
-                                                        <form id="delete-form-{{ $empresa->id }}"
-                                                            action="{{ route('empresas.destroy', $empresa->id) }}"
-                                                            method="POST" class="hidden">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                        </form>
+                                                            <button type="button" data-empresa-id="{{ $empresa->id }}"
+                                                                class="delete-btn inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-red-500 dark:hover:text-blue-400 dark:focus:text-blue-400 cursor-pointer">Eliminar</button>
+                                                            <form id="delete-form-{{ $empresa->id }}"
+                                                                action="{{ route('empresas.destroy', $empresa->id) }}"
+                                                                method="POST" class="hidden">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                            </form>
+                                                        @endrole
                                                     </td>
                                                 </tr>
                                             @endforeach

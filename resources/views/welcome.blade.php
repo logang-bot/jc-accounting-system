@@ -14,15 +14,12 @@
                     click en el boton de Crear Cuenta
                 </p>
                 <a href="{{ route('show.login') }}">
-                    <button class="login-button group">
+                    <button class="login-button group cursor-pointer">
                         <span>
                             Ingresar
                         </span>
                     </button>
                 </a>
-                <button type="button" class="register-button">
-                    <a href="{{ route('show.register') }}">Register</a>
-                </button>
             </div>
         </div>
     </div>

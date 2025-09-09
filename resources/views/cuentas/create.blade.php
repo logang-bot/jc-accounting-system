@@ -66,7 +66,7 @@
             {{-- Checkbox: Es Movimiento --}}
             <div class="mb-4">
                 <label class="inline-flex items-center">
-                    <input type="checkbox" id="es_movimiento" value="1"
+                    <input type="checkbox" name="es_movimiento" id="es_movimiento" value="1"
                         class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
                         x-model="esMovimiento">
                     <span class="ml-2 text-sm text-gray-700">¿Es cuenta de movimiento?</span>

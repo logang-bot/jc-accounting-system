@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="max-w-xl mx-auto">
-        <h1 class="text-xl font-bold mb-4">Create User</h1>
+        <h1 class="text-xl font-bold mb-4">Create Usfgher</h1>
 
         <form action="{{ route('admin.users.store') }}" method="POST">
             @csrf

@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\CuentasContables;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Empresa;
+use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 class EmpresasController extends Controller
 {
@@ -17,7 +20,18 @@ class EmpresasController extends Controller
 
     public function create()
     {
-        return view('empresas.create', ['empresas' => Empresa::all()]);
+        $roles = Role::pluck('name');
+        $empresas = Empresa::all();
+
+        $users = auth()->user()->hasRole('Administrator') 
+            ? User::with('roles')->paginate(15) 
+            : collect();
+
+        return view('empresas.create', [
+            'roles' => $roles,
+            'empresas' => $empresas,
+            'users' => $users,
+        ]);
     }
 
     public function store(Request $request)
@@ -31,27 +45,6 @@ class EmpresasController extends Controller
             'name' => $request->name,
             'nit' => $request->nit,
         ]);
-
-        // Crear cuentas raíz para la empresa
-        // $tipos = ['Activo', 'Pasivo', 'Patrimonio', 'Ingresos', 'Egresos'];
-
-        // foreach ($tipos as $tipo) {
-        //     $existe = CuentasContables::where('empresa_id', $empresa->id)
-        //         ->whereNull('parent_id')
-        //         ->where('tipo_cuenta', $tipo)
-        //         ->exists();
-
-        //     if (!$existe) {
-        //         CuentasContables::create([
-        //             'nombre_cuenta' => $tipo,
-        //             'tipo_cuenta' => $tipo,
-        //             'codigo_cuenta' => self::generarCodigoRaiz($tipo),
-        //             'nivel' => 1,
-        //             'es_movimiento' => false,
-        //             'empresa_id' => $empresa->id,
-        //         ]);
-        //     }
-        // }
 
         // Crear cuentas para Activo
         $this->crearCuentasActivos($empresa);

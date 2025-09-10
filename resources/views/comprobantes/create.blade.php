@@ -1,3 +1,7 @@
+@php
+    $oldDetalles = old('detalles');
+@endphp
+
 @extends('layouts.admin')
 
 @section('content')
@@ -104,7 +108,87 @@
                             </tr>
                         </thead>
                         <tbody id="detalle-rows">
-                            @if ($editMode)
+                            @if ($oldDetalles && is_array($oldDetalles) && count($oldDetalles))
+                                {{-- Rebuild rows from old input (validation failed case) --}}
+                                @foreach ($oldDetalles as $i => $detalle)
+                                    <tr>
+                                        <td class="px-3 py-2">
+                                            <input type="text" name="detalles[{{ $i }}][codigo_cuenta]"
+                                                value="{{ $detalle['codigo_cuenta'] ?? '' }}"
+                                                class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly>
+                                        </td>
+
+                                        <td class="px-3 py-2">
+                                            <select name="detalles[{{ $i }}][cuenta_id]"
+                                                class="w-full border rounded px-2 py-1 cuenta-nombre-select"
+                                                data-index="{{ $i }}" required>
+                                                @foreach ($cuentas as $cuenta)
+                                                    <option value="{{ $cuenta->id_cuenta }}"
+                                                        data-codigo="{{ $cuenta->codigo_cuenta }}"
+                                                        {{ (string) ($detalle['cuenta_id'] ?? '') === (string) $cuenta->id_cuenta ? 'selected' : '' }}>
+                                                        {{ $cuenta->nombre_cuenta }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+
+                                        <td class="px-3 py-2">
+                                            <input type="text" name="detalles[{{ $i }}][descripcion]"
+                                                class="w-full border rounded px-2 py-1"
+                                                value="{{ $detalle['descripcion'] ?? '' }}">
+                                            {{-- @error("detalles.$i.descripcion")
+                                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                            @enderror --}}
+                                        </td>
+
+                                        <td class="px-3 py-2">
+                                            <input type="number" step="0.01" name="detalles[{{ $i }}][debe]"
+                                                class="w-full text-right border rounded px-2 py-1"
+                                                value="{{ $detalle['debe'] ?? '' }}">
+                                            {{-- @error("detalles.$i.debe")
+                                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                            @enderror --}}
+                                        </td>
+
+                                        <td class="px-3 py-2">
+                                            <input type="number" step="0.01"
+                                                name="detalles[{{ $i }}][haber]"
+                                                class="w-full text-right border rounded px-2 py-1"
+                                                value="{{ $detalle['haber'] ?? '' }}">
+                                            {{-- @error("detalles.$i.haber")
+                                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                            @enderror --}}
+                                        </td>
+
+                                        <td class="px-3 py-2 text-right us-debe">
+                                            <input type="text" readonly
+                                                class="w-full text-right bg-gray-100 border rounded px-2 py-1"
+                                                value="{{ number_format($detalle['us_debe'] ?? 0, 2) }}">
+                                        </td>
+
+                                        <td class="px-3 py-2 text-right us-haber">
+                                            <input type="text" readonly
+                                                class="w-full text-right bg-gray-100 border rounded px-2 py-1"
+                                                value="{{ number_format($detalle['us_haber'] ?? 0, 2) }}">
+                                        </td>
+
+                                        <td class="px-3 py-2 text-right iva">
+                                            <input type="number" step="0.01" min="0" max="100"
+                                                name="detalles[{{ $i }}][iva]"
+                                                class="w-20 text-right border rounded px-2 py-1"
+                                                value="{{ $detalle['iva'] ?? 0 }}">
+                                            {{-- @error("detalles.$i.iva")
+                                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                            @enderror --}}
+                                        </td>
+
+                                        <td class="px-3 py-2 text-center">
+                                            <button type="button" onclick="removeRow(this)"
+                                                class="text-red-600 hover:underline">Eliminar</button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @elseif ($editMode)
                                 @foreach ($comprobante->detalles as $i => $detalle)
                                     <tr>
                                         <td class="px-3 py-2">
@@ -130,18 +214,19 @@
                                         <td class="px-3 py-2">
                                             <input type="text" name="detalles[{{ $i }}][descripcion]"
                                                 class="w-full border rounded px-2 py-1"
-                                                value="{{ $detalle->descripcion }}">
+                                                value="{{ old("detalles.$i.descripcion", $detalle->descripcion ?? '') }}">
                                         </td>
                                         <td class="px-3 py-2">
-                                            <input type="number" step="0.01" name="detalles[{{ $i }}][debe]"
+                                            <input type="number" step="0.01"
+                                                name="detalles[{{ $i }}][debe]"
                                                 class="w-full text-right border rounded px-2 py-1"
-                                                value="{{ $detalle->debe }}">
+                                                value="{{ old("detalles.$i.debe", $detalle->debe ?? 0) }}">
                                         </td>
                                         <td class="px-3 py-2">
                                             <input type="number" step="0.01"
                                                 name="detalles[{{ $i }}][haber]"
                                                 class="w-full text-right border rounded px-2 py-1"
-                                                value="{{ $detalle->haber }}">
+                                                value="{{ old("detalles.$i.haber", $detalle->haber ?? 0) }}">
                                         </td>
                                         <td class="px-3 py-2 text-right us-debe">
                                             <input type="text" readonly
@@ -237,7 +322,8 @@
     </div>
 
     <script>
-        let rowCount = {{ $editMode ? count($comprobante->detalles) : 1 }};
+        let rowCount =
+            {{ old('detalles') ? count(old('detalles')) : ($editMode ? count($comprobante->detalles) : 1) }};
 
         function updateSubmitButtonState() {
             const submitBtn = document.getElementById('submit-button');
@@ -309,6 +395,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             updateSubmitButtonState()
+            actualizarConversiones()
             const table = document.querySelector('#table-detalles');
 
             if (table)

@@ -100,9 +100,16 @@ class ComprobantesController extends Controller
             'detalles' => 'required|array|min:2',
             'detalles.*.cuenta_id' => 'required|exists:cuentas,id_cuenta',
             'detalles.*.descripcion' => 'nullable|string',
-            'detalles.*.debe' => 'required|numeric|min:0',
-            'detalles.*.haber' => 'required|numeric|min:0',
+            'detalles.*.debe' => 'nullable|numeric|min:0',
+            'detalles.*.haber' => 'nullable|numeric|min:0',
         ]);
+
+        $validated = $validator->validated();
+
+        foreach ($validated['detalles'] as &$detalle) {
+            $detalle['debe']  = $detalle['debe']  ?? 0;
+            $detalle['haber'] = $detalle['haber'] ?? 0;
+        }
 
         $validator->after(function ($validator) use ($request) {
             $totalDebe = 0;
@@ -125,19 +132,21 @@ class ComprobantesController extends Controller
                 ->withInput();
         }
 
-        $validated = $validator->validated();
-
         try {
             DB::transaction(function () use ($validated) {
                 $totalDebe = collect($validated['detalles'])->sum('debe');
+                $empresaId = session('empresa_id');
 
                 $comprobante = Comprobante::create([
+                    'empresa_id' => $empresaId,
                     'fecha' => $validated['fecha'],
                     'tipo' => $validated['tipo'],
                     'descripcion' => $validated['descripcion'] ?? '',
                     'total' => $totalDebe,
                     'tasa_cambio' => $validated['tasa_cambio'],
                     'user_id' => Auth::id(),
+                    'destinatario' => $validated['destinatario'],
+                    'lugar' => $validated['lugar'],
                 ]);
 
                 foreach ($validated['detalles'] as $detalle) {
@@ -206,6 +215,8 @@ class ComprobantesController extends Controller
                 'tipo' => $request->tipo,
                 'descripcion' => $request->descripcion,
                 'tasa_cambio' => $request['tasa_cambio'],
+                'destinatario' => $request['destinatario'],
+                'lugar' => $request['lugar'],
             ]);
 
             // Eliminar detalles existentes y recrearlos

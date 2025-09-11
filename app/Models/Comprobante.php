@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Comprobante extends Model
 {
@@ -37,12 +38,13 @@ class Comprobante extends Model
         $year = now()->format('Y');
 
         do {
-            $lastId = static::where('empresa_id', $empresaId)
+            $lastId = DB::table('comprobantes')
+                ->where('empresa_id', $empresaId)
                 ->whereYear('fecha', $year)
                 ->max('id') ?? 0;
 
             $numero = sprintf("COMP-%s-%04d", $year, $lastId + 1);
-        } while (static::where('numero', $numero)->exists());
+        } while (DB::table('comprobantes')->where('empresa_id', $empresaId)->where('numero', $numero)->exists());
 
         return $numero;
     }

@@ -95,6 +95,6 @@ Route::middleware('auth')->controller(ComprobantesController::class)->group(func
 
 Route::middleware('auth')->controller(ComprobantesController::class)->group(function() {
     Route::get('/libro-diario', [LibroDiarioController::class, 'index'])->name('libro-diario.index');
-    Route::get('/libro-diario/{id}/pdf', [LibroDiarioController::class, 'generatePDF'])->name('libro-diario.pdf');
+    Route::get('/libro-diario/pdf', [LibroDiarioController::class, 'exportPdf'])->name('libro-diario.pdf');
 });
 

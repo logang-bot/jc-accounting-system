@@ -6,6 +6,7 @@
         <!-- Título -->
         <h1 class="text-2xl font-bold text-gray-800 mb-6">Libro Diario</h1>
 
+
         <!-- Filtros -->
         <form method="GET" class="grid grid-cols-1 sm:grid-cols-5 gap-4 bg-white p-4 rounded-lg shadow mb-6">
             <div>
@@ -40,6 +41,9 @@
                     class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-800 text-sm font-medium rounded-md shadow hover:bg-gray-200">
                     Limpiar
                 </a>
+
+                <a href="{{ route('libro-diario.pdf', request()->all()) }}"
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md shadow hover:bg-blue-700">Imprimir</a>
             </div>
         </form>
 

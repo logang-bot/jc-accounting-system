@@ -48,20 +48,66 @@ class LibroDiarioController extends Controller
         return view('libroDiario.index', compact('comprobantes', 'totales', 'hayFiltros'));
     }
 
-    
-    public function generatePDF($id) 
+
+    public function exportPdf(Request $request)
     {
-        $data = [
-            'title' => 'Detalle Comprobante',
-            'date' => date('m/d/Y')
-        ];
+        $request->validate([
+            'fecha_desde' => 'nullable|date',
+            'fecha_hasta' => 'nullable|date',
+            'tipo'        => 'nullable|string',
+        ]);
 
-        $comprobante = Comprobante::with(['detalles.cuenta', 'user'])->findOrFail($id);
         $empresaId = session('empresa_id');
-        $empresa = Empresa::findOrFail($empresaId);
 
-        $pdf = pdf()->view('libroDiarioComprobantePDF', compact('comprobante', 'empresa'));
+        $hayFiltros = $request->filled('fecha_desde') ||
+                    $request->filled('fecha_hasta') ||
+                    $request->filled('tipo');
 
-        return $pdf->name('comprobante-'. $comprobante->numero. '.pdf');
+        $comprobantes = collect();
+        $totales = ['debe' => 0, 'haber' => 0];
+
+        if ($hayFiltros) {
+            $query = Comprobante::with(['detalles.cuenta','empresa','user'])
+                ->where('empresa_id', $empresaId)
+                ->when($request->fecha_desde, fn($q) => $q->where('fecha', '>=', $request->fecha_desde))
+                ->when($request->fecha_hasta, fn($q) => $q->where('fecha', '<=', $request->fecha_hasta))
+                ->when($request->tipo, fn($q) => $q->where('tipo', $request->tipo))
+                ->orderBy('fecha', 'asc')
+                ->orderBy('numero', 'asc');
+
+            // 👇 no paginate here → get all results
+            $comprobantes = $query->get();
+
+            $collection = $comprobantes->flatMap(fn($c) => $c->detalles);
+            $totales = [
+                'debe'  => $collection->sum(fn($d) => $d->debe ?? 0),
+                'haber' => $collection->sum(fn($d) => $d->haber ?? 0),
+            ];
+        }
+
+        $pdf = pdf()->view('libroDiarioPDF', [
+            'comprobantes' => $comprobantes,
+            'totales'      => $totales,
+            'filters'      => $request->only(['fecha_desde','fecha_hasta','tipo']),
+            'hayFiltros'   => $hayFiltros,
+        ]);
+
+        return $pdf->name('libro_diario.pdf');
     }
+    
+    // public function generatePDF($id) 
+    // {
+    //     $data = [
+    //         'title' => 'Libro Diario',
+    //         'date' => date('m/d/Y')
+    //     ];
+
+    //     $comprobante = Comprobante::with(['detalles.cuenta', 'user'])->findOrFail($id);
+    //     $empresaId = session('empresa_id');
+    //     $empresa = Empresa::findOrFail($empresaId);
+
+    //     $pdf = pdf()->view('', compact('comprobante', 'empresa'));
+
+    //     return $pdf->name('comprobante-'. $comprobante->numero. '.pdf');
+    // }
 }

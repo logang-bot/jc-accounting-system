@@ -16,15 +16,15 @@
                         NIT: <strong>{{ $empresa->nit }}</strong>
                     </div>
                 @endif
-                <p><strong>Número:</strong> {{ $comprobante->numero }}</p>
-                <p><strong>Fecha:</strong> {{ $comprobante->fecha }}</p>
                 <p><strong>Tipo:</strong> {{ ucfirst($comprobante->tipo) }}</p>
+                <p><strong>Fecha:</strong> {{ $comprobante->fecha }}</p>
+                <p><strong>Número:</strong> {{ $comprobante->numero }}</p>
                 <p><strong>Descripción:</strong> {{ $comprobante->descripcion }}</p>
                 <p><strong>Total:</strong> {{ number_format($comprobante->total, 2) }}</p>
                 <p><strong>Creado por:</strong> {{ $comprobante->user->name ?? '—' }}</p>
             </div>
             <div class="flex items-center gap-4 my-4">
-                <label for="tasa-cambio" class="text-sm font-medium">Tasa de cambio:</label>
+                <label for="tasa-cambio"><strong>Tasa de cambio:</strong></label>
                 <input type="number" step="0.0001" id="tasa-cambio" class="border rounded px-3 py-1 w-32" value="6.96">
                 <button type="button" onclick="actualizarConversiones()"
                     class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">

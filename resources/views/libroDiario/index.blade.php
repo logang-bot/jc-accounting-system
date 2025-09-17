@@ -1,12 +1,16 @@
 @extends('layouts.admin')
 
 @section('content')
+    <div class="bg-blue-600 p-8">
+        <div class="flex flex-wrap">
+            <div class="w-full">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-white text-2xl font-semibold">Libro Diario</h3>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-
-        <!-- Título -->
-        <h1 class="text-2xl font-bold text-gray-800 mb-6">Libro Diario</h1>
-
-
         <!-- Filtros -->
         <form method="GET" class="grid grid-cols-1 sm:grid-cols-5 gap-4 bg-white p-4 rounded-lg shadow mb-6">
             <div>
@@ -67,22 +71,20 @@
                             <th class="px-4 py-2 text-left font-semibold">Cuenta</th>
                             <th class="px-4 py-2 text-right font-semibold">Debe</th>
                             <th class="px-4 py-2 text-right font-semibold">Haber</th>
-                            <th class="px-4 py-2 text-right font-semibold">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($comprobantes as $comp)
+                            <!-- Cabecera de comprobante -->
                             <tr class="bg-blue-50">
                                 <td class="px-4 py-2">{{ $comp->fecha }}</td>
                                 <td class="px-4 py-2">{{ $comp->numero }}</td>
                                 <td class="px-4 py-2 capitalize">{{ $comp->tipo }}</td>
                                 <td class="px-4 py-2" colspan="4">{{ $comp->descripcion }}</td>
-                                <td class="px-4 py-2" colspan="4">
-
-                                    <a href="{{ route('libro-diario.pdf', $comp->id) }}"
-                                        class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Imprimir</a>
-                                </td>
+                                
                             </tr>
+
+                            <!-- Detalles del comprobante -->
                             @foreach ($comp->detalles as $det)
                                 <tr class="border-b">
                                     <td class="px-4 py-2"></td>
@@ -93,17 +95,23 @@
                                         {{ $det->cuenta->nombre_cuenta ?? '' }}</td>
                                     <td class="px-4 py-2 text-right">{{ number_format($det->debe ?? 0, 2) }}</td>
                                     <td class="px-4 py-2 text-right">{{ number_format($det->haber ?? 0, 2) }}</td>
+                                    <td></td>
                                 </tr>
                             @endforeach
+
+                            <!-- Totales de este comprobante -->
+                            <tr class="bg-gray-100 font-semibold border-b">
+                                <td colspan="5" class="px-4 py-2 text-right">Totales (Comprobante)</td>
+                                <td class="px-4 py-2 text-right">
+                                    {{ number_format($comp->detalles->sum(fn($d) => $d->debe ?? 0), 2) }}
+                                </td>
+                                <td class="px-4 py-2 text-right">
+                                    {{ number_format($comp->detalles->sum(fn($d) => $d->haber ?? 0), 2) }}
+                                </td>
+                                <td></td>
+                            </tr>
                         @endforeach
                     </tbody>
-                    <tfoot class="bg-gray-100 font-semibold">
-                        <tr>
-                            <td colspan="5" class="px-4 py-2 text-right">Totales (página)</td>
-                            <td class="px-4 py-2 text-right">{{ number_format($totales['debe'], 2) }}</td>
-                            <td class="px-4 py-2 text-right">{{ number_format($totales['haber'], 2) }}</td>
-                        </tr>
-                    </tfoot>
                 </table>
             @endif
         </div>

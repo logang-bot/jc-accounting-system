@@ -1,11 +1,27 @@
 @php
-    $f = new NumberFormatter('spa', NumberFormatter::SPELLOUT);
-    $text_debe_bs_debe = $f->format(number_format($comprobante->detalles->sum('debe'), 2));
-    $text_debe_bs_haber = $f->format(number_format($comprobante->detalles->sum('haber'), 2));
-    $text_debe_sus_debe = $f->format(number_format($comprobante->detalles->sum('debe') * $comprobante->tasa_cambio, 2));
-    $text_debe_sus_haber = $f->format(
-        number_format($comprobante->detalles->sum('haber') * $comprobante->tasa_cambio, 2),
-    );
+    // Totales del comprobante
+    $total_debe_bs = $comprobante->detalles->sum('debe');
+    $total_haber_bs = $comprobante->detalles->sum('haber');
+    $total_debe_usd = $total_debe_bs / $comprobante->tasa_cambio;
+    $total_haber_usd = $total_haber_bs / $comprobante->tasa_cambio;
+
+    // Función para convertir número a literal estilo bancario
+    function convertirALetras($numero)
+    {
+        $f = new \NumberFormatter('es', \NumberFormatter::SPELLOUT);
+
+        $entero = floor($numero);
+        $decimales = round(($numero - $entero) * 100);
+
+        $texto_entero = strtoupper($f->format($entero));
+        $texto_decimales = str_pad($decimales, 2, '0', STR_PAD_LEFT);
+
+        return "$texto_entero, $texto_decimales/100";
+    }
+
+    // Expresiones literales solo tomando el total Debe
+    $texto_total_bs = convertirALetras($total_debe_bs) . ' Bolivianos';
+    $texto_total_usd = convertirALetras($total_debe_usd) . ' Dólares';
 @endphp
 
 <!DOCTYPE html>
@@ -164,25 +180,17 @@
                     <p class="title">Fecha</p>
                     <hr />
                     <div class="fecha-detalles-container">
-                        <p>
-                            {{ \Carbon\Carbon::parse($comprobante->fecha)->format('d') }}
-                        </p>
+                        <p>{{ \Carbon\Carbon::parse($comprobante->fecha)->format('d') }}</p>
                         <hr />
-                        <p>
-                            {{ \Carbon\Carbon::parse($comprobante->fecha)->format('m') }}
-                        </p>
+                        <p>{{ \Carbon\Carbon::parse($comprobante->fecha)->format('m') }}</p>
                         <hr />
-                        <p>
-                            {{ \Carbon\Carbon::parse($comprobante->fecha)->format('Y') }}
-                        </p>
+                        <p>{{ \Carbon\Carbon::parse($comprobante->fecha)->format('Y') }}</p>
                     </div>
                 </div>
                 <div class="tc">
                     <p class="title">T.C.</p>
                     <hr />
-                    <p class="value">
-                        {{ number_format($comprobante->tasa_cambio, 2) }}
-                    </p>
+                    <p class="value">{{ number_format($comprobante->tasa_cambio, 2) }}</p>
                 </div>
             </div>
             <h3 class="numero">Nº {{ $comprobante->numero }}</h3>
@@ -191,17 +199,15 @@
 
     <table class="comprobante-info">
         <tr>
-            <td><strong>LUGAR Y FECHA:</strong></td>
-            <td>
-                {{ \Carbon\Carbon::parse($comprobante->fecha)->format('d/m/Y') }}
-            </td>
+            <td><strong>FECHA:</strong></td>
+            <td>{{ \Carbon\Carbon::parse($comprobante->fecha)->format('d/m/Y') }}</td>
         </tr>
         <tr>
             <td><strong>PAGADO A:</strong></td>
             <td>{{ $comprobante->destinatario }}</td>
         </tr>
         <tr>
-            <td><strong>CONCEPTO</strong></td>
+            <td><strong>CONCEPTO:</strong></td>
             <td>{{ $comprobante->descripcion }}</td>
         </tr>
     </table>
@@ -213,7 +219,7 @@
                 <th rowspan="2">Código</th>
                 <th rowspan="2">Nombre cuenta y Referencia</th>
                 <th colspan="2">Bolivianos</th>
-                <th colspan="2">Dolares</th>
+                <th colspan="2">Dólares</th>
             </tr>
             <tr>
                 <th>Debe</th>
@@ -230,41 +236,27 @@
                         <p>{{ $detalle->cuenta->nombre_cuenta }}</p>
                         <p>REF. --> {{ $detalle->descripcion }}</p>
                     </td>
-                    <td style="text-align: right">
-                        {{ number_format($detalle->debe, 2) }}
+                    <td style="text-align: right">{{ number_format($detalle->debe, 2) }}</td>
+                    <td style="text-align: right">{{ number_format($detalle->haber, 2) }}</td>
+                    <td style="text-align: right">{{ number_format($detalle->debe / $comprobante->tasa_cambio, 2) }}
                     </td>
-                    <td style="text-align: right">
-                        {{ number_format($detalle->haber, 2) }}
-                    </td>
-                    <td style="text-align: right">
-                        {{ number_format($detalle->debe, 2) }}
-                    </td>
-                    <td style="text-align: right">
-                        {{ number_format($detalle->haber, 2) }}
+                    <td style="text-align: right">{{ number_format($detalle->haber / $comprobante->tasa_cambio, 2) }}
                     </td>
                 </tr>
             @endforeach
             <tr>
                 <td colspan="2">TOTALES</td>
-                <td>{{ number_format($comprobante->detalles->sum('debe'), 2) }}</td>
-                <td>{{ number_format($comprobante->detalles->sum('haber'), 2) }}</td>
-                <td>
-                    {{ number_format($comprobante->detalles->sum('debe') * $comprobante->tasa_cambio, 2) }}
-                </td>
-                <td>
-                    {{ number_format($comprobante->detalles->sum('haber') * $comprobante->tasa_cambio, 2) }}
-                </td>
+                <td>{{ number_format($total_debe_bs, 2) }}</td>
+                <td>{{ number_format($total_haber_bs, 2) }}</td>
+                <td>{{ number_format($total_debe_usd, 2) }}</td>
+                <td>{{ number_format($total_haber_usd, 2) }}</td>
             </tr>
         </tbody>
     </table>
 
     <div class="totales">
-        <p>
-            <strong>SON:</strong> {{ $text_debe_bs_debe }} Bolivianos
-        </p>
-        <p>
-            <strong>SON:</strong> {{ $text_debe_sus_debe }} Dolares Americanos
-        </p>
+        <p><strong>Son:</strong> {{ $texto_total_bs }}</p>
+        <p><strong>Son:</strong> {{ $texto_total_usd }}</p>
     </div>
 
     <br />

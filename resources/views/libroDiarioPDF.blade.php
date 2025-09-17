@@ -172,56 +172,63 @@
             </tr>
         </thead>
         <tbody>
-            {{-- @foreach ($comprobante->detalles as $detalle)
-            <tr>
-                <td>{{ $detalle->cuenta->codigo_cuenta }}</td>
-                <td class="nombre_cuenta">
-                    <p>{{ $detalle->cuenta->nombre_cuenta }}</p>
-                    <p>{{ $detalle->descripcion }}</p>
-                </td>
-                <td style="text-align: right">
-                    {{ number_format($detalle->debe, 2) }}
-                </td>
-                <td style="text-align: right">
-                    {{ number_format($detalle->haber, 2) }}
-                </td>
-                <td style="text-align: right">
-                    {{ number_format($detalle->debe, 2) }}
-                </td>
-                <td style="text-align: right">
-                    {{ number_format($detalle->haber, 2) }}
-                </td>
-            </tr>
-            @endforeach --}}
-            {{-- <tr>
-                <td>{{ $detalle->cuenta->codigo_cuenta }}</td>
-                <td>{{ $detalle->cuenta->nombre_cuenta }}</td>
-                <td style="text-align: right">
-                    {{ number_format($detalle->debe, 2) }}
-                </td>
-                <td style="text-align: right">
-                    {{ number_format($detalle->haber, 2) }}
-                </td>
-                <td style="text-align: right">
-                    {{ number_format($detalle->debe, 2) }}
-                </td>
-                <td style="text-align: right">
-                    {{ number_format($detalle->haber, 2) }}
-                </td>
-            </tr> --}}
+            @forelse ($comprobantes as $comprobante)
+                <!-- Cabecera de comprobante -->
+                <tr style="background-color:#f0f8ff;">
+                    <td colspan="6" style="text-align:left; font-weight:bold;">
+                        {{ $comprobante->fecha }} - N° {{ $comprobante->numero }} ({{ ucfirst($comprobante->tipo) }})
+                        <br>
+                        <small>{{ $comprobante->descripcion }}</small>
+                    </td>
+                </tr>
 
-            <tr>
-                <td colspan="2">TOTALES</td>
-                {{-- <td>{{ number_format($comprobante->detalles->sum('debe'), 2) }}</td> --}}
-                {{-- <td>{{ number_format($comprobante->detalles->sum('haber'), 2) }}</td> --}}
-                <td>
-                    {{-- {{-- {{ number_format($comprobante->detalles->sum('debe') * $comprobante->tasa_cambio, 2) }} --}} --}}
-                </td>
-                <td>
-                    {{-- {{-- {{ number_format($comprobante->detalles->sum('haber') * $comprobante->tasa_cambio, 2) }} --}} --}}
-                </td>
-            </tr>
+                <!-- Detalles del comprobante -->
+                @foreach ($comprobante->detalles as $detalle)
+                    <tr>
+                        <td>{{ $detalle->cuenta->codigo_cuenta ?? '' }}</td>
+                        <td class="nombre_cuenta">
+                            <p>{{ $detalle->cuenta->nombre_cuenta ?? '' }}</p>
+                            @if ($detalle->descripcion)
+                                <p><small>{{ $detalle->descripcion }}</small></p>
+                            @endif
+                        </td>
+                        <td style="text-align: right">{{ number_format($detalle->debe ?? 0, 2) }}</td>
+                        <td style="text-align: right">{{ number_format($detalle->haber ?? 0, 2) }}</td>
+                        <td style="text-align: right">
+                            {{ number_format(($detalle->debe ?? 0) / ($comprobante->tasa_cambio ?: 1), 2) }}
+                        </td>
+                        <td style="text-align: right">
+                            {{ number_format(($detalle->haber ?? 0) / ($comprobante->tasa_cambio ?: 1), 2) }}
+                        </td>
+                    </tr>
+                @endforeach
+
+                <!-- Totales del comprobante -->
+                <tr style="font-weight:bold; background:#eee;">
+                    <td colspan="2">TOTAL COMPROBANTE</td>
+                    <td style="text-align: right">
+                        {{ number_format($comprobante->detalles->sum(fn($d) => $d->debe ?? 0), 2) }}
+                    </td>
+                    <td style="text-align: right">
+                        {{ number_format($comprobante->detalles->sum(fn($d) => $d->haber ?? 0), 2) }}
+                    </td>
+                    <td style="text-align: right">
+                        {{ number_format($comprobante->detalles->sum(fn($d) => ($d->debe ?? 0) / ($comprobante->tasa_cambio ?: 1)), 2) }}
+                    </td>
+                    <td style="text-align: right">
+                        {{ number_format($comprobante->detalles->sum(fn($d) => ($d->haber ?? 0) / ($comprobante->tasa_cambio ?: 1)), 2) }}
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="6" style="text-align:center; color:gray;">
+                        No se encontraron comprobantes con los filtros aplicados.
+                    </td>
+                </tr>
+            @endforelse
         </tbody>
+
+
     </table>
 </body>
 

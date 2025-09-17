@@ -17,55 +17,48 @@
     </div>
     <div class="container mx-auto px-6">
         <!-- Formulario para filtros y búsqueda -->
-        <div class="flex flex-wrap mt-4">
-            <div class="w-full">
-                <form method="GET" action="{{ route('show.comprobantes.home') }}">
-                    <div class="bg-white rounded-lg shadow">
-                        <div class="p-4">
-                            <div class="flex flex-col">
-                                <!-- Filtro por tipo de comprobante (dropdown) -->
-                                <div class="w-full md:w-1/4 mb-3 pr-2">
-                                    <select name="tipo_comprobante" class="w-full p-2 border rounded">
-                                        <option value="">Todos los tipos</option>
-                                        <option value="ingreso"
-                                            {{ request('tipo_comprobante') == 'ingreso' ? 'selected' : '' }}>Ingreso
-                                        </option>
-                                        <option value="egreso"
-                                            {{ request('tipo_comprobante') == 'egreso' ? 'selected' : '' }}>Egreso</option>
-                                        <option value="traspaso"
-                                            {{ request('tipo_comprobante') == 'traspaso' ? 'selected' : '' }}>Traspaso
-                                        </option>
-                                        <option value="ajuste"
-                                            {{ request('tipo_comprobante') == 'ajuste' ? 'selected' : '' }}>Ajuste</option>
-                                    </select>
-                                </div>
+        <div class="flex mt-4">
+            <form method="GET" action="{{ route('show.comprobantes.home') }}"
+                class="flex flex-wrap items-end gap-4 bg-white p-4 rounded-lg shadow mb-6 w-full">
 
-                                <div class="flex flex-row">
-                                    <!-- Filtro por fecha -->
-                                    <div class="w-full md:w-1/4 mb-3 pr-2">
-                                        <input type="date" name="fecha" class="w-full p-2 border rounded"
-                                            placeholder="Filtrar por fecha" value="{{ request('fecha') }}">
-                                    </div>
+                <div>
+                    <label for="fecha" class="block text-sm font-medium text-gray-700">Fecha</label>
+                    <input type="date" id="fecha" name="fecha" value="{{ request('fecha') }}"
+                        class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                </div>
 
-                                    <!-- Filtro por glosa -->
-                                    <div class="w-full md:w-1/4 mb-3 pr-2">
-                                        <input type="text" name="glosa_general" class="w-full p-2 border rounded"
-                                            placeholder="Buscar por glosa" value="{{ request('glosa_general') }}">
-                                    </div>
-                                </div>
+                <div>
+                    <label for="tipo_comprobante" class="block text-sm font-medium text-gray-700">Tipo</label>
+                    <select id="tipo_comprobante" name="tipo_comprobante"
+                        class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                        <option value="">Todos los tipos</option>
+                        <option value="ingreso" @selected(request('tipo_comprobante') == 'ingreso')>Ingreso</option>
+                        <option value="egreso" @selected(request('tipo_comprobante') == 'egreso')>Egreso</option>
+                        <option value="traspaso" @selected(request('tipo_comprobante') == 'traspaso')>Traspaso</option>
+                        <option value="ajuste" @selected(request('tipo_comprobante') == 'ajuste')>Ajuste</option>
+                    </select>
+                </div>
 
-                                <!-- Botón para aplicar filtros -->
-                                <div class="w-full md:w-1/4 mb-3">
-                                    <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded">Buscar</button>
-                                    <a href="{{ route('show.comprobantes.home') }}"
-                                        class="text-blue-600 underline whitespace-nowrap self-center">Limpiar filtros</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
+                <div class="flex-1">
+                    <label for="glosa_general" class="block text-sm font-medium text-gray-700">Glosa</label>
+                    <input type="text" id="glosa_general" name="glosa_general" value="{{ request('glosa_general') }}"
+                        placeholder="Buscar por glosa"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                </div>
+
+                <div class="flex gap-2">
+                    <button type="submit"
+                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md shadow hover:bg-blue-700">
+                        Buscar
+                    </button>
+                    <a href="{{ route('show.comprobantes.home') }}"
+                        class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-800 text-sm font-medium rounded-md shadow hover:bg-gray-200">
+                        Limpiar filtros
+                    </a>
+                </div>
+            </form>
         </div>
+
 
         <!-- Tabla de comprobantes -->
         <div class="flex flex-wrap mt-6">

@@ -34,35 +34,10 @@
                 </div>
             @endif
 
-            <div class="grid grid-cols-1 gap-4 mb-6">
-                @if ($editMode)
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Número de Comprobante</label>
-                        <input type="text" name="numero" class="w-full border rounded px-3 py-2"
-                            value="{{ old('numero', $comprobante->numero) }}" required>
-                        <small class="text-gray-500 text-sm">Puedes editar este número si es necesario. Asegúrate de que sea
-                            único.</small>
-                    </div>
-                @endif
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
                 <div>
-                    <label for="destinatario" class="block text-sm font-medium text-gray-700 mb-1">Destinatario</label>
-                    <input type="text" name="destinatario" id="destinatario" class="w-full border rounded px-3 py-2"
-                        value="{{ old('destinatario', $comprobante->destinatario ?? '') }}" required>
-                </div>
-
-                <div>
-                    <label for="lugar" class="block text-sm font-medium text-gray-700 mb-1">Lugar</label>
-                    <input type="text" name="lugar" id="lugar" class="w-full border rounded px-3 py-2"
-                        value="{{ old('lugar', $comprobante->lugar ?? '') }}" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
-                    <input type="date" name="fecha" class="w-full border rounded px-3 py-2"
-                        value="{{ old('fecha', $editMode ? $comprobante->fecha : '') }}" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
-                    <select name="tipo" class="w-full border rounded px-3 py-2" required>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tipo:</label>
+                    <select id="tipo" name="tipo" class="w-full border rounded px-3 py-2" required>
                         <option value="">-- Seleccione --</option>
                         @foreach (['ingreso', 'egreso', 'traspaso', 'ajuste'] as $tipo)
                             <option value="{{ $tipo }}"
@@ -72,18 +47,41 @@
                         @endforeach
                     </select>
                 </div>
+
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-                    <textarea name="descripcion" rows="2" class="w-full border rounded px-3 py-2">{{ old('descripcion', $editMode ? $comprobante->descripcion : '') }}</textarea>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha:</label>
+                    <input type="date" name="fecha" class="w-full border rounded px-3 py-2"
+                        value="{{ old('fecha', $editMode ? $comprobante->fecha : '') }}" required>
+                </div>
+
+                <div>
+                    <label for="tasa-cambio" class="block text-sm font-medium text-gray-700 mb-1">
+                        Tasa de Cambio (Bs/USD)
+                    </label>
+                    <input type="number" step="0.0001" min="0.0001" id="tasa-cambio" name="tasa_cambio"
+                        class="w-full border rounded px-3 py-2" oninput="actualizarConversiones()"
+                        value="{{ old('tasa_cambio', $editMode ? $comprobante->tasa_cambio : '') }}" required>
+                </div>
+                <div>
+                    <label for="destinatario" id="label-destinatario" class="block text-sm font-medium text-gray-700 mb-1">
+                        Destinatario:
+                    </label>
+                    <input type="text" name="destinatario" id="destinatario" class="w-full border rounded px-3 py-2"
+                        value="{{ old('destinatario', $comprobante->destinatario ?? '') }}" required>
+                </div>
+
+                <div>
+                    <label for="lugar" class="block text-sm font-medium text-gray-700 mb-1">Lugar:</label>
+                    <input type="text" name="lugar" id="lugar" class="w-full border rounded px-3 py-2"
+                        value="{{ old('lugar', $comprobante->lugar ?? '') }}" required>
                 </div>
             </div>
 
-            <div class="flex items-center mb-4">
-                <label for="tasa-cambio" class="mr-2 font-medium">Tasa de Cambio (Bs/USD):</label>
-                <input type="number" step="0.0001" min="0.0001" id="tasa-cambio" name="tasa_cambio"
-                    class="border rounded px-3 py-1 w-32" oninput="actualizarConversiones()"
-                    value="{{ old('tasa_cambio', $editMode ? $comprobante->tasa_cambio : '') }}" required>
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                <textarea name="descripcion" rows="2" class="w-full border rounded px-3 py-2">{{ old('descripcion', $editMode ? $comprobante->descripcion : '') }}</textarea>
             </div>
+
 
             <h3 class="text-lg font-semibold mb-2">Detalle del Comprobante</h3>
 
@@ -309,6 +307,32 @@
                         class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                         Agregar Línea
                     </button>
+
+                    <!-- Modal -->
+                    <div x-data="{ open: false }">
+                        <!-- Botón para abrir modal -->
+                        <button type="button" @click="open = true"
+                            class="mt-4 ml-2 px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-700">
+                            Editar Plan de Cuentas
+                        </button>
+
+                        <!-- Modal -->
+                        <div x-show="open" x-transition
+                            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                            <div class="bg-white p-4 rounded shadow-lg w-4/5 h-4/5 relative">
+                                <!-- Botón cerrar -->
+                                <button @click="open = false"
+                                    class="absolute top-2 right-2 text-red-600 font-bold text-lg">X</button>
+
+                                <!-- Iframe solo se carga si open=true -->
+                                <template x-if="open">
+                                    <iframe src="{{ route('show.cuentas.home') }}"
+                                        class="w-full h-full border rounded"></iframe>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
                 @endif
             </div>
 
@@ -321,7 +345,53 @@
         </form>
     </div>
 
+
     <script>
+        function openCuentasModal() {
+            document.getElementById('cuentas-modal').classList.remove('hidden');
+        }
+
+        function closeCuentasModal() {
+            document.getElementById('cuentas-modal').classList.add('hidden');
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            const tasaCambioInput = document.getElementById("tasa-cambio");
+
+            tasaCambioInput.addEventListener("focus", function() {
+                if (!tasaCambioInput.value) {
+                    tasaCambioInput.value = 6.96; // valor por defecto
+                }
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function() {
+            const tipoSelect = document.getElementById("tipo");
+            const labelDestinatario = document.getElementById("label-destinatario");
+
+            function actualizarLabel() {
+                switch (tipoSelect.value) {
+                    case "ingreso":
+                        labelDestinatario.textContent = "Recibido de:";
+                        break;
+                    case "egreso":
+                        labelDestinatario.textContent = "Pagado a:";
+                        break;
+                    case "traspaso":
+                        labelDestinatario.textContent = "Transferido a:";
+                        break;
+                    case "ajuste":
+                        labelDestinatario.textContent = "Responsable:";
+                        break;
+                    default:
+                        labelDestinatario.textContent = "Destinatario:";
+                }
+            }
+
+            // Ejecutar al cargar por si hay valor seleccionado
+            actualizarLabel();
+
+            // Escuchar cambios
+            tipoSelect.addEventListener("change", actualizarLabel);
+        });
         let rowCount =
             {{ old('detalles') ? count(old('detalles')) : ($editMode ? count($comprobante->detalles) : 1) }};
 

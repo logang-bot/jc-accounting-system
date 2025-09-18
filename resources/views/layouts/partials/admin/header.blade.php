@@ -27,15 +27,6 @@
         <div id="userDropdown"
             class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700 dark:divide-neutral-700 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full"
             role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-default">
-            {{-- <div class="px-4 py-3 border-b">
-                @if (Auth::check())
-                    <h5 class="text-sm font-semibold">{{ Auth::user()->name }}</h5>
-                    <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
-                @else
-                    <h5 class="text-sm font-semibold">Invitado</h5>
-                    <p class="text-xs text-gray-500">Sin correo</p>
-                @endif
-            </div> --}}
             <ul class="py-2 text-sm text-gray-700">
                 @if (Auth::check())
                     <li>
@@ -69,12 +60,6 @@
                             @csrf
                         </form>
                     </li>
-                    {{-- @else
-                    <li>
-                        <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-gray-100">
-                            <i data-feather="log-in" class="inline w-4 h-4 mr-2"></i> Iniciar sesión
-                        </a>
-                    </li> --}}
                 @endif
             </ul>
         </div>

@@ -49,8 +49,12 @@ class ComprobantesController extends Controller
     {
         $empresaId = session('empresa_id');
         $empresa = Empresa::findOrFail($empresaId);
-        $cuentas = CuentasContables::where('es_movimiento', true)
-            ->where('estado', true)
+        // $cuentas = CuentasContables::where('es_movimiento', true)
+        //     ->where('estado', true)
+        //     ->where('empresa_id', $empresaId)
+        //     ->get();
+
+        $cuentas = CuentasContables::where('estado', true)
             ->where('empresa_id', $empresaId)
             ->get();
 

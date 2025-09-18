@@ -262,7 +262,6 @@ class ComprobantesController extends Controller
         $empresaId = session('empresa_id');
         $empresa = Empresa::findOrFail($empresaId);
 
-        // $pdf = FacadePdf::loadView('comprobantePDF', compact('comprobante', 'empresa'));
         $pdf = pdf()->view('comprobantePDF', compact('comprobante', 'empresa'));
 
         return $pdf->name('comprobante-'. $comprobante->numero. '.pdf');

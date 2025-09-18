@@ -63,10 +63,11 @@ Route::middleware('auth')->controller(CuentaController::class)->group(function()
         // Rutas para vistas
         Route::get('/home', 'home')->name('show.cuentas.home');
         Route::get('/crear', 'create')->name('show.cuentas.create');
-        Route::get('/{id}', 'show')->name('show.cuentas.detail');
+        // Route::get('/{id}', 'show')->name('show.cuentas.detail');
         Route::get('/edit/{id}', 'edit')->name('show.cuentas.edit');
 
         // Rutas de funcionalidades
+        Route::get('/pdf', 'exportPdf')->name('cuentas.pdf');
         Route::post('/', 'store')->name('cuentas.store');
         Route::put('/{id}', 'update')->name('cuentas.update');
         Route::delete('/delete/{id}', 'destroy')->name('cuentas.destroy');
@@ -93,8 +94,8 @@ Route::middleware('auth')->controller(ComprobantesController::class)->group(func
     });
 });
 
-Route::middleware('auth')->controller(ComprobantesController::class)->group(function() {
-    Route::get('/libro-diario', [LibroDiarioController::class, 'index'])->name('libro-diario.index');
-    Route::get('/libro-diario/pdf', [LibroDiarioController::class, 'exportPdf'])->name('libro-diario.pdf');
+Route::middleware('auth')->controller(LibroDiarioController::class)->group(function() {
+    Route::get('/libro-diario', 'index')->name('libro-diario.index');
+    Route::get('/libro-diario/pdf', 'exportPdf')->name('libro-diario.pdf');
 });
 

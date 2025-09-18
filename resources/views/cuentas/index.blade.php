@@ -26,14 +26,14 @@
                 <!-- Table -->
                 <div class="px-6 flex flex-row w-full gap-4">
                     <div class="flex gap-2 flex-col w-[10%]">
-                        <a href="{{ route('show.cuentas.create') }}" type="button"
+                        <a href="{{ route('show.cuentas.create') }}"
                             class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-center">
                             Adicionar
                         </a>
-                        <button type="button" class="bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-700"
-                            aria-controls="cuentas-report" data-hs-overlay="#cuentas-report">
+                        <a href="{{ route('cuentas.pdf') }}"
+                            class="bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-700 text-center">
                             Reporte
-                        </button>
+                        </a>
                     </div>
                     <div class="overflow-y-auto max-h-[760px] w-[90%]">
                         <div class="hs-accordion-group border border-gray-300 divide-y divide-gray-300"

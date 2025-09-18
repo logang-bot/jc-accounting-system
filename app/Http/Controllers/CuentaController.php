@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CuentasContables;
+use App\Models\Empresa;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Spatie\Browsershot\Browsershot;
 
 class CuentaController extends Controller
 {
@@ -299,5 +301,35 @@ class CuentaController extends Controller
         $cuenta->delete();
 
         return response()->json(['success' => true, 'message' => 'Cuenta eliminada correctamente.']);
+    }
+
+    public function exportPdf()
+    {
+        $empresaId = session('empresa_id');
+
+        $empresa = Empresa::findOrFail($empresaId);
+
+        $cuentas = CuentasContables::where('empresa_id', $empresaId)
+            ->orderBy('codigo_cuenta')
+            ->get();
+
+        $html = view('pdf.planCuentas', [
+            'empresa' => $empresa,
+            'cuentas' => $cuentas
+        ])->render();
+
+        $fileName = "Plan_de_Cuentas_{$empresa->name}.pdf";
+        $path = storage_path("app/public/{$fileName}");
+
+         Browsershot::html($html)
+            ->format('A4')
+            ->margins(20, 15, 30, 15)
+            ->showBrowserHeaderAndFooter()
+            ->footerHtml('<div style="font-size:10px; width:100%; text-align:center;">
+                            Página <span class="pageNumber"></span> de <span class="totalPages"></span>
+                        </div>')
+            ->save($path);
+
+        return response()->download($path, $fileName);
     }
 }

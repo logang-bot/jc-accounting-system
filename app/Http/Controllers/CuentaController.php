@@ -147,7 +147,9 @@ class CuentaController extends Controller
 
         try {
             CuentasContables::create($data);
-            return redirect()->route('show.cuentas.home')->with('success', 'Cuenta creada correctamente.');
+            return redirect()
+                ->to($request->input('redirect_to', route('show.cuentas.home')))
+                ->with('success', 'Cuenta creada correctamente.');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Error al crear la cuenta: ' . $e->getMessage()])->withInput();
         }

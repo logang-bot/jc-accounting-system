@@ -13,7 +13,7 @@
 @endphp
 <div class="px-6 flex flex-row w-full gap-4">
     <div class="flex gap-2 flex-col w-[10%]">
-        <a href="{{ route('show.cuentas.create') }}"
+        <a href="{{ route('show.cuentas.create', ['redirect_to' => url()->current()]) }}"
             class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-center">
             Adicionar
         </a>

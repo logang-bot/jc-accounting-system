@@ -105,6 +105,7 @@
                     {{ $modo === 'editar' ? 'Actualizar cuenta' : 'Crear cuenta' }}
                 </button>
             </div>
+            <input type="hidden" name="redirect_to" value="{{ request('redirect_to') }}">
         </form>
 
     </div>

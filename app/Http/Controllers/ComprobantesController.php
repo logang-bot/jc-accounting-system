@@ -52,6 +52,7 @@ class ComprobantesController extends Controller
         $cuentas = CuentasContables::where('es_movimiento', true)
             ->where('estado', true)
             ->where('empresa_id', $empresaId)
+            ->orderBy('codigo_cuenta', 'asc')
             ->get();
 
         return view('comprobantes.create', [

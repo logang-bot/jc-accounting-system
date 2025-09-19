@@ -340,13 +340,6 @@
     </x-modal>
 
     <script>
-        function openCuentasModal() {
-            document.getElementById('cuentas-modal').classList.remove('hidden');
-        }
-
-        function closeCuentasModal() {
-            document.getElementById('cuentas-modal').classList.add('hidden');
-        }
         document.addEventListener("DOMContentLoaded", function() {
             const tasaCambioInput = document.getElementById("tasa-cambio");
 
@@ -461,10 +454,26 @@
             actualizarConversiones()
             const table = document.querySelector('#table-detalles');
 
-            if (table)
+            if (table) {
+                table.addEventListener('mousedown', function(event) {
+                    for (let option of event.target.options) {
+                        let codigo = option.getAttribute('data-codigo')
+                        option.textContent = `${codigo} - ${option.textContent}`
+                    }
+                })
                 table.addEventListener('change', function(event) {
+                    for (let option of event.target.options) {
+                        option.textContent = option.textContent.split(" - ")[1];
+                    }
                     calculateAccountNumber(event.target)
                 });
+
+                table.addEventListener('focusout', function(event) {
+                    for (let option of event.target.options) {
+                        option.textContent = option.textContent.split(" - ")[1];
+                    }
+                })
+            }
         });
 
         const calculateAccountNumber = (target) => {

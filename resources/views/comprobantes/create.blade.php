@@ -303,35 +303,19 @@
                             @endif
                         </tbody>
                     </table>
-                    <button type="button" onclick="addRow()"
-                        class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Agregar Línea
-                    </button>
-
-                    <!-- Modal -->
-                    <div x-data="{ open: false }">
-                        <!-- Botón para abrir modal -->
-                        <button type="button" @click="open = true"
-                            class="mt-4 ml-2 px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-700">
-                            Editar Plan de Cuentas
+                    <section class="flex flex-col">
+                        <button type="button" onclick="addRow()"
+                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                            Agregar Línea
                         </button>
 
-                        <!-- Modal -->
-                        <div x-show="open" x-transition
-                            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                            <div class="bg-white p-4 rounded shadow-lg w-4/5 h-4/5 relative">
-                                <!-- Botón cerrar -->
-                                <button @click="open = false"
-                                    class="absolute top-2 right-2 text-red-600 font-bold text-lg">X</button>
-
-                                <!-- Iframe solo se carga si open=true -->
-                                <template x-if="open">
-                                    <iframe src="{{ route('show.cuentas.home') }}"
-                                        class="w-full h-full border rounded"></iframe>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
+                        <!-- Botón para abrir modal -->
+                        <button type="button" aria-controls="show-plan-cuentas-modal"
+                            data-hs-overlay="#show-plan-cuentas-modal"
+                            class="mt-4 px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-700">
+                            Editar Plan de Cuentas
+                        </button>
+                    </section>
 
                 @endif
             </div>
@@ -345,6 +329,15 @@
         </form>
     </div>
 
+    <x-modal id="show-plan-cuentas-modal">
+        <div class="flex flex-col gap-2 items-center justify-center min-h-screen px-4">
+            <button class="text-white hover:text-gray-700 text-5xl font-bold cursor-pointer"
+                data-hs-overlay="#show-plan-cuentas-modal">&times;</button>
+            <div class="bg-amber-50 max-w-[90%] p-5">
+                @include('cuentas.partials.planCuentas')
+            </div>
+        </div>
+    </x-modal>
 
     <script>
         function openCuentasModal() {

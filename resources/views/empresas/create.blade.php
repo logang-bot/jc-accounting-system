@@ -309,7 +309,6 @@
             </div>
         </x-modal>
 
-
         <x-modal id="create-user-modal">
             <div class="flex items-center justify-center min-h-screen px-4">
                 <div class="bg-white w-full max-w-md rounded-lg shadow-lg p-4">

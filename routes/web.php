@@ -6,6 +6,7 @@ use App\Http\Controllers\EmpresasController;
 use App\Http\Controllers\CuentaController;
 use App\Http\Controllers\ComprobantesController;
 use App\Http\Controllers\LibroDiarioController;
+use App\Http\Controllers\LibroMayorController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -97,5 +98,11 @@ Route::middleware('auth')->controller(ComprobantesController::class)->group(func
 Route::middleware('auth')->controller(LibroDiarioController::class)->group(function() {
     Route::get('/libro-diario', 'index')->name('libro-diario.index');
     Route::get('/libro-diario/pdf', 'exportPdf')->name('libro-diario.pdf');
+});
+
+
+Route::middleware('auth')->controller(LibroMayorController::class)->group(function() {
+    Route::get('/libro-mayor', 'index')->name('libro-mayor.index');
+    Route::get('/libro-mayor/pdf', 'exportPdf')->name('libro-mayor.pdf');
 });
 

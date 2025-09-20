@@ -126,11 +126,35 @@
                                     class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200">
                                     Libro Diario</a>
                             </li>
-                            <li>
-                                <a href="{{ route('libro-mayor.index') }}"
-                                    class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200">
-                                    Libro Mayor</a>
+                            <!-- Libro Mayor con submenú -->
+                            <li class="hs-accordion" id="libro-mayor-accordion">
+                                <button type="button"
+                                    class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                                    aria-expanded="false" aria-controls="libro-mayor-accordion-collapse">
+                                    Libro Mayor
+                                    <x-carbon-chevron-down class="w-4 h-4 ms-auto" />
+                                </button>
+                                <div id="libro-mayor-accordion-collapse"
+                                    class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+                                    role="region" aria-labelledby="libro-mayor-accordion">
+                                    <ul class="ps-7 space-y-1">
+                                        <li>
+                                            <a href="{{ route('libro-mayor.index') }}?tipo=una"
+                                                class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200">
+                                                Una sola cuenta
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('libroMayor.varias') }}"
+                                                class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200">
+                                                Varias cuentas
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </div>
                             </li>
+
                             <li>
                                 <a href="#"
                                     class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200">
@@ -163,7 +187,8 @@
                                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                                     class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200 hover:text-gray-300">
                                     Cerrar Sesion</a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                    class="hidden">
                                     @csrf
                                 </form>
                             </li>

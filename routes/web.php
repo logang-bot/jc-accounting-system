@@ -18,7 +18,7 @@ Route::get('/', function () {
 // Route::get('/register', [AuthController::class, 'showRegister'])->name('show.register');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('show.login');
-Route::middleware('guest')->controller(AuthController::class)->group(function() {
+Route::middleware('guest')->controller(AuthController::class)->group(function () {
     // Route::post('/register', 'register')->name('register');
     Route::post('/login', 'login')->name('login');
 });
@@ -33,11 +33,11 @@ Route::middleware(['auth', 'role:Administrator'])
         Route::get('/users', [UserController::class, 'index'])->name('show.users.index');
     });
 
-Route::middleware('auth')->controller(EmpresasController::class)->group(function() {
-    
+Route::middleware('auth')->controller(EmpresasController::class)->group(function () {
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     // Rutas para empresas
-    Route::prefix('/empresas')->group(function() {
+    Route::prefix('/empresas')->group(function () {
 
         // Rutas para vistas
         Route::get('/home/{id}', 'home')->name('show.empresas.home');
@@ -50,17 +50,17 @@ Route::middleware('auth')->controller(EmpresasController::class)->group(function
         Route::put('/{id}', 'update')->name('empresas.update');
         Route::delete('/{id}', 'destroy')->name('empresas.destroy');
 
-        Route::middleware('role:Administrator')->group(function() {
+        Route::middleware('role:Administrator')->group(function () {
             Route::post('/{id}', 'archive')->name('empresas.archive');
         });
         Route::post('/exit', 'exit')->name('empresas.exit');
     });
 });
 
-Route::middleware('auth')->controller(CuentaController::class)->group(function() {
+Route::middleware('auth')->controller(CuentaController::class)->group(function () {
 
-    Route::prefix('/cuentas')->group(function() {
-        
+    Route::prefix('/cuentas')->group(function () {
+
         // Rutas para vistas
         Route::get('/home', 'home')->name('show.cuentas.home');
         Route::get('/crear', 'create')->name('show.cuentas.create');
@@ -78,9 +78,9 @@ Route::middleware('auth')->controller(CuentaController::class)->group(function()
 Route::get('/cuentas/reporte', [CuentaController::class, 'reporte'])->name('cuentas.reporte');
 
 // Comprobantes////////////////////////////////////////////////
-Route::middleware('auth')->controller(ComprobantesController::class)->group(function() {
-    Route::prefix('/comprobantes')->group(function() {
-        
+Route::middleware('auth')->controller(ComprobantesController::class)->group(function () {
+    Route::prefix('/comprobantes')->group(function () {
+
         // Rutas para vistas
         Route::get('/home', 'home')->name('show.comprobantes.home');
         Route::get('/crear', 'create')->name('show.comprobantes.create');
@@ -95,14 +95,21 @@ Route::middleware('auth')->controller(ComprobantesController::class)->group(func
     });
 });
 
-Route::middleware('auth')->controller(LibroDiarioController::class)->group(function() {
+Route::middleware('auth')->controller(LibroDiarioController::class)->group(function () {
     Route::get('/libro-diario', 'index')->name('libro-diario.index');
     Route::get('/libro-diario/pdf', 'exportPdf')->name('libro-diario.pdf');
 });
 
 
-Route::middleware('auth')->controller(LibroMayorController::class)->group(function() {
+Route::middleware('auth')->controller(LibroMayorController::class)->group(function () {
     Route::get('/libro-mayor', 'index')->name('libro-mayor.index');
-    Route::get('/libro-mayor/pdf', 'exportPdf')->name('libro-mayor.pdf');
-});
+    Route::get('/libro-mayor/pdf', 'generarPDF')->name('libro-mayor.pdf');
 
+    // Mostrar el formulario de varias cuentas
+    Route::get('/libro-mayor/varias', [LibroMayorController::class, 'varias'])
+        ->name('libroMayor.varias');
+
+    // Generar reporte (PDF, XLS)
+    Route::get('/libro-mayor/varias/reporte', [LibroMayorController::class, 'variasReporte'])
+        ->name('libroMayor.varias.reporte');
+});

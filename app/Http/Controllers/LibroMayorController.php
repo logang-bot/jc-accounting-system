@@ -6,24 +6,20 @@ use Illuminate\Http\Request;
 use App\Models\CuentasContables;
 use App\Models\ComprobanteDetalles;
 use App\Models\Comprobantes;
-use Barryvdh\DomPDF\Facade\Pdf; // Correcto: fuera de la clase
+
+use function Spatie\LaravelPdf\Support\pdf;
 
 class LibroMayorController extends Controller
 {
     public function index(Request $request)
     {
         $cuentaId     = $request->get('cuenta');
-        $nombreCuenta = $request->get('nombre_cuenta');
-        $proyectoId   = $request->get('proyecto');
-        $moneda       = $request->get('moneda', 'bs');
         $saldoTipo    = $request->get('saldo', 'con_saldo');
         $fechaDesde   = $request->get('fecha_desde');
         $fechaHasta   = $request->get('fecha_hasta');
 
         $query = ComprobanteDetalles::with(['comprobante', 'cuenta'])
             ->when($cuentaId, fn($q) => $q->where('cuenta_contable_id', $cuentaId))
-            ->when($nombreCuenta, fn($q) => $q->whereHas('cuenta', fn($sub) => $sub->where('nombre_cuenta', 'ilike', "%$nombreCuenta%")))
-            ->when($proyectoId, fn($q) => $q->where('proyecto_id', $proyectoId))
             ->when($fechaDesde, fn($q) => $q->whereHas('comprobante', fn($sub) => $sub->whereDate('fecha', '>=', $fechaDesde)))
             ->when($fechaHasta, fn($q) => $q->whereHas('comprobante', fn($sub) => $sub->whereDate('fecha', '<=', $fechaHasta)))
             ->join('comprobantes', 'comprobante_detalles.comprobante_id', '=', 'comprobantes.id')
@@ -46,12 +42,9 @@ class LibroMayorController extends Controller
                 ];
             }
 
-            $debe  = $moneda === 'usd' ? ($mov->debe / $mov->comprobante->tasa_cambio) : $mov->debe;
-            $haber = $moneda === 'usd' ? ($mov->haber / $mov->comprobante->tasa_cambio) : $mov->haber;
-
             $libroMayor[$cuenta->id_cuenta]['movimientos'][] = (object) [
-                'debe'        => $debe,
-                'haber'       => $haber,
+                'debe'        => $mov->debe,
+                'haber'       => $mov->haber,
                 'descripcion' => $mov->descripcion,
                 'comprobante' => $mov->comprobante,
             ];
@@ -78,7 +71,7 @@ class LibroMayorController extends Controller
     public function generarPDF(Request $request)
     {
         $cuentaId   = $request->get('cuenta');
-        $moneda     = $request->get('moneda', 'bs');
+        $moneda     = $request->get('moneda');
         $fechaDesde = $request->get('fecha_desde');
         $fechaHasta = $request->get('fecha_hasta');
 
@@ -91,36 +84,39 @@ class LibroMayorController extends Controller
             ->when($fechaDesde, fn($q) => $q->whereHas('comprobante', fn($sub) => $sub->whereDate('fecha', '>=', $fechaDesde)))
             ->when($fechaHasta, fn($q) => $q->whereHas('comprobante', fn($sub) => $sub->whereDate('fecha', '<=', $fechaHasta)))
             ->join('comprobantes', 'comprobante_detalles.comprobante_id', '=', 'comprobantes.id')
-            ->orderBy('comprobante_detalles.id')
+            ->orderBy('cuenta_contable_id')
+            ->orderBy('comprobantes.fecha')
+            ->orderBy('comprobantes.numero')
             ->select('comprobante_detalles.*')
             ->get();
 
         $libroMayor = [];
         $saldoAcumulado = 0;
-        foreach ($movimientos as $mov) {
-            $debe  = $moneda === 'usd' ? ($mov->debe / $mov->comprobante->tasa_cambio) : $mov->debe;
-            $haber = $moneda === 'usd' ? ($mov->haber / $mov->comprobante->tasa_cambio) : $mov->haber;
 
-            $saldoAcumulado += $debe - $haber;
+        foreach ($movimientos as $mov) {
+            $cuenta = $mov->cuenta;
 
             $libroMayor[] = [
-                'fecha'        => $mov->comprobante->fecha,
-                'comprobante'  => $mov->comprobante->numero,
-                'descripcion'  => $mov->descripcion,
-                'debe'         => $debe,
-                'haber'        => $haber,
-                'saldo'        => $saldoAcumulado,
+                'fecha'       => $mov->comprobante->fecha,
+                'debe'        => $mov->debe,
+                'haber'       => $mov->haber,
+                'descripcion' => $mov->descripcion,
+                'comprobante' => $mov->comprobante,
             ];
         }
 
         $cuenta = CuentasContables::find($cuentaId);
 
-        $pdf = Pdf::loadView('libroMayorPDF', compact('libroMayor', 'cuenta'));
-        return $pdf->stream("LibroMayor_{$cuenta->codigo_cuenta}.pdf");
+        $pdf = pdf()->view('libroMayorPDF', [
+            'libroMayor' => $libroMayor,
+            'cuenta'      => $cuenta,
+        ]);
+
+        return $pdf->name('LibroMayor_{$cuenta->codigo_cuenta}.pdf');
     }
 
     public function varias()
     {
-        return view('libroMayor.varias'); // Apunta a tu Blade 'varias.blade.php'
+        return view('libroMayor.varias');
     }
 }

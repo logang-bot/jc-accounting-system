@@ -102,14 +102,11 @@ Route::middleware('auth')->controller(LibroDiarioController::class)->group(funct
 
 
 Route::middleware('auth')->controller(LibroMayorController::class)->group(function () {
-    Route::get('/libro-mayor', 'index')->name('libro-mayor.index');
-    Route::get('/libro-mayor/pdf', 'generarPDF')->name('libro-mayor.pdf');
-
-    // Mostrar el formulario de varias cuentas
-    Route::get('/libro-mayor/varias', [LibroMayorController::class, 'varias'])
-        ->name('libroMayor.varias');
-
+    Route::get('/libro-mayor', 'index')->name('show.libro-mayor.index');
+    Route::get('/libro-mayor/varias', 'varias')->name('show.libro-mayor.varias');
+    
     // Generar reporte (PDF, XLS)
+    Route::get('/libro-mayor/pdf', 'generarPDF')->name('libro-mayor.pdf');
     Route::get('/libro-mayor/varias/reporte', [LibroMayorController::class, 'variasReporte'])
         ->name('libroMayor.varias.reporte');
 });

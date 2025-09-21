@@ -13,7 +13,7 @@
     <div class="p-8 bg-gray-100 min-h-screen">
         <div class="bg-white p-6 rounded-lg shadow-lg">
             {{-- Filtros --}}
-            <form action="{{ route('libroMayor.varias.reporte') }}" method="GET" class="space-y-4">
+            <form action="{{ route('show.libro-mayor.varias.reporte') }}" method="GET" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                     {{-- Rango de Cuentas --}}
@@ -72,7 +72,7 @@
                         class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">
                         Exportar XLS sin formato
                     </button>
-                    <a href="{{ route('libroMayor.varias') }}"
+                    <a href="{{ route('show.libro-mayor.varias') }}"
                         class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
                         Cancelar
                     </a>

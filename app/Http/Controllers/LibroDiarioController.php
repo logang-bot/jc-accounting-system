@@ -94,20 +94,4 @@ class LibroDiarioController extends Controller
 
         return $pdf->name('libro_diario.pdf');
     }
-    
-    // public function generatePDF($id) 
-    // {
-    //     $data = [
-    //         'title' => 'Libro Diario',
-    //         'date' => date('m/d/Y')
-    //     ];
-
-    //     $comprobante = Comprobante::with(['detalles.cuenta', 'user'])->findOrFail($id);
-    //     $empresaId = session('empresa_id');
-    //     $empresa = Empresa::findOrFail($empresaId);
-
-    //     $pdf = pdf()->view('', compact('comprobante', 'empresa'));
-
-    //     return $pdf->name('comprobante-'. $comprobante->numero. '.pdf');
-    // }
 }

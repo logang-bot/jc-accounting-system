@@ -13,7 +13,7 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {{-- Filtros --}}
-        <form method="GET" action="{{ route('libro-mayor.index') }}"
+        <form method="GET" action="{{ route('show.libro-mayor.index') }}"
             class="mb-6 grid grid-cols-1 md:grid-cols-6 gap-4 bg-white p-4 rounded-xl shadow text-sm">
 
             {{-- Código Contable --}}
@@ -68,11 +68,16 @@
             {{-- Botones --}}
             <div class="col-span-6 flex justify-end items-end gap-2">
                 <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Procesar</button>
-                <a href="{{ route('libro-mayor.index') }}"
+                <a href="{{ route('show.libro-mayor.index') }}"
                     class="px-4 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200">Cancelar</a>
 
                 @if ($cuentaSeleccionada)
-                    <a href="{{ route('libro-mayor.pdf', ['cuenta' => $cuentaSeleccionada]) }}"
+                    <a href="{{ route('libro-mayor.pdf', [
+                        'cuenta' => $cuentaSeleccionada,
+                        'moneda' => request('moneda'),
+                        'fecha_desde' => request('fecha_desde'),
+                        'fecha_hasta' => request('fecha_hasta'),
+                    ]) }}"
                         class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
                         Visualizar PDF
                     </a>

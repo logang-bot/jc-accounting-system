@@ -13,7 +13,7 @@
     <div class="p-8 bg-gray-100 min-h-screen">
         <div class="bg-white p-6 rounded-lg shadow-lg">
             {{-- Filtros --}}
-            <form action="{{ route('show.libro-mayor.varias.reporte') }}" method="GET" class="space-y-4">
+            <form action="{{ route('show.libro-mayor.varias') }}" method="GET" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                     {{-- Rango de Cuentas --}}
@@ -49,13 +49,13 @@
                     </div>
 
                     {{-- Tipo de impresión --}}
-                    <div class="flex items-center space-x-2">
+                    {{-- <div class="flex items-center space-x-2">
                         <label class="w-32 font-medium">Tipo de impresión:</label>
                         <select name="tipo_impresion" class="border rounded p-2 w-full">
                             <option value="varias_hoja">Varias cuentas en una hoja</option>
                             <option value="mayor_hoja">Un mayor por hoja</option>
                         </select>
-                    </div>
+                    </div> --}}
                 </div>
 
                 {{-- Botones de acción --}}
@@ -63,14 +63,6 @@
                     <button type="submit" name="accion" value="pdf"
                         class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
                         Generar PDF
-                    </button>
-                    <button type="submit" name="accion" value="xls"
-                        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                        Exportar XLS
-                    </button>
-                    <button type="submit" name="accion" value="xls_sin_formato"
-                        class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">
-                        Exportar XLS sin formato
                     </button>
                     <a href="{{ route('show.libro-mayor.varias') }}"
                         class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">

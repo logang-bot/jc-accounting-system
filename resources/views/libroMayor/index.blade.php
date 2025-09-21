@@ -17,7 +17,7 @@
             class="mb-6 grid grid-cols-1 md:grid-cols-6 gap-4 bg-white p-4 rounded-xl shadow text-sm">
 
             {{-- Código Contable --}}
-            <div class="col-span-2">
+            <div class="col-span-2" id="singleCuenta_mode">
                 <label for="cuenta" class="block font-medium text-gray-700">Código Contable</label>
                 <select id="cuenta" name="cuenta"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
@@ -28,6 +28,32 @@
                         </option>
                     @endforeach
                 </select>
+            </div>
+
+            {{-- Rango de cuentas --}}
+            <div class="col-span-2 flex gap-2" id="multicuentas_mode">
+                <div>
+                    <label for="cuenta_desde" class="block font-medium text-gray-700">Desde cuenta</label>
+                    <select id="cuenta_desde" name="cuenta_desde"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        @foreach ($cuentas as $cu)
+                            <option value="{{ $cu->id_cuenta }}" @selected(request('cuenta') == $cu->id_cuenta)>
+                                {{ $cu->codigo_cuenta }} - {{ $cu->nombre_cuenta }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label for="cuenta_hasta" class="block font-medium text-gray-700">Hasta cuenta</label>
+                    <select id="cuenta_hasta" name="cuenta_hasta"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        @foreach ($cuentas as $cu)
+                            <option value="{{ $cu->id_cuenta }}" @selected(request('cuenta') == $cu->id_cuenta)>
+                                {{ $cu->codigo_cuenta }} - {{ $cu->nombre_cuenta }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
             {{-- Rango de Fechas --}}
@@ -66,7 +92,9 @@
             </div>
 
             {{-- Botones --}}
-            <div class="col-span-6 flex justify-end items-end gap-2">
+            <div class="col-span-6 flex justify-end items-center gap-2 ">
+                <label for="cuenta_mode">Cuenta simple</label>
+                <input type="checkbox" name="cuenta_mode" id="cuenta_mode">
                 <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Procesar</button>
                 <a href="{{ route('show.libro-mayor.index') }}"
                     class="px-4 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200">Cancelar</a>
@@ -177,18 +205,22 @@
                                 Totales</th>
 
                             @if (request('moneda') == 'bs' || request('moneda') == 'ambas')
-                                <th class="px-4 py-2 text-right font-semibold text-gray-700 border border-gray-300 rounded">
+                                <th
+                                    class="px-4 py-2 text-right font-semibold text-gray-700 border border-gray-300 rounded">
                                     {{ number_format($totalDebeBs, 2) }}</th>
-                                <th class="px-4 py-2 text-right font-semibold text-gray-700 border border-gray-300 rounded">
+                                <th
+                                    class="px-4 py-2 text-right font-semibold text-gray-700 border border-gray-300 rounded">
                                     {{ number_format($totalHaberBs, 2) }}</th>
                                 <th class="px-4 py-2 text-right font-bold text-gray-900 border border-gray-300 rounded">
                                     {{ number_format($saldoBs, 2) }}</th>
                             @endif
 
                             @if (request('moneda') == 'usd' || request('moneda') == 'ambas')
-                                <th class="px-4 py-2 text-right font-semibold text-gray-700 border border-gray-300 rounded">
+                                <th
+                                    class="px-4 py-2 text-right font-semibold text-gray-700 border border-gray-300 rounded">
                                     {{ number_format($totalDebeUsd, 2) }}</th>
-                                <th class="px-4 py-2 text-right font-semibold text-gray-700 border border-gray-300 rounded">
+                                <th
+                                    class="px-4 py-2 text-right font-semibold text-gray-700 border border-gray-300 rounded">
                                     {{ number_format($totalHaberUsd, 2) }}</th>
                                 <th class="px-4 py-2 text-right font-bold text-gray-900 border border-gray-300 rounded">
                                     {{ number_format($saldoUsd, 2) }}</th>
@@ -202,5 +234,32 @@
                 <p>No se encontraron movimientos para el criterio seleccionado.</p>
             </div>
         @endforelse
+        <script>
+            const cuentasCheckbox = document.getElementById("cuenta_mode");
+            // cuentasCheckbox.checked = true
+            // checkCuentasMode()
+            const singleCuentaContainer = document.getElementById("singleCuenta_mode");
+            const multicuentasContainer = document.getElementById("multicuentas_mode");
+
+            cuentasCheckbox.addEventListener("change", function() {
+                if (this.checked) {
+                    singleCuentaContainer.classList.remove("hidden");
+                    multicuentasContainer.classList.add("hidden");
+                } else {
+                    singleCuentaContainer.classList.add("hidden");
+                    multicuentasContainer.classList.remove("hidden");
+                }
+            });
+
+            document.addEventListener("DOMContentLoaded", function() {
+                if (cuentasCheckbox.checked) {
+                    singleCuentaContainer.classList.remove("hidden");
+                    multicuentasContainer.classList.add("hidden");
+                } else {
+                    singleCuentaContainer.classList.add("hidden");
+                    multicuentasContainer.classList.remove("hidden");
+                }
+            })
+        </script>
     </div>
 @endsection

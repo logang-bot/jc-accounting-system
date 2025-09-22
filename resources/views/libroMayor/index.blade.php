@@ -37,7 +37,7 @@
                     <select id="cuenta_desde" name="cuenta_desde"
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         @foreach ($cuentas as $cu)
-                            <option value="{{ $cu->id_cuenta }}" @selected(request('cuenta') == $cu->id_cuenta)>
+                            <option value="{{ $cu->id_cuenta }}" @selected(request('cuenta_desde') == $cu->id_cuenta)>
                                 {{ $cu->codigo_cuenta }} - {{ $cu->nombre_cuenta }}
                             </option>
                         @endforeach
@@ -48,7 +48,7 @@
                     <select id="cuenta_hasta" name="cuenta_hasta"
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         @foreach ($cuentas as $cu)
-                            <option value="{{ $cu->id_cuenta }}" @selected(request('cuenta') == $cu->id_cuenta)>
+                            <option value="{{ $cu->id_cuenta }}" @selected(request('cuenta_hasta') == $cu->id_cuenta)>
                                 {{ $cu->codigo_cuenta }} - {{ $cu->nombre_cuenta }}
                             </option>
                         @endforeach
@@ -94,22 +94,29 @@
             {{-- Botones --}}
             <div class="col-span-6 flex justify-end items-center gap-2 ">
                 <label for="cuenta_mode">Cuenta simple</label>
-                <input type="checkbox" name="cuenta_mode" id="cuenta_mode">
+
+                <input type="checkbox" name="cuenta_mode" id="cuenta_mode" {{ request('cuenta_mode') ? 'checked' : '' }}
+                    value="1">
+
                 <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Procesar</button>
                 <a href="{{ route('show.libro-mayor.index') }}"
                     class="px-4 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200">Cancelar</a>
 
-                @if ($cuentaSeleccionada)
-                    <a href="{{ route('libro-mayor.pdf', [
-                        'cuenta' => $cuentaSeleccionada,
-                        'moneda' => request('moneda'),
-                        'fecha_desde' => request('fecha_desde'),
-                        'fecha_hasta' => request('fecha_hasta'),
-                    ]) }}"
-                        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-                        Visualizar PDF
-                    </a>
-                @endif
+                {{-- @if ($cuentaSeleccionada) --}}
+                <a href="{{ route('libro-mayor.pdf', [
+                    'cuenta' => $cuentaSeleccionada,
+                    'moneda' => request('moneda'),
+                    'fecha_desde' => request('fecha_desde'),
+                    'fecha_hasta' => request('fecha_hasta'),
+                    'cuenta_desde' => request('cuenta_desde'),
+                    'cuenta_hasta' => request('cuenta_hasta'),
+                    'saldo' => request('saldo'),
+                    'cuenta_mode' => request('cuenta_mode'),
+                ]) }}"
+                    class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                    Visualizar PDF
+                </a>
+                {{-- @endif --}}
             </div>
         </form>
 

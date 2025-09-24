@@ -334,12 +334,12 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="block">Contrasenia</label>
+                            <label class="block">Contraseña</label>
                             <input type="password" name="password" class="border rounded w-full p-2" required>
                         </div>
 
                         <div class="mb-3">
-                            <label class="block">Confirmar Contrasenia</label>
+                            <label class="block">Confirmar Contraseña</label>
                             <input type="password" name="password_confirmation" class="border rounded w-full p-2"
                                 required>
                         </div>

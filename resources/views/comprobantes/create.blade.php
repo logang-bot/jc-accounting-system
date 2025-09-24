@@ -34,7 +34,7 @@
                 </div>
             @endif
 
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-4 mb-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Tipo:</label>
                     <select id="tipo" name="tipo" class="w-full border rounded px-3 py-2" required>
@@ -62,6 +62,18 @@
                         class="w-full border rounded px-3 py-2" oninput="actualizarConversiones()"
                         value="{{ old('tasa_cambio', $editMode ? $comprobante->tasa_cambio : '') }}" required>
                 </div>
+
+                <!-- 🔥 NUEVO: Selección de moneda -->
+                <div>
+                    <label for="moneda" class="block text-sm font-medium text-gray-700 mb-1">Moneda:</label>
+                    <select id="moneda" name="moneda" class="w-full border rounded px-3 py-2"
+                        onchange="cambiarMoneda()">
+                        <option value="BOB" selected>Bolivianos (Bs.)</option>
+                        <option value="USD">Dólares (USD)</option>
+                    </select>
+                </div>
+
+
                 <div>
                     <label for="destinatario" id="label-destinatario" class="block text-sm font-medium text-gray-700 mb-1">
                         Destinatario:
@@ -81,7 +93,6 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
                 <textarea name="descripcion" rows="2" class="w-full border rounded px-3 py-2">{{ old('descripcion', $editMode ? $comprobante->descripcion : '') }}</textarea>
             </div>
-
 
             <h3 class="text-lg font-semibold mb-2">Detalle del Comprobante</h3>
 
@@ -229,13 +240,14 @@
                                         <td class="px-3 py-2 text-right us-debe">
                                             <input type="text" readonly
                                                 class="w-full text-right bg-gray-100 border rounded px-2 py-1"
-                                                value="0.00">
+                                                value="{{ number_format($detalle->debe / ($comprobante->tasa_cambio ?: 6.96), 2) }}">
                                         </td>
                                         <td class="px-3 py-2 text-right us-haber">
                                             <input type="text" readonly
                                                 class="w-full text-right bg-gray-100 border rounded px-2 py-1"
-                                                value="0.00">
+                                                value="{{ number_format($detalle->haber / ($comprobante->tasa_cambio ?: 6.96), 2) }}">
                                         </td>
+
 
                                         <td class="px-3 py-2 text-right iva">
                                             <input type="number" step="0.01" min="0" max="100"
@@ -349,6 +361,78 @@
                 }
             });
         });
+
+        // --- NUEVO: Control de moneda ---
+        function cambiarMoneda() {
+            const moneda = document.getElementById('moneda').value;
+            const filas = document.querySelectorAll('#detalle-rows tr');
+            const tasa = parseFloat(document.getElementById('tasa-cambio').value) || 6.96;
+
+            filas.forEach(fila => {
+                const debeBs = fila.querySelector('input[name*="[debe]"]');
+                const haberBs = fila.querySelector('input[name*="[haber]"]');
+                const debeUSD = fila.querySelector('.us-debe input');
+                const haberUSD = fila.querySelector('.us-haber input');
+
+                if (moneda === "USD") {
+                    // 🔵 Modo Dólares: habilitar USD, deshabilitar Bs
+                    debeUSD.removeAttribute('readonly');
+                    haberUSD.removeAttribute('readonly');
+                    debeUSD.classList.remove('bg-gray-100');
+                    haberUSD.classList.remove('bg-gray-100');
+
+                    debeBs.setAttribute('readonly', true);
+                    haberBs.setAttribute('readonly', true);
+                    debeBs.classList.add('bg-gray-100');
+                    haberBs.classList.add('bg-gray-100');
+
+                    // Convertir valores actuales de Bs a USD para que el usuario los pueda ver/editar
+                    const debe = parseFloat(debeBs.value) || 0;
+                    const haber = parseFloat(haberBs.value) || 0;
+                    debeUSD.value = (debe / tasa).toFixed(2);
+                    haberUSD.value = (haber / tasa).toFixed(2);
+
+                } else {
+                    // 🟢 Modo Bolivianos: habilitar Bs, deshabilitar USD
+                    debeBs.removeAttribute('readonly');
+                    haberBs.removeAttribute('readonly');
+                    debeBs.classList.remove('bg-gray-100');
+                    haberBs.classList.remove('bg-gray-100');
+
+                    debeUSD.setAttribute('readonly', true);
+                    haberUSD.setAttribute('readonly', true);
+                    debeUSD.classList.add('bg-gray-100');
+                    haberUSD.classList.add('bg-gray-100');
+
+                    // Convertir valores actuales de USD a Bs
+                    const debe = parseFloat(debeUSD.value) || 0;
+                    const haber = parseFloat(haberUSD.value) || 0;
+                    debeBs.value = (debe * tasa).toFixed(2);
+                    haberBs.value = (haber * tasa).toFixed(2);
+                }
+            });
+        }
+
+        // Escuchar cambios en los campos USD para convertir en vivo a Bs
+        document.addEventListener('input', function(e) {
+            const moneda = document.getElementById('moneda').value;
+            if (moneda === "USD" && (e.target.closest('.us-debe') || e.target.closest('.us-haber'))) {
+                const fila = e.target.closest('tr');
+                const tasa = parseFloat(document.getElementById('tasa-cambio').value) || 6.96;
+
+                const debeUSD = parseFloat(fila.querySelector('.us-debe input').value) || 0;
+                const haberUSD = parseFloat(fila.querySelector('.us-haber input').value) || 0;
+
+                fila.querySelector('input[name*="[debe]"]').value = (debeUSD * tasa).toFixed(2);
+                fila.querySelector('input[name*="[haber]"]').value = (haberUSD * tasa).toFixed(2);
+            }
+        });
+
+        // Llamar al cargar página para dejar todo en el estado inicial
+        document.addEventListener("DOMContentLoaded", function() {
+            cambiarMoneda();
+        });
+
         document.addEventListener("DOMContentLoaded", function() {
             const tipoSelect = document.getElementById("tipo");
             const labelDestinatario = document.getElementById("label-destinatario");
@@ -456,23 +540,34 @@
 
             if (table) {
                 table.addEventListener('mousedown', function(event) {
-                    for (let option of event.target.options) {
-                        let codigo = option.getAttribute('data-codigo')
-                        option.textContent = `${codigo} - ${option.textContent}`
+                    if (event.target.tagName === "SELECT") {
+                        for (let option of event.target.options) {
+                            let codigo = option.getAttribute('data-codigo');
+                            let nombre = option.textContent.split(" - ")
+                                .pop(); // ← toma siempre solo el nombre
+                            option.textContent = `${codigo} - ${nombre}`;
+                        }
                     }
-                })
+                });
+
                 table.addEventListener('change', function(event) {
-                    for (let option of event.target.options) {
-                        option.textContent = option.textContent.split(" - ")[1];
+                    if (event.target.tagName === "SELECT") {
+                        for (let option of event.target.options) {
+                            // Quita el código y deja solo el nombre al cerrar el select
+                            option.textContent = option.textContent.split(" - ").pop();
+                        }
+                        calculateAccountNumber(event.target)
                     }
-                    calculateAccountNumber(event.target)
                 });
 
                 table.addEventListener('focusout', function(event) {
-                    for (let option of event.target.options) {
-                        option.textContent = option.textContent.split(" - ")[1];
+                    if (event.target.tagName === "SELECT") {
+                        for (let option of event.target.options) {
+                            option.textContent = option.textContent.split(" - ").pop();
+                        }
                     }
-                })
+                });
+
             }
         });
 
@@ -490,5 +585,16 @@
                 }
             }
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const selects = document.querySelectorAll('.cuenta-nombre-select');
+            selects.forEach(select => {
+                for (let option of select.options) {
+                    const codigo = option.getAttribute('data-codigo');
+                    const nombre = option.textContent;
+                    option.textContent = `${codigo} - ${nombre}`;
+                }
+            });
+        });
     </script>
 @endsection

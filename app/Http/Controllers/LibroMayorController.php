@@ -23,11 +23,17 @@ class LibroMayorController extends Controller
 
         // dd($cuentaMode);
 
+        $empresaId = session('empresa_id');
+
         $query = ComprobanteDetalles::with(['comprobante', 'cuenta'])
+            ->whereHas('comprobante', function ($q) use ($empresaId) {
+                $q->where('empresa_id', $empresaId);
+            })
+            // 📌 Filtro CUENTA ÚNICA
             ->when($cuentaMode && $cuentaId, function ($q) use ($cuentaId) {
-                // single mode
                 $q->where('cuenta_contable_id', $cuentaId);
             })
+            // 📌 Filtro RANGO DE CUENTAS
             ->when(!$cuentaMode && $cuentaDesde && $cuentaHasta, function ($q) use ($cuentaDesde, $cuentaHasta) {
                 $desdeModel = $cuentaDesde ? CuentasContables::find($cuentaDesde) : null;
                 $hastaModel = $cuentaHasta ? CuentasContables::find($cuentaHasta) : null;
@@ -48,7 +54,6 @@ class LibroMayorController extends Controller
                 });
 
                 return;
-
             })
             ->when($fechaDesde, fn($q) => $q->whereHas('comprobante', fn($sub) => $sub->whereDate('fecha', '>=', $fechaDesde)))
             ->when($fechaHasta, fn($q) => $q->whereHas('comprobante', fn($sub) => $sub->whereDate('fecha', '<=', $fechaHasta)))
@@ -87,7 +92,21 @@ class LibroMayorController extends Controller
             });
         }
 
-        $cuentas   = CuentasContables::all();
+        $empresaId = session('empresa_id'); // o como obtienes la empresa activa
+
+        // Si quieres mostrar TODAS las cuentas de la empresa:
+        $cuentas = CuentasContables::where('empresa_id', $empresaId)
+            ->orderByRaw("
+        CASE
+            WHEN tipo_cuenta = 'Activo' THEN 1        
+            WHEN tipo_cuenta = 'Pasivo' THEN 2
+            WHEN tipo_cuenta = 'Patrimonio' THEN 3
+            WHEN tipo_cuenta = 'Ingresos' THEN 4
+            WHEN tipo_cuenta = 'Egresos' THEN 5
+            ELSE 6
+        END, 
+        codigo_cuenta ASC
+    ")->get();
 
         return view('libroMayor.index', [
             'libroMayor' => $libroMayor,
@@ -134,7 +153,6 @@ class LibroMayorController extends Controller
                 });
 
                 return;
-
             })
             ->when($fechaDesde, fn($q) => $q->whereHas('comprobante', fn($sub) => $sub->whereDate('fecha', '>=', $fechaDesde)))
             ->when($fechaHasta, fn($q) => $q->whereHas('comprobante', fn($sub) => $sub->whereDate('fecha', '<=', $fechaHasta)))

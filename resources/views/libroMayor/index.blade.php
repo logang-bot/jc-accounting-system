@@ -21,7 +21,7 @@
                 <label for="cuenta" class="block font-medium text-gray-700">Código Contable</label>
                 <select id="cuenta" name="cuenta"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                    <option value="">Todas</option>
+                    
                     @foreach ($cuentas as $cu)
                         <option value="{{ $cu->id_cuenta }}" @selected(request('cuenta') == $cu->id_cuenta)>
                             {{ $cu->codigo_cuenta }} - {{ $cu->nombre_cuenta }}

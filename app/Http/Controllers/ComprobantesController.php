@@ -49,9 +49,9 @@ class ComprobantesController extends Controller
     {
         $empresaId = session('empresa_id');
         $empresa = Empresa::findOrFail($empresaId);
-        $cuentas = CuentasContables::where('es_movimiento', true)
-            ->where('estado', true)
-            ->where('empresa_id', $empresaId)
+
+        // Cargar todas las cuentas del plan de cuentas, sin filtrar por es_movimiento
+        $cuentas = CuentasContables::where('empresa_id', $empresaId)
             ->orderBy('codigo_cuenta', 'asc')
             ->get();
 
@@ -63,6 +63,7 @@ class ComprobantesController extends Controller
         ]);
     }
 
+
     public function show($id)
     {
         $comprobante = Comprobante::with(['detalles.cuenta', 'user'])->findOrFail($id);
@@ -71,7 +72,8 @@ class ComprobantesController extends Controller
         return view('comprobantes.show', compact('comprobante', 'empresa'));
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         $comprobante = Comprobante::with('detalles')->findOrFail($id);
         $empresaId = session('empresa_id');
         $empresa = Empresa::findOrFail($empresaId);
@@ -252,7 +254,7 @@ class ComprobantesController extends Controller
         }
     }
 
-    public function generatePDF($id) 
+    public function generatePDF($id)
     {
         $data = [
             'title' => 'Detalle Comprobante',
@@ -265,6 +267,6 @@ class ComprobantesController extends Controller
 
         $pdf = pdf()->view('comprobantePDF', compact('comprobante', 'empresa'));
 
-        return $pdf->name('comprobante-'. $comprobante->numero. '.pdf');
+        return $pdf->name('comprobante-' . $comprobante->numero . '.pdf');
     }
 }

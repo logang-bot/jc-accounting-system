@@ -118,27 +118,19 @@
                         </thead>
                         <tbody id="detalle-rows">
                             @if ($oldDetalles && is_array($oldDetalles) && count($oldDetalles))
-                                {{-- Rebuild rows from old input (validation failed case) --}}
+                                {{-- Reconstruir filas a partir de la entrada anterior (caso de validación fallida) --}}
                                 @foreach ($oldDetalles as $i => $detalle)
                                     <tr>
                                         <td class="px-3 py-2">
-                                            <input type="text" name="detalles[{{ $i }}][codigo_cuenta]"
-                                                value="{{ $detalle['codigo_cuenta'] ?? '' }}"
+                                            <input type="text" name="detalles[0][codigo_cuenta]"
                                                 class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly>
+                                            <input type="hidden" name="detalles[0][cuenta_id]" class="cuenta-id-input"
+                                                value="">
                                         </td>
 
                                         <td class="px-3 py-2">
-                                            <select name="detalles[{{ $i }}][cuenta_id]"
-                                                class="w-full border rounded px-2 py-1 cuenta-nombre-select"
-                                                data-index="{{ $i }}" required>
-                                                @foreach ($cuentas as $cuenta)
-                                                    <option value="{{ $cuenta->id_cuenta }}"
-                                                        data-codigo="{{ $cuenta->codigo_cuenta }}"
-                                                        {{ (string) ($detalle['cuenta_id'] ?? '') === (string) $cuenta->id_cuenta ? 'selected' : '' }}>
-                                                        {{ $cuenta->nombre_cuenta }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                            <input type="text" name="detalles[0][nombre_cuenta]"
+                                                class="w-full border rounded px-2 py-1" readonly>
                                         </td>
 
                                         <td class="px-3 py-2">
@@ -191,9 +183,18 @@
                                             @enderror --}}
                                         </td>
 
-                                        <td class="px-3 py-2 text-center">
+                                        <td class="px-3 py-2 text-center space-x-2">
+                                            <!-- Botón seleccionar cuenta -->
+                                            <button type="button" class="text-blue-600 select-cuenta-action"
+                                                data-index="0">
+                                                Seleccionar
+                                            </button>
+
+                                            <!-- Botón eliminar -->
                                             <button type="button" onclick="removeRow(this)"
-                                                class="text-red-600 hover:underline">Eliminar</button>
+                                                class="text-red-600 hover:underline">
+                                                Eliminar
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -201,24 +202,16 @@
                                 @foreach ($comprobante->detalles as $i => $detalle)
                                     <tr>
                                         <td class="px-3 py-2">
-                                            <input type="text" name="detalles[{{ $i }}][codigo_cuenta]"
-                                                value="{{ $detalle->cuenta->codigo_cuenta }}"
+                                            <input type="text" name="detalles[0][codigo_cuenta]"
                                                 class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly>
+                                            <input type="hidden" name="detalles[0][cuenta_id]" class="cuenta-id-input"
+                                                value="">
                                         </td>
 
                                         <!-- Columna: Nombre de cuenta (select) -->
                                         <td class="px-3 py-2">
-                                            <select name="detalles[{{ $i }}][cuenta_id]"
-                                                class="w-full border rounded px-2 py-1 cuenta-nombre-select"
-                                                data-index="{{ $i }}" required>
-                                                @foreach ($cuentas as $cuenta)
-                                                    <option value="{{ $cuenta->id_cuenta }}"
-                                                        data-codigo="{{ $cuenta->codigo_cuenta }}"
-                                                        {{ $detalle->cuenta_id == $cuenta->id_cuenta ? 'selected' : '' }}>
-                                                        {{ $cuenta->nombre_cuenta }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                            <input type="text" name="detalles[0][nombre_cuenta]"
+                                                class="w-full border rounded px-2 py-1" readonly>
                                         </td>
                                         <td class="px-3 py-2">
                                             <input type="text" name="detalles[{{ $i }}][descripcion]"
@@ -255,9 +248,17 @@
                                                 class="w-20 text-right border rounded px-2 py-1" placeholder="0.00">
                                         </td>
 
-                                        <td class="px-3 py-2 text-center">
+                                        <td class="px-3 py-2 text-center space-x-2">
+                                            <!-- Botón seleccionar cuenta -->
+                                            <button type="button" class="text-blue-600 select-cuenta-action"
+                                                data-index="0">
+                                                Seleccionar
+                                            </button>
+                                            <!-- Botón eliminar -->
                                             <button type="button" onclick="removeRow(this)"
-                                                class="text-red-600 hover:underline">Eliminar</button>
+                                                class="text-red-600 hover:underline">
+                                                Eliminar
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -265,21 +266,14 @@
                                 <tr>
                                     <td class="px-3 py-2">
                                         <input type="text" name="detalles[0][codigo_cuenta]"
-                                            value="{{ $cuentas[0]->codigo_cuenta }}"
                                             class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly>
+                                        <input type="hidden" name="detalles[0][cuenta_id]" class="cuenta-id-input"
+                                            value="">
                                     </td>
 
                                     <td class="px-3 py-2">
-                                        <select name="detalles[0][cuenta_id]"
-                                            class="w-full border rounded px-2 py-1 cuenta-nombre-select" data-index="0"
-                                            required>
-                                            @foreach ($cuentas as $cuenta)
-                                                <option value="{{ $cuenta->id_cuenta }}"
-                                                    data-codigo="{{ $cuenta->codigo_cuenta }}">
-                                                    {{ $cuenta->nombre_cuenta }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                        <input type="text" name="detalles[0][nombre_cuenta]"
+                                            class="w-full border rounded px-2 py-1" readonly>
                                     </td>
                                     <td class="px-3 py-2">
                                         <input type="text" name="detalles[0][descripcion]"
@@ -307,9 +301,16 @@
                                             name="detalles[0][iva]" class="w-full text-right border rounded px-2 py-1"
                                             placeholder="0.00">
                                     </td>
-                                    <td class="px-3 py-2 text-center">
+                                    <td class="px-3 py-2 text-center space-x-2">
+                                        <!-- Botón seleccionar cuenta -->
+                                        <button type="button" class="text-blue-600 select-cuenta-action" data-index="0">
+                                            Seleccionar
+                                        </button>
+                                        <!-- Botón eliminar -->
                                         <button type="button" onclick="removeRow(this)"
-                                            class="text-red-600 hover:underline">Eliminar</button>
+                                            class="text-red-600 hover:underline">
+                                            Eliminar
+                                        </button>
                                     </td>
                                 </tr>
                             @endif
@@ -342,27 +343,110 @@
     </div>
 
     <x-modal id="show-plan-cuentas-modal">
-        <div class="flex flex-col gap-2 items-center justify-center min-h-screen px-4">
-            <button class="text-white hover:text-gray-700 text-5xl font-bold cursor-pointer"
-                data-hs-overlay="#show-plan-cuentas-modal">&times;</button>
-            <div class="bg-amber-50 max-w-[90%] p-5">
-                @include('cuentas.partials.planCuentas')
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="bg-white w-full max-w-[90%] rounded-lg shadow-lg">
+
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between px-6 py-4 border-b">
+                    <h5 class="text-lg font-semibold">
+                        {{ __('Plan de Cuentas') }}
+                    </h5>
+                    <button class="text-gray-500 hover:text-gray-700 text-xl font-bold"
+                        data-hs-overlay="#show-plan-cuentas-modal">&times;</button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6">
+                    @include('cuentas.partials.planCuentas')
+                </div>
+            </div>
+        </div>
+    </x-modal>
+
+    <!-- Modal seleccionar cuenta -->
+    <x-modal id="select-cuenta-modal" class="hidden">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="bg-white w-full max-w-4xl rounded-lg shadow-lg">
+
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between px-6 py-4 border-b bg-blue-600 rounded-t-lg">
+                    <h5 class="text-lg font-semibold text-white">Seleccionar Cuenta Contable</h5>
+                    <button class="text-white hover:text-gray-200 text-xl font-bold"
+                        data-hs-overlay="#select-cuenta-modal">&times;</button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6">
+                    <!-- Filtro -->
+                    <div class="mb-4">
+                        <input type="text" id="buscar-cuenta" placeholder="Buscar por código o nombre..."
+                            class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
+                    </div>
+
+                    <!-- Tabla -->
+                    <div class="overflow-y-auto max-h-96 border rounded">
+                        <table class="w-full text-sm border-collapse">
+                            <thead class="bg-gray-100 sticky top-0">
+                                <tr>
+                                    <th class="px-3 py-2 border">Código</th>
+                                    <th class="px-3 py-2 border">Nombre</th>
+                                    <th class="px-3 py-2 border text-center">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-cuentas">
+                                @foreach ($cuentas as $cuenta)
+                                    <tr class="hover:bg-gray-100 cursor-pointer" data-id="{{ $cuenta->id_cuenta }}"
+                                        data-nombre="{{ $cuenta->nombre_cuenta }}"
+                                        data-codigo="{{ $cuenta->codigo_cuenta }}">
+                                        <td class="px-3 py-2 border">{{ $cuenta->codigo_cuenta }}</td>
+                                        <td class="px-3 py-2 border">{{ $cuenta->nombre_cuenta }}</td>
+                                        <td class="px-3 py-2 border text-center">
+                                            <button type="button"
+                                                class="px-2 py-1 bg-blue-600 text-white rounded select-cuenta-btn"
+                                                data-id="{{ $cuenta->id_cuenta }}"
+                                                data-nombre="{{ $cuenta->nombre_cuenta }}"
+                                                data-codigo="{{ $cuenta->codigo_cuenta }}">
+                                                Seleccionar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
             </div>
         </div>
     </x-modal>
 
     <script>
+        let rowCount = {{ old('detalles') ? count(old('detalles')) : ($editMode ? count($comprobante->detalles) : 1) }};
+        let filaActiva = null;
+
         document.addEventListener("DOMContentLoaded", function() {
             const tasaCambioInput = document.getElementById("tasa-cambio");
 
-            tasaCambioInput.addEventListener("focus", function() {
-                if (!tasaCambioInput.value) {
-                    tasaCambioInput.value = 6.96; // valor por defecto
-                }
-            });
+            // Valor por defecto de la tasa
+            if (!tasaCambioInput.value) tasaCambioInput.value = 6.96;
+
+            cambiarMoneda();
+            actualizarLabelTipo();
+            actualizarConversiones();
+            initSelectCuentaButtons();
+            updateSubmitButtonState();
+
+            const closeModalBtn = document.querySelector("#select-cuenta-modal .text-xl.font-bold");
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener("click", function() {
+                    const modal = document.getElementById("select-cuenta-modal");
+                    if (modal) modal.classList.add("hidden");
+                    filaActiva = null;
+                });
+            }
         });
 
-        // --- NUEVO: Control de moneda ---
+        // ────────── Conversión Bs/USD ──────────
         function cambiarMoneda() {
             const moneda = document.getElementById('moneda').value;
             const filas = document.querySelectorAll('#detalle-rows tr');
@@ -375,69 +459,54 @@
                 const haberUSD = fila.querySelector('.us-haber input');
 
                 if (moneda === "USD") {
-                    // 🔵 Modo Dólares: habilitar USD, deshabilitar Bs
+                    // Habilitar USD, deshabilitar Bs
                     debeUSD.removeAttribute('readonly');
                     haberUSD.removeAttribute('readonly');
                     debeUSD.classList.remove('bg-gray-100');
                     haberUSD.classList.remove('bg-gray-100');
-
                     debeBs.setAttribute('readonly', true);
                     haberBs.setAttribute('readonly', true);
                     debeBs.classList.add('bg-gray-100');
                     haberBs.classList.add('bg-gray-100');
 
-                    // Convertir valores actuales de Bs a USD para que el usuario los pueda ver/editar
-                    const debe = parseFloat(debeBs.value) || 0;
-                    const haber = parseFloat(haberBs.value) || 0;
-                    debeUSD.value = (debe / tasa).toFixed(2);
-                    haberUSD.value = (haber / tasa).toFixed(2);
-
+                    debeUSD.value = ((parseFloat(debeBs.value) || 0) / tasa).toFixed(2);
+                    haberUSD.value = ((parseFloat(haberBs.value) || 0) / tasa).toFixed(2);
                 } else {
-                    // 🟢 Modo Bolivianos: habilitar Bs, deshabilitar USD
+                    // Habilitar Bs, deshabilitar USD
                     debeBs.removeAttribute('readonly');
                     haberBs.removeAttribute('readonly');
                     debeBs.classList.remove('bg-gray-100');
                     haberBs.classList.remove('bg-gray-100');
-
                     debeUSD.setAttribute('readonly', true);
                     haberUSD.setAttribute('readonly', true);
                     debeUSD.classList.add('bg-gray-100');
                     haberUSD.classList.add('bg-gray-100');
 
-                    // Convertir valores actuales de USD a Bs
-                    const debe = parseFloat(debeUSD.value) || 0;
-                    const haber = parseFloat(haberUSD.value) || 0;
-                    debeBs.value = (debe * tasa).toFixed(2);
-                    haberBs.value = (haber * tasa).toFixed(2);
+                    debeBs.value = ((parseFloat(debeUSD.value) || 0) * tasa).toFixed(2);
+                    haberBs.value = ((parseFloat(haberUSD.value) || 0) * tasa).toFixed(2);
                 }
             });
         }
 
-        // Escuchar cambios en los campos USD para convertir en vivo a Bs
+        // Actualizar Bs al editar USD
         document.addEventListener('input', function(e) {
             const moneda = document.getElementById('moneda').value;
             if (moneda === "USD" && (e.target.closest('.us-debe') || e.target.closest('.us-haber'))) {
                 const fila = e.target.closest('tr');
                 const tasa = parseFloat(document.getElementById('tasa-cambio').value) || 6.96;
-
-                const debeUSD = parseFloat(fila.querySelector('.us-debe input').value) || 0;
-                const haberUSD = parseFloat(fila.querySelector('.us-haber input').value) || 0;
-
-                fila.querySelector('input[name*="[debe]"]').value = (debeUSD * tasa).toFixed(2);
-                fila.querySelector('input[name*="[haber]"]').value = (haberUSD * tasa).toFixed(2);
+                fila.querySelector('input[name*="[debe]"]').value = ((parseFloat(fila.querySelector(
+                    '.us-debe input').value) || 0) * tasa).toFixed(2);
+                fila.querySelector('input[name*="[haber]"]').value = ((parseFloat(fila.querySelector(
+                    '.us-haber input').value) || 0) * tasa).toFixed(2);
             }
         });
 
-        // Llamar al cargar página para dejar todo en el estado inicial
-        document.addEventListener("DOMContentLoaded", function() {
-            cambiarMoneda();
-        });
-
-        document.addEventListener("DOMContentLoaded", function() {
+        // ────────── Actualizar label según tipo ──────────
+        function actualizarLabelTipo() {
             const tipoSelect = document.getElementById("tipo");
             const labelDestinatario = document.getElementById("label-destinatario");
 
-            function actualizarLabel() {
+            function actualizar() {
                 switch (tipoSelect.value) {
                     case "ingreso":
                         labelDestinatario.textContent = "Recibido de:";
@@ -456,15 +525,11 @@
                 }
             }
 
-            // Ejecutar al cargar por si hay valor seleccionado
-            actualizarLabel();
+            actualizar();
+            tipoSelect.addEventListener("change", actualizar);
+        }
 
-            // Escuchar cambios
-            tipoSelect.addEventListener("change", actualizarLabel);
-        });
-        let rowCount =
-            {{ old('detalles') ? count(old('detalles')) : ($editMode ? count($comprobante->detalles) : 1) }};
-
+        // ────────── Agregar / Eliminar filas ──────────
         function updateSubmitButtonState() {
             const submitBtn = document.getElementById('submit-button');
             submitBtn.disabled = rowCount < 2;
@@ -473,128 +538,130 @@
         function addRow() {
             const tbody = document.getElementById('detalle-rows');
             const newRow = tbody.rows[0].cloneNode(true);
+
             const inputs = newRow.querySelectorAll('input, select');
             inputs.forEach(el => {
                 if (el.tagName === 'INPUT') {
-                    el.value = '';
-                } else if (el.tagName === 'SELECT') {
-                    el.selectedIndex = 0;
+                    // Inicializar Debe y Haber en 0.00
+                    if (el.name?.includes('[debe]') || el.name?.includes('[haber]') || el.closest('.us-debe') || el
+                        .closest('.us-haber')) {
+                        el.value = "0.00";
+                    }
+                    // Vaciar campos de cuenta y código
+                    else if (el.name?.includes('[cuenta_id]') || el.name?.includes('[codigo_cuenta]')) {
+                        el.value = '';
+                    } else {
+                        el.value = '';
+                    }
+                }
+                if (el.tagName === 'SELECT') {
+                    el.selectedIndex = 0; // Vaciar select de cuentas
                 }
 
+                // Actualizar índice para que el formulario funcione correctamente
                 const name = el.getAttribute('name');
-                if (name) {
-                    const newName = name.replace(/\[\d+\]/, `[${rowCount}]`);
-                    el.setAttribute('name', newName);
-                }
+                if (name) el.setAttribute('name', name.replace(/\[\d+\]/, `[${rowCount}]`));
 
                 const dataIndex = el.getAttribute('data-index');
-                if (dataIndex) {
-                    el.setAttribute('data-index', rowCount);
-                }
+                if (dataIndex) el.setAttribute('data-index', rowCount);
             });
+
             tbody.appendChild(newRow);
-            calculateAccountNumber(newRow.querySelector('.cuenta-nombre-select'))
             rowCount++;
             updateSubmitButtonState();
+
+            initRowButtons(newRow); // inicializar botones de la nueva fila
         }
 
-        function removeRow(button) {
-            const row = button.closest('tr');
+        function removeRow(btn) {
+            const row = btn.closest('tr');
             if (document.getElementById('detalle-rows').rows.length > 1) {
-                rowCount--;
                 row.remove();
+                rowCount--;
                 updateSubmitButtonState();
             }
         }
 
+        // ────────── Conversion Bs/USD de todas las filas ──────────
         function actualizarConversiones() {
             const tasa = parseFloat(document.getElementById('tasa-cambio').value);
             if (!tasa || tasa <= 0) return;
-
-            const filas = document.querySelectorAll('#detalle-rows tr');
-            filas.forEach(fila => {
-                const inputDebe = fila.querySelector('input[name*="[debe]"]');
-                const inputHaber = fila.querySelector('input[name*="[haber]"]');
-                const usDebe = fila.querySelector('.us-debe input');
-                const usHaber = fila.querySelector('.us-haber input');
-
-                const debe = parseFloat(inputDebe.value) || 0;
-                const haber = parseFloat(inputHaber.value) || 0;
-
-                usDebe.value = (debe / tasa).toFixed(2);
-                usHaber.value = (haber / tasa).toFixed(2);
+            document.querySelectorAll('#detalle-rows tr').forEach(fila => {
+                const debe = parseFloat(fila.querySelector('input[name*="[debe]"]').value) || 0;
+                const haber = parseFloat(fila.querySelector('input[name*="[haber]"]').value) || 0;
+                fila.querySelector('.us-debe input').value = (debe / tasa).toFixed(2);
+                fila.querySelector('.us-haber input').value = (haber / tasa).toFixed(2);
             });
         }
 
-        // Dispara actualización cada vez que se cambien valores en Bs
         document.addEventListener('input', function(e) {
-            if (e.target.name?.includes('[debe]') || e.target.name?.includes('[haber]')) {
-                actualizarConversiones();
-            }
+            if (e.target.name?.includes('[debe]') || e.target.name?.includes('[haber]')) actualizarConversiones();
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            updateSubmitButtonState()
-            actualizarConversiones()
-            const table = document.querySelector('#table-detalles');
-
-            if (table) {
-                table.addEventListener('mousedown', function(event) {
-                    if (event.target.tagName === "SELECT") {
-                        for (let option of event.target.options) {
-                            let codigo = option.getAttribute('data-codigo');
-                            let nombre = option.textContent.split(" - ")
-                                .pop(); // ← toma siempre solo el nombre
-                            option.textContent = `${codigo} - ${nombre}`;
-                        }
-                    }
-                });
-
-                table.addEventListener('change', function(event) {
-                    if (event.target.tagName === "SELECT") {
-                        for (let option of event.target.options) {
-                            // Quita el código y deja solo el nombre al cerrar el select
-                            option.textContent = option.textContent.split(" - ").pop();
-                        }
-                        calculateAccountNumber(event.target)
-                    }
-                });
-
-                table.addEventListener('focusout', function(event) {
-                    if (event.target.tagName === "SELECT") {
-                        for (let option of event.target.options) {
-                            option.textContent = option.textContent.split(" - ").pop();
-                        }
-                    }
-                });
-
-            }
-        });
-
-        const calculateAccountNumber = (target) => {
-            if (target && target.classList.contains('cuenta-nombre-select')) {
-                const selectedOption = target.options[target.selectedIndex];
-                const codigo = selectedOption.getAttribute('data-codigo');
-                const index = target.dataset.index;
-
-                const inputCodigo = target.closest('tr').querySelector(
-                    `input[name="detalles[${index}][codigo_cuenta]"]`
-                );
-                if (inputCodigo) {
-                    inputCodigo.value = codigo;
-                }
+        // ────────── Select cuentas dentro de fila ──────────
+        function calculateAccountNumber(select) {
+            if (select && select.classList.contains('cuenta-nombre-select')) {
+                const option = select.options[select.selectedIndex];
+                const codigo = option.getAttribute('data-codigo');
+                select.closest('tr').querySelector(`input[name*="[codigo_cuenta]"]`).value = codigo;
             }
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
-            const selects = document.querySelectorAll('.cuenta-nombre-select');
-            selects.forEach(select => {
-                for (let option of select.options) {
-                    const codigo = option.getAttribute('data-codigo');
-                    const nombre = option.textContent;
-                    option.textContent = `${codigo} - ${nombre}`;
+        function initSelectCuentaButtons() {
+            document.querySelectorAll("#detalle-rows tr").forEach(initRowButtons);
+        }
+
+        function initRowButtons(fila) {
+            // Botón seleccionar cuenta
+            const selectBtn = fila.querySelector('.select-cuenta-action');
+            selectBtn.addEventListener('click', function() {
+                filaActiva = this.closest('tr').rowIndex - 1;
+                document.querySelector("#select-cuenta-modal").classList.remove("hidden");
+                document.getElementById("buscar-cuenta").focus();
+            });
+
+            // Cambiar select dentro de la fila
+            const sel = fila.querySelector('.cuenta-nombre-select');
+            sel.addEventListener('change', () => calculateAccountNumber(sel));
+        }
+
+        // ────────── Selección de cuenta desde modal ──────────
+        document.getElementById("buscar-cuenta").addEventListener("input", function() {
+            const filtro = this.value.toLowerCase();
+            document.querySelectorAll("#tabla-cuentas tr").forEach(fila => {
+                const codigo = fila.dataset.codigo.toLowerCase();
+                const nombre = fila.dataset.nombre.toLowerCase();
+                fila.style.display = (codigo.includes(filtro) || nombre.includes(filtro)) ? "" : "none";
+            });
+        });
+
+        document.querySelectorAll(".select-cuenta-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                if (filaActiva !== null) {
+                    const id = this.dataset.id;
+                    const codigo = this.dataset.codigo;
+                    const nombre = this.dataset.nombre;
+
+                    const fila = document.querySelector(
+                        `#detalle-rows tr:nth-child(${parseInt(filaActiva)+1})`);
+                    if (!fila) return;
+
+                    // Inputs que reemplazan al select
+                    const inputNombre = fila.querySelector(`input[name*="[nombre_cuenta]"]`);
+                    const inputCodigo = fila.querySelector(`input[name*="[codigo_cuenta]"]`);
+                    const inputCuentaId = fila.querySelector(`input[name*="[cuenta_id]"]`);
+
+                    if (inputNombre) inputNombre.value = nombre;
+                    if (inputCodigo) inputCodigo.value = codigo;
+                    if (inputCuentaId) inputCuentaId.value = id;
+
+                    document.querySelector('#select-cuenta-modal').classList.add("hidden");
+                    filaActiva = null;
                 }
+
             });
         });
     </script>
+
+
 @endsection

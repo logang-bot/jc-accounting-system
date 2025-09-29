@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BalancesController;
 use App\Http\Controllers\EmpresasController;
 use App\Http\Controllers\CuentaController;
 use App\Http\Controllers\ComprobantesController;
+use App\Http\Controllers\EstadoResultadosController;
 use App\Http\Controllers\LibroDiarioController;
 use App\Http\Controllers\LibroMayorController;
 use Illuminate\Support\Facades\Route;
@@ -109,4 +111,12 @@ Route::middleware('auth')->controller(LibroMayorController::class)->group(functi
     Route::get('/libro-mayor/pdf', 'generarPDF')->name('libro-mayor.pdf');
     Route::get('/libro-mayor/varias/reporte', [LibroMayorController::class, 'variasReporte'])
         ->name('libroMayor.varias.reporte');
+});
+
+Route::middleware('auth')->controller(BalancesController::class)->group(function() {
+    Route::get('/balances/general', 'balanceGeneral')->name('balances.general');
+});
+
+Route::middleware('auth')->controller(EstadoResultadosController::class)->group(function() {
+    Route::get('/reportes/estado-resultados', 'index')->name('estado-resultados.index');
 });

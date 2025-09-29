@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class CuentasContables extends Model
 {
-    use HasFactory;
+    const TIPO_ACTIVO      = 'Activo';
+    const TIPO_PASIVO      = 'Pasivo';
+    const TIPO_PATRIMONIO  = 'Patrimonio';
+    const TIPO_INGRESOS    = 'Ingresos';
+    const TIPO_GASTOS      = 'Egresos';
 
     protected $table = 'cuentas';
     protected $primaryKey = 'id_cuenta';
@@ -175,6 +179,34 @@ class CuentasContables extends Model
         if (substr($codigo, 1, 2) !== '00') return 2;
         
         return 1; // Nivel raíz
+    }
+
+    public static function tipoFromCodigo(string $codigo): ?string
+    {
+        // remove non-digits and take first digit
+        $digits = preg_replace('/\D+/', '', $codigo);
+        if ($digits === '') return null;
+        switch (substr($digits, 0, 1)) {
+            case '1': return self::TIPO_ACTIVO;
+            case '2': return self::TIPO_PASIVO;
+            case '3': return self::TIPO_PATRIMONIO;
+            case '4': return self::TIPO_INGRESOS;
+            case '5': return self::TIPO_GASTOS;
+            default: return null;
+        }
+    }
+
+    public function getFullParentChainAttribute()
+    {
+        $chain = [];
+        $current = $this;
+
+        while ($current->parent) {
+            $chain[] = $current->parent->nombre_cuenta; // or codigo_cuenta if you prefer
+            $current = $current->parent;
+        }
+
+        return array_reverse($chain); // from top-level parent down
     }
 
 }

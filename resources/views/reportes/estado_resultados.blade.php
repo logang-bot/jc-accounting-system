@@ -1,15 +1,52 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="container mx-auto px-4">
-        <h1 class="text-2xl font-bold mb-4">Estado de Resultados</h1>
+    <div class="bg-blue-600 p-8">
+        <div class="flex flex-wrap">
+            <div class="w-full">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-white text-2xl font-semibold">Estado de Resultados</h3>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {{-- Filters --}}
-        <form method="GET" action="{{ route('estado-resultados.index') }}" class="mb-6 flex gap-4">
-            <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="border rounded px-2 py-1">
-            <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="border rounded px-2 py-1">
-            <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded">Filtrar</button>
+        <form method="GET" action="{{ route('estado-resultados.index') }}"
+            class="flex flex-wrap items-end gap-4 bg-white p-4 rounded-lg shadow mb-6 w-full">
+
+            <!-- Fecha Desde -->
+            <div>
+                <label for="fecha_desde" class="block text-sm font-medium text-gray-700">Desde</label>
+                <input type="date" id="fecha_desde" name="fecha_desde" value="{{ $fechaDesde }}"
+                    class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+            </div>
+
+            <!-- Fecha Hasta -->
+            <div>
+                <label for="fecha_hasta" class="block text-sm font-medium text-gray-700">Hasta</label>
+                <input type="date" id="fecha_hasta" name="fecha_hasta" value="{{ $fechaHasta }}"
+                    class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+            </div>
+
+            <!-- Botones -->
+            <div class="flex gap-2">
+                <!-- Filtrar -->
+                <button type="submit"
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md shadow hover:bg-blue-700">
+                    Filtrar
+                </button>
+
+                <!-- Reporte PDF -->
+                <a href="{{ route('estado_resultados.pdf', ['fecha_desde' => $fechaDesde, 'fecha_hasta' => $fechaHasta]) }}"
+                    target="_blank"
+                    class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md shadow hover:bg-red-700">
+                    Reporte Estado de Resultados
+                </a>
+            </div>
         </form>
+
 
         {{-- Ingresos --}}
         <div class="mb-6">

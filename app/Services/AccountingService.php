@@ -26,7 +26,7 @@ class AccountingService
             $totalHaber = $movs->sum('haber');
 
             // Compute saldo according to tipo_cuenta
-            $saldo = ($cuenta->tipo_cuenta === 'Activo') 
+            $saldo = ($cuenta->tipo_cuenta === 'Activo')
                 ? $totalDebe - $totalHaber
                 : $totalHaber - $totalDebe;
 
@@ -103,8 +103,10 @@ class AccountingService
         // Step 2: compute saldo for each account
         $query = $cuentas->map(function ($cuenta) use ($fechaDesde, $fechaHasta) {
             $movs = ComprobanteDetalles::where('cuenta_contable_id', $cuenta->id_cuenta)
-                ->when($fechaDesde, fn($q) => $q->whereDate('created_at', '>=', $fechaDesde))
-                ->when($fechaHasta, fn($q) => $q->whereDate('created_at', '<=', $fechaHasta))
+                ->whereHas('comprobante', function ($q) use ($fechaDesde, $fechaHasta) {
+                    if ($fechaDesde) $q->whereDate('fecha', '>=', $fechaDesde);
+                    if ($fechaHasta) $q->whereDate('fecha', '<=', $fechaHasta);
+                })
                 ->get();
 
             $totalDebe = $movs->sum('debe');
@@ -113,10 +115,18 @@ class AccountingService
             // For Estado de Resultados:
             // - Ingresos: saldo = haber - debe
             // - Egresos: saldo = debe - haber
-            $saldo = ($cuenta->tipo_cuenta === 'Ingreso') 
-                ? $totalHaber - $totalDebe
-                : $totalDebe - $totalHaber;
+            //$saldo = ($cuenta->tipo_cuenta === 'Ingreso')
+            //  ? $totalHaber - $totalDebe
+            //: $totalDebe - $totalHaber;
 
+            // Naturaleza: Ingreso (4xxxx) → haber - debe, Egreso (5xxxx) → debe - haber
+            if ($cuenta->tipo_cuenta === 'Ingreso' || str_starts_with($cuenta->codigo_cuenta, '4')) {
+                $saldo = $totalHaber - $totalDebe;
+            } elseif ($cuenta->tipo_cuenta === 'Egreso' || str_starts_with($cuenta->codigo_cuenta, '5')) {
+                $saldo = $totalDebe - $totalHaber;
+            } else {
+                $saldo = 0;
+            }
             return [
                 'cuenta' => $cuenta,
                 'codigo_cuenta' => $cuenta->codigo_cuenta,
@@ -126,10 +136,10 @@ class AccountingService
             ];
         });
 
-        // Step 3: filter out zero balances
+        // Filtrar saldos en cero
         $query = $query->filter(fn($row) => $row['saldo'] != 0);
 
-        // Step 4: add full parent chain and level
+        // Armar parent chain
         $query = $query->map(function ($row) {
             $parentChain = [];
             $current = $row['cuenta'];
@@ -160,10 +170,19 @@ class AccountingService
                 'level' => $row['level'],
             ];
 
-            if ($row['tipo_cuenta'] === 'Ingreso') {
+            /*  if ($row['tipo_cuenta'] === 'Ingreso') {
                 $resultados['ingresos'][] = $data;
                 $resultados['total_ingresos'] += $row['saldo'];
             } else { // Egreso
+                $resultados['egresos'][] = $data;
+                $resultados['total_egresos'] += $row['saldo'];
+            }
+              */
+            
+            if ($row['tipo_cuenta'] === 'Ingreso' || str_starts_with($row['codigo_cuenta'], '4')) {
+                $resultados['ingresos'][] = $data;
+                $resultados['total_ingresos'] += $row['saldo'];
+            } elseif ($row['tipo_cuenta'] === 'Egreso' || str_starts_with($row['codigo_cuenta'], '5')) {
                 $resultados['egresos'][] = $data;
                 $resultados['total_egresos'] += $row['saldo'];
             }

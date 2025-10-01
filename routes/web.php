@@ -106,17 +106,22 @@ Route::middleware('auth')->controller(LibroDiarioController::class)->group(funct
 Route::middleware('auth')->controller(LibroMayorController::class)->group(function () {
     Route::get('/libro-mayor', 'index')->name('show.libro-mayor.index');
     Route::get('/libro-mayor/varias', 'varias')->name('show.libro-mayor.varias');
-    
+
     // Generar reporte (PDF, XLS)
     Route::get('/libro-mayor/pdf', 'generarPDF')->name('libro-mayor.pdf');
     Route::get('/libro-mayor/varias/reporte', [LibroMayorController::class, 'variasReporte'])
         ->name('libroMayor.varias.reporte');
 });
 
-Route::middleware('auth')->controller(BalancesController::class)->group(function() {
+Route::middleware('auth')->controller(BalancesController::class)->group(function () {
     Route::get('/balances/general', 'balanceGeneral')->name('balances.general');
+
+    Route::get('/balances/pdf', 'exportPdf')->name('balances.pdf');
 });
 
-Route::middleware('auth')->controller(EstadoResultadosController::class)->group(function() {
+Route::middleware('auth')->controller(EstadoResultadosController::class)->group(function () {
     Route::get('/reportes/estado-resultados', 'index')->name('estado-resultados.index');
+
+    Route::get('/reportes/estado-resultados/pdf', [EstadoResultadosController::class, 'exportarPDF'])
+        ->name('estado_resultados.pdf');
 });

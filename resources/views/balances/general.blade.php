@@ -1,26 +1,44 @@
 @extends('layouts.admin')
 
 @section('content')
+    <div class="bg-blue-600 p-8">
+        <div class="flex flex-wrap">
+            <div class="w-full">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-white text-2xl font-semibold">Balance General (Estado de Situación Financiera)</h3>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container mx-auto px-4 py-6">
-        <h1 class="text-2xl font-bold mb-6">Balance General (Estado de Situación Financiera)</h1>
-
         {{-- Filters --}}
-        <form method="GET" action="{{ route('balances.general') }}" class="mb-6 flex gap-4 items-end">
+        <form method="GET" action="{{ route('balances.general') }}"
+            class="flex flex-wrap items-end gap-4 bg-white p-4 rounded-lg shadow mb-6 w-full">
+
             <div>
-                <label for="fecha_desde" class="block text-sm font-medium">Desde</label>
+                <label for="fecha_desde" class="block text-sm font-medium text-gray-700">Desde</label>
                 <input type="date" id="fecha_desde" name="fecha_desde" value="{{ $fechaDesde }}"
-                    class="border rounded px-2 py-1 w-full">
+                    class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
             </div>
 
             <div>
-                <label for="fecha_hasta" class="block text-sm font-medium">Hasta</label>
+                <label for="fecha_hasta" class="block text-sm font-medium text-gray-700">Hasta</label>
                 <input type="date" id="fecha_hasta" name="fecha_hasta" value="{{ $fechaHasta }}"
-                    class="border rounded px-2 py-1 w-full">
+                    class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
             </div>
 
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded shadow">
-                Filtrar
-            </button>
+            <div class="flex gap-2">
+                <button type="submit"
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md shadow hover:bg-blue-700">
+                    Filtrar
+                </button>
+
+                <a href="{{ route('balances.pdf', ['fecha_desde' => $fechaDesde, 'fecha_hasta' => $fechaHasta]) }}"
+                    target="_blank"
+                    class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md shadow hover:bg-red-700">
+                    Reporte Balance General
+                </a>
+            </div>
         </form>
 
         {{-- Balance Table --}}

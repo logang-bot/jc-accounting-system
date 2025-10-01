@@ -118,37 +118,32 @@
                         </thead>
                         <tbody id="detalle-rows">
                             @if ($oldDetalles && is_array($oldDetalles) && count($oldDetalles))
-                                {{-- Reconstruir filas a partir de la entrada anterior (caso de validación fallida) --}}
                                 @foreach ($oldDetalles as $i => $detalle)
                                     <tr>
                                         <td class="px-3 py-2">
                                             <input type="text" name="detalles[0][codigo_cuenta]"
-                                                class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly>
+                                                class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly
+                                                value="{{ old("detalles.$i.cuenta.codigo_cuenta", $detalle->cuenta->codigo_cuenta ?? '') }}">
                                             <input type="hidden" name="detalles[0][cuenta_id]" class="cuenta-id-input"
                                                 value="">
                                         </td>
 
                                         <td class="px-3 py-2">
                                             <input type="text" name="detalles[0][nombre_cuenta]"
-                                                class="w-full border rounded px-2 py-1" readonly>
+                                                class="w-full border rounded px-2 py-1" readonly
+                                                value="{{ old("detalles.$i.cuenta.nombre_cuenta", $detalle->cuenta->nombre_cuenta ?? '') }}">
                                         </td>
 
                                         <td class="px-3 py-2">
                                             <input type="text" name="detalles[{{ $i }}][descripcion]"
                                                 class="w-full border rounded px-2 py-1"
                                                 value="{{ $detalle['descripcion'] ?? '' }}">
-                                            {{-- @error("detalles.$i.descripcion")
-                                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                                            @enderror --}}
                                         </td>
 
                                         <td class="px-3 py-2">
                                             <input type="number" step="0.01" name="detalles[{{ $i }}][debe]"
                                                 class="w-full text-right border rounded px-2 py-1"
                                                 value="{{ $detalle['debe'] ?? '' }}">
-                                            {{-- @error("detalles.$i.debe")
-                                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                                            @enderror --}}
                                         </td>
 
                                         <td class="px-3 py-2">
@@ -156,9 +151,6 @@
                                                 name="detalles[{{ $i }}][haber]"
                                                 class="w-full text-right border rounded px-2 py-1"
                                                 value="{{ $detalle['haber'] ?? '' }}">
-                                            {{-- @error("detalles.$i.haber")
-                                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                                            @enderror --}}
                                         </td>
 
                                         <td class="px-3 py-2 text-right us-debe">
@@ -178,9 +170,6 @@
                                                 name="detalles[{{ $i }}][iva]"
                                                 class="w-20 text-right border rounded px-2 py-1"
                                                 value="{{ $detalle['iva'] ?? 0 }}">
-                                            {{-- @error("detalles.$i.iva")
-                                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                                            @enderror --}}
                                         </td>
 
                                         <td class="px-3 py-2 text-center space-x-2">
@@ -203,7 +192,8 @@
                                     <tr>
                                         <td class="px-3 py-2">
                                             <input type="text" name="detalles[0][codigo_cuenta]"
-                                                class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly>
+                                                class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly
+                                                value="{{ old("detalles.$i.cuenta.codigo_cuenta", $detalle->cuenta->codigo_cuenta ?? '') }}">
                                             <input type="hidden" name="detalles[0][cuenta_id]" class="cuenta-id-input"
                                                 value="">
                                         </td>
@@ -211,7 +201,8 @@
                                         <!-- Columna: Nombre de cuenta (select) -->
                                         <td class="px-3 py-2">
                                             <input type="text" name="detalles[0][nombre_cuenta]"
-                                                class="w-full border rounded px-2 py-1" readonly>
+                                                class="w-full border rounded px-2 py-1" readonly
+                                                value="{{ old("detalles.$i.cuenta.nombre_cuenta", $detalle->cuenta->nombre_cuenta ?? '') }}">
                                         </td>
                                         <td class="px-3 py-2">
                                             <input type="text" name="detalles[{{ $i }}][descripcion]"
@@ -219,10 +210,12 @@
                                                 value="{{ old("detalles.$i.descripcion", $detalle->descripcion ?? '') }}">
                                         </td>
                                         <td class="px-3 py-2">
-                                            <input type="number" step="0.01"
-                                                name="detalles[{{ $i }}][debe]"
-                                                class="w-full text-right border rounded px-2 py-1"
-                                                value="{{ old("detalles.$i.debe", $detalle->debe ?? 0) }}">
+                                            <div>
+                                                <input type="number" step="0.01"
+                                                    name="detalles[{{ $i }}][debe]"
+                                                    class="w-full text-right border rounded px-2 py-1"
+                                                    value="{{ old("detalles.$i.debe", $detalle->debe ?? 0) }}">
+                                            </div>
                                         </td>
                                         <td class="px-3 py-2">
                                             <input type="number" step="0.01"
@@ -482,8 +475,8 @@
                     debeUSD.classList.add('bg-gray-100');
                     haberUSD.classList.add('bg-gray-100');
 
-                    debeBs.value = ((parseFloat(debeUSD.value) || 0) * tasa).toFixed(2);
-                    haberBs.value = ((parseFloat(haberUSD.value) || 0) * tasa).toFixed(2);
+                    // debeBs.value = ((parseFloat(debeUSD.value) || 0) * tasa).toFixed(2);
+                    // haberBs.value = ((parseFloat(haberUSD.value) || 0) * tasa).toFixed(2);
                 }
             });
         }
@@ -570,7 +563,7 @@
             rowCount++;
             updateSubmitButtonState();
 
-            initRowButtons(newRow); // inicializar botones de la nueva fila
+            // initRowButtons(newRow); 
         }
 
         function removeRow(btn) {
@@ -587,6 +580,7 @@
             const tasa = parseFloat(document.getElementById('tasa-cambio').value);
             if (!tasa || tasa <= 0) return;
             document.querySelectorAll('#detalle-rows tr').forEach(fila => {
+                const rawDebe = fila.querySelector('input[name*="[debe]"]').value;
                 const debe = parseFloat(fila.querySelector('input[name*="[debe]"]').value) || 0;
                 const haber = parseFloat(fila.querySelector('input[name*="[haber]"]').value) || 0;
                 fila.querySelector('.us-debe input').value = (debe / tasa).toFixed(2);
@@ -608,22 +602,22 @@
         }
 
         function initSelectCuentaButtons() {
-            document.querySelectorAll("#detalle-rows tr").forEach(initRowButtons);
+            // document.querySelectorAll("#detalle-rows tr").forEach(initRowButtons);
         }
 
-        function initRowButtons(fila) {
-            // Botón seleccionar cuenta
-            const selectBtn = fila.querySelector('.select-cuenta-action');
-            selectBtn.addEventListener('click', function() {
-                filaActiva = this.closest('tr').rowIndex - 1;
-                document.querySelector("#select-cuenta-modal").classList.remove("hidden");
-                document.getElementById("buscar-cuenta").focus();
-            });
+        // function initRowButtons(fila) {
+        //     // Botón seleccionar cuenta
+        //     const selectBtn = fila.querySelector('.select-cuenta-action');
+        //     selectBtn.addEventListener('click', function() {
+        //         filaActiva = this.closest('tr').rowIndex - 1;
+        //         document.querySelector("#select-cuenta-modal").classList.remove("hidden");
+        //         document.getElementById("buscar-cuenta").focus();
+        //     });
 
-            // Cambiar select dentro de la fila
-            const sel = fila.querySelector('.cuenta-nombre-select');
-            sel.addEventListener('change', () => calculateAccountNumber(sel));
-        }
+        //     // Cambiar select dentro de la fila
+        //     const sel = fila.querySelector('.cuenta-nombre-select');
+        //     sel.addEventListener('change', () => calculateAccountNumber(sel));
+        // }
 
         // ────────── Selección de cuenta desde modal ──────────
         document.getElementById("buscar-cuenta").addEventListener("input", function() {

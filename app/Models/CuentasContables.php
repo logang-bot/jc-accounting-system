@@ -110,7 +110,6 @@ class CuentasContables extends Model
         ];
 
         if (!$cuenta->parent_id) {
-            // Nivel 1: código base como "1000000000", "2000000000", etc.
             return str_pad($prefijos[$cuenta->tipo_cuenta], 10, '0', STR_PAD_RIGHT);
         }
 
@@ -122,11 +121,11 @@ class CuentasContables extends Model
 
         // Definimos los rangos de dígitos por nivel
         $rangos = [
-            1 => [0, 1],     // 1er dígito
-            2 => [1, 2],     // digitos 2-3
-            3 => [3, 2],     // dígitos 4-5
-            4 => [5, 2],     // dígitos 6-7
-            5 => [7, 3],     // dígitos 8-10
+            1 => [0, 1],     // 1er digito
+            2 => [1, 1],     // 2do digito
+            3 => [2, 2],     // dígitos 3-4
+            4 => [4, 2],     // dígitos 5-6
+            5 => [6, 4],     // dígitos 7-10
         ];
 
         if (!isset($rangos[$nivelPadre]) || !isset($rangos[$nivelHijo])) {
@@ -144,8 +143,12 @@ class CuentasContables extends Model
             ->orderBy('codigo_cuenta', 'desc')
             ->first();
 
-        $nuevoSegmento = $nivelHijo === 5 ? '0001' : '01';
-        $nuevoSegmento = $nivelHijo === 2 ? '1' : '01';
+        $nuevoSegmento = '01';
+
+        if ($nivelHijo === 5) 
+            $nuevoSegmento = '0001';
+        else if ($nivelHijo === 2)
+            $nuevoSegmento = '1';
 
         if ($nivelHijo == 5)
             error_log("nivel cinco");
@@ -173,10 +176,10 @@ class CuentasContables extends Model
         $codigo = str_pad($codigo, 10, '0', STR_PAD_RIGHT);
     
         // Verificar desde el nivel más profundo al más superficial
-        if (substr($codigo, 7, 3) !== '000') return 5;
-        if (substr($codigo, 5, 2) !== '00') return 4;
-        if (substr($codigo, 3, 2) !== '00') return 3;
-        if (substr($codigo, 1, 2) !== '00') return 2;
+        if (substr($codigo, 6, 4) !== '0000') return 5;
+        if (substr($codigo, 4, 2) !== '00') return 4;
+        if (substr($codigo, 2, 2) !== '00') return 3;
+        if (substr($codigo, 1, 1) !== '0') return 2;
         
         return 1; // Nivel raíz
     }

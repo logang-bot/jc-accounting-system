@@ -39,10 +39,6 @@
         .font-bold {
             font-weight: bold;
         }
-
-        .padding-left {
-            padding-left: 20px;
-        }
     </style>
 </head>
 
@@ -61,17 +57,17 @@
         </thead>
         <tbody>
             @foreach ($balances['activos'] ?? [] as $cuenta)
-                @foreach ($cuenta['full_parent_chain'] as $i => $parent)
+                @foreach ($cuenta['full_parent_chain'] ?? [] as $i => $parent)
                     <tr>
                         <td style="padding-left: {{ $i * 20 }}px;">{{ $parent }}</td>
                         <td></td>
                     </tr>
                 @endforeach
                 <tr>
-                    <td style="padding-left: {{ $cuenta['nivel'] * 20 }}px;">
-                        {{ $cuenta['codigo_cuenta'] }} - {{ $cuenta['nombre'] }}
+                    <td style="padding-left: {{ ($cuenta['nivel'] ?? 0) * 20 }}px;">
+                        {{ $cuenta['codigo'] ?? '' }} - {{ $cuenta['nombre'] ?? '' }}
                     </td>
-                    <td class="text-right">{{ number_format($cuenta['saldo'], 2) }}</td>
+                    <td class="text-right">{{ number_format($cuenta['saldo'] ?? 0, 2) }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -93,46 +89,49 @@
             </tr>
         </thead>
         <tbody>
+            {{-- Pasivos --}}
             @foreach ($balances['pasivos'] ?? [] as $cuenta)
-                @foreach ($cuenta['full_parent_chain'] as $i => $parent)
+                @foreach ($cuenta['full_parent_chain'] ?? [] as $i => $parent)
                     <tr>
                         <td style="padding-left: {{ $i * 20 }}px;">{{ $parent }}</td>
                         <td></td>
                     </tr>
                 @endforeach
                 <tr>
-                    <td style="padding-left: {{ $cuenta['nivel'] * 20 }}px;">
-                        {{ $cuenta['codigo_cuenta'] }} - {{ $cuenta['nombre'] }}
+                    <td style="padding-left: {{ ($cuenta['nivel'] ?? 0) * 20 }}px;">
+                        {{ $cuenta['codigo'] ?? '' }} - {{ $cuenta['nombre'] ?? '' }}
                     </td>
-                    <td class="text-right">{{ number_format($cuenta['saldo'], 2) }}</td>
+                    <td class="text-right">{{ number_format($cuenta['saldo'] ?? 0, 2) }}</td>
                 </tr>
             @endforeach
 
+            {{-- Patrimonio --}}
             @foreach ($balances['patrimonio'] ?? [] as $cuenta)
-                @foreach ($cuenta['full_parent_chain'] as $i => $parent)
+                @foreach ($cuenta['full_parent_chain'] ?? [] as $i => $parent)
                     <tr>
                         <td style="padding-left: {{ $i * 20 }}px;">{{ $parent }}</td>
                         <td></td>
                     </tr>
                 @endforeach
                 <tr>
-                    <td style="padding-left: {{ $cuenta['nivel'] * 20 }}px;">
-                        {{ $cuenta['codigo_cuenta'] }} - {{ $cuenta['nombre'] }}
+                    <td style="padding-left: {{ ($cuenta['nivel'] ?? 0) * 20 }}px;">
+                        {{ $cuenta['codigo'] ?? '' }} - {{ $cuenta['nombre'] ?? '' }}
                     </td>
-                    <td class="text-right">{{ number_format($cuenta['saldo'], 2) }}</td>
+                    <td class="text-right">{{ number_format($cuenta['saldo'] ?? 0, 2) }}</td>
                 </tr>
             @endforeach
-        </tbody>
         <tfoot>
             <tr class="font-bold">
                 <td>Total Pasivos + Patrimonio</td>
                 <td class="text-right">
-                    {{ number_format(($balances['total_pasivos'] ?? 0) + ($balances['total_patrimonio'] ?? 0), 2) }}
+                    {{ number_format(
+                        ($balances['total_pasivos'] ?? 0) + ($balances['total_patrimonio'] ?? 0) + ($balances['resultado_neto'] ?? 0),
+                        2,
+                    ) }}
                 </td>
             </tr>
         </tfoot>
     </table>
-
 </body>
 
 </html>

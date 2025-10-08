@@ -15,6 +15,7 @@
             </div>
         </div>
     </div>
+
     <div class="container mx-auto px-6">
         <!-- Formulario para filtros y búsqueda -->
         <div class="flex mt-4">
@@ -31,7 +32,8 @@
                     <label for="tipo_comprobante" class="block text-sm font-medium text-gray-700">Tipo</label>
                     <select id="tipo_comprobante" name="tipo_comprobante"
                         class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
-                        <option value="">Todos los tipos</option>
+                        <option value="" disabled @if (!request('tipo_comprobante')) selected @endif>Seleccione</option>
+                        <option value="todos" @selected(request('tipo_comprobante') == 'todos')>Todos</option>
                         <option value="ingreso" @selected(request('tipo_comprobante') == 'ingreso')>Ingreso</option>
                         <option value="egreso" @selected(request('tipo_comprobante') == 'egreso')>Egreso</option>
                         <option value="traspaso" @selected(request('tipo_comprobante') == 'traspaso')>Traspaso</option>
@@ -58,7 +60,6 @@
                 </div>
             </form>
         </div>
-
 
         <!-- Tabla de comprobantes -->
         <div class="flex flex-wrap mt-6">
@@ -102,7 +103,11 @@
                                     @empty
                                         <tr>
                                             <td colspan="5" class="border p-2 text-center text-gray-500 italic">
-                                                No hay comprobantes registrados.
+                                                @if (!request()->filled('fecha') && !request()->filled('tipo_comprobante') && !request()->filled('glosa_general'))
+                                                    Coloca algún filtro para buscar comprobantes.
+                                                @else
+                                                    No se encontraron comprobantes con los filtros seleccionados.
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforelse
@@ -111,9 +116,11 @@
                         </div>
 
                         <!-- Paginación -->
-                        <div class="mt-4">
-                            {{ $comprobantes->appends(request()->query())->links() }}
-                        </div>
+                        @if ($comprobantes->count() > 0)
+                            <div class="mt-4">
+                                {{ $comprobantes->appends(request()->query())->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

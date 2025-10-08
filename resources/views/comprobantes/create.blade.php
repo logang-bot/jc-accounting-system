@@ -426,7 +426,6 @@
             cambiarMoneda();
             actualizarLabelTipo();
             actualizarConversiones();
-            initSelectCuentaButtons();
             updateSubmitButtonState();
 
             const closeModalBtn = document.querySelector("#select-cuenta-modal .text-xl.font-bold");
@@ -452,7 +451,6 @@
                 const haberUSD = fila.querySelector('.us-haber input');
 
                 if (moneda === "USD") {
-                    // Habilitar USD, deshabilitar Bs
                     debeUSD.removeAttribute('readonly');
                     haberUSD.removeAttribute('readonly');
                     debeUSD.classList.remove('bg-gray-100');
@@ -465,7 +463,6 @@
                     debeUSD.value = ((parseFloat(debeBs.value) || 0) / tasa).toFixed(2);
                     haberUSD.value = ((parseFloat(haberBs.value) || 0) / tasa).toFixed(2);
                 } else {
-                    // Habilitar Bs, deshabilitar USD
                     debeBs.removeAttribute('readonly');
                     haberBs.removeAttribute('readonly');
                     debeBs.classList.remove('bg-gray-100');
@@ -474,9 +471,6 @@
                     haberUSD.setAttribute('readonly', true);
                     debeUSD.classList.add('bg-gray-100');
                     haberUSD.classList.add('bg-gray-100');
-
-                    // debeBs.value = ((parseFloat(debeUSD.value) || 0) * tasa).toFixed(2);
-                    // haberBs.value = ((parseFloat(haberUSD.value) || 0) * tasa).toFixed(2);
                 }
             });
         }
@@ -535,23 +529,18 @@
             const inputs = newRow.querySelectorAll('input, select');
             inputs.forEach(el => {
                 if (el.tagName === 'INPUT') {
-                    // Inicializar Debe y Haber en 0.00
                     if (el.name?.includes('[debe]') || el.name?.includes('[haber]') || el.closest('.us-debe') || el
                         .closest('.us-haber')) {
                         el.value = "0.00";
-                    }
-                    // Vaciar campos de cuenta y código
-                    else if (el.name?.includes('[cuenta_id]') || el.name?.includes('[codigo_cuenta]')) {
+                    } else if (el.name?.includes('[cuenta_id]') || el.name?.includes('[codigo_cuenta]') || el.name
+                        ?.includes('[nombre_cuenta]')) {
                         el.value = '';
                     } else {
                         el.value = '';
                     }
                 }
-                if (el.tagName === 'SELECT') {
-                    el.selectedIndex = 0; // Vaciar select de cuentas
-                }
+                if (el.tagName === 'SELECT') el.selectedIndex = 0;
 
-                // Actualizar índice para que el formulario funcione correctamente
                 const name = el.getAttribute('name');
                 if (name) el.setAttribute('name', name.replace(/\[\d+\]/, `[${rowCount}]`));
 
@@ -562,8 +551,6 @@
             tbody.appendChild(newRow);
             rowCount++;
             updateSubmitButtonState();
-
-            // initRowButtons(newRow); 
         }
 
         function removeRow(btn) {
@@ -580,7 +567,6 @@
             const tasa = parseFloat(document.getElementById('tasa-cambio').value);
             if (!tasa || tasa <= 0) return;
             document.querySelectorAll('#detalle-rows tr').forEach(fila => {
-                const rawDebe = fila.querySelector('input[name*="[debe]"]').value;
                 const debe = parseFloat(fila.querySelector('input[name*="[debe]"]').value) || 0;
                 const haber = parseFloat(fila.querySelector('input[name*="[haber]"]').value) || 0;
                 fila.querySelector('.us-debe input').value = (debe / tasa).toFixed(2);
@@ -601,25 +587,16 @@
             }
         }
 
-        function initSelectCuentaButtons() {
-            // document.querySelectorAll("#detalle-rows tr").forEach(initRowButtons);
-        }
+        // ────────── Abrir modal de selección de cuenta (delegación de eventos) ──────────
+        document.addEventListener("click", function(e) {
+            if (e.target.classList.contains("select-cuenta-action")) {
+                filaActiva = e.target.closest("tr");
+                document.querySelector("#select-cuenta-modal").classList.remove("hidden");
+                document.getElementById("buscar-cuenta").focus();
+            }
+        });
 
-        // function initRowButtons(fila) {
-        //     // Botón seleccionar cuenta
-        //     const selectBtn = fila.querySelector('.select-cuenta-action');
-        //     selectBtn.addEventListener('click', function() {
-        //         filaActiva = this.closest('tr').rowIndex - 1;
-        //         document.querySelector("#select-cuenta-modal").classList.remove("hidden");
-        //         document.getElementById("buscar-cuenta").focus();
-        //     });
-
-        //     // Cambiar select dentro de la fila
-        //     const sel = fila.querySelector('.cuenta-nombre-select');
-        //     sel.addEventListener('change', () => calculateAccountNumber(sel));
-        // }
-
-        // ────────── Selección de cuenta desde modal ──────────
+        // ────────── Filtrar cuentas en modal ──────────
         document.getElementById("buscar-cuenta").addEventListener("input", function() {
             const filtro = this.value.toLowerCase();
             document.querySelectorAll("#tabla-cuentas tr").forEach(fila => {
@@ -629,6 +606,7 @@
             });
         });
 
+        // ────────── Seleccionar cuenta desde modal ──────────
         document.querySelectorAll(".select-cuenta-btn").forEach(btn => {
             btn.addEventListener("click", function() {
                 if (filaActiva !== null) {
@@ -636,14 +614,9 @@
                     const codigo = this.dataset.codigo;
                     const nombre = this.dataset.nombre;
 
-                    const fila = document.querySelector(
-                        `#detalle-rows tr:nth-child(${parseInt(filaActiva)+1})`);
-                    if (!fila) return;
-
-                    // Inputs que reemplazan al select
-                    const inputNombre = fila.querySelector(`input[name*="[nombre_cuenta]"]`);
-                    const inputCodigo = fila.querySelector(`input[name*="[codigo_cuenta]"]`);
-                    const inputCuentaId = fila.querySelector(`input[name*="[cuenta_id]"]`);
+                    const inputNombre = filaActiva.querySelector(`input[name*="[nombre_cuenta]"]`);
+                    const inputCodigo = filaActiva.querySelector(`input[name*="[codigo_cuenta]"]`);
+                    const inputCuentaId = filaActiva.querySelector(`input[name*="[cuenta_id]"]`);
 
                     if (inputNombre) inputNombre.value = nombre;
                     if (inputCodigo) inputCodigo.value = codigo;
@@ -652,10 +625,10 @@
                     document.querySelector('#select-cuenta-modal').classList.add("hidden");
                     filaActiva = null;
                 }
-
             });
         });
     </script>
+
 
 
 @endsection

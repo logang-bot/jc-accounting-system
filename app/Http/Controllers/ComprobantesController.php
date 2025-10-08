@@ -21,28 +21,35 @@ class ComprobantesController extends Controller
     {
         $empresaId = session('empresa_id');
 
+        // Obtener filtros
+        $fecha = $request->input('fecha');
+        $tipo = $request->input('tipo_comprobante');
+        $glosa = $request->input('glosa_general');
+
+        // Iniciar query
         $query = Comprobante::where('empresa_id', $empresaId);
 
-        // Filtro por fecha exacta
-        if ($request->filled('fecha')) {
-            $query->whereDate('fecha', $request->fecha);
+        // Aplicar filtros solo si vienen datos
+        if ($fecha) {
+            $query->whereDate('fecha', $fecha);
         }
 
-        // Filtro por tipo de comprobante
-        if ($request->filled('tipo_comprobante')) {
-            $query->where('tipo', 'ILIKE', '%' . $request->tipo_comprobante . '%');
+        if ($tipo && $tipo !== '' && $tipo !== 'todos') {
+            $query->where('tipo', 'ILIKE', '%' . $tipo . '%');
         }
 
-        // Filtro por glosa / descripción
-        if ($request->filled('glosa_general')) {
-            $query->where('descripcion', 'ILIKE', '%' . $request->glosa_general . '%');
+        if ($glosa) {
+            $query->where('descripcion', 'ILIKE', '%' . $glosa . '%');
         }
 
-        $empresaId = session('empresa_id');
-        $comprobantes = $query->latest()->paginate(15)->appends($request->query());
+        // Solo mostrar resultados si al menos un filtro está activo
+        $mostrar = ($fecha || ($tipo && $tipo !== '') || $glosa);
+        $comprobantes = $mostrar ? $query->latest()->paginate(15)->appends($request->query()) : collect();
 
         return view('comprobantes.index', compact('comprobantes'));
     }
+
+
 
     // Muestra el formulario para crear un nuevo comprobante
     public function create()

@@ -23,9 +23,10 @@ class EmpresasController extends Controller
         $roles = Role::pluck('name');
         $empresas = Empresa::all();
 
-        $users = auth()->user()->hasRole('Administrator') 
-            ? User::with('roles')->paginate(15) 
+        $users = Auth::user()->hasRole('Administrator')
+            ? User::with('roles')->paginate(15)
             : collect();
+
 
         return view('empresas.create', [
             'roles' => $roles,
@@ -56,7 +57,7 @@ class EmpresasController extends Controller
         return redirect()->route('show.empresas.create')->with('success', 'Empresa creada correctamente.');
     }
 
-    public static function crearCuentasActivos(Empresa $empresa) 
+    public static function crearCuentasActivos(Empresa $empresa)
     {
         $activo = CuentasContables::create([
             'nombre_cuenta' => 'ACTIVO',
@@ -258,7 +259,7 @@ class EmpresasController extends Controller
             'parent_id' => $inventarios->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         // -------------------- ACTIVO NO CORRIENTE --------------------
 
         $activoNoCorriente = CuentasContables::create([
@@ -418,7 +419,7 @@ class EmpresasController extends Controller
             'parent_id' => $pasivoExigible->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         CuentasContables::create([
             'nombre_cuenta' => 'CUENTAS POR PAGAR M/N',
             'tipo_cuenta' => 'Pasivo',
@@ -428,7 +429,7 @@ class EmpresasController extends Controller
             'parent_id' => $cuentasPorPagar->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         CuentasContables::create([
             'nombre_cuenta' => 'CUENTAS POR PAGAR M/E',
             'tipo_cuenta' => 'Pasivo',
@@ -447,7 +448,7 @@ class EmpresasController extends Controller
             'parent_id' => $pasivoExigible->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         CuentasContables::create([
             'nombre_cuenta' => 'DOCUMENTOS POR COBRAR M/N',
             'tipo_cuenta' => 'Pasivo',
@@ -457,7 +458,7 @@ class EmpresasController extends Controller
             'parent_id' => $documentosPorPagar->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         CuentasContables::create([
             'nombre_cuenta' => 'DOCUMENTOS POR COBRAR M/E',
             'tipo_cuenta' => 'Pasivo',
@@ -486,7 +487,7 @@ class EmpresasController extends Controller
             'parent_id' => $cuentasPorPagarAlPersonal->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         $obligacionesLaborales = CuentasContables::create([
             'nombre_cuenta' => 'OBLIGACIONES LABORALES',
             'tipo_cuenta' => 'Pasivo',
@@ -514,7 +515,7 @@ class EmpresasController extends Controller
                 'empresa_id' => $empresa->id,
             ]);
         }
-        
+
         $proveedoresPorPagar = CuentasContables::create([
             'nombre_cuenta' => 'PROVEEDORES POR PAGAR',
             'tipo_cuenta' => 'Pasivo',
@@ -552,7 +553,7 @@ class EmpresasController extends Controller
             'parent_id' => $pasivoCorriente->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         $impuestosDirectos = CuentasContables::create([
             'nombre_cuenta' => 'IMPUESTOS DIRECTOS',
             'tipo_cuenta' => 'Pasivo',
@@ -719,7 +720,7 @@ class EmpresasController extends Controller
             'parent_id' => $patrimonio->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         $reservasContables = CuentasContables::create([
             'nombre_cuenta' => 'RESERVAS',
             'tipo_cuenta' => 'Patrimonio',
@@ -765,7 +766,7 @@ class EmpresasController extends Controller
             'parent_id' => $resultadosAcumulados->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         CuentasContables::create([
             'nombre_cuenta' => 'RESULTADOS DE EJERCICIOS ANTERIORES',
             'tipo_cuenta' => 'Patrimonio',
@@ -794,7 +795,7 @@ class EmpresasController extends Controller
             'parent_id' => $patrimonioAportado->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         $componentesDeCapital = CuentasContables::create([
             'nombre_cuenta' => 'COMPONENTES DE CAPITAL',
             'tipo_cuenta' => 'Patrimonio',
@@ -870,7 +871,7 @@ class EmpresasController extends Controller
             'parent_id' => $excedentesContables->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         CuentasContables::create([
             'nombre_cuenta' => 'EXCEDENTES ACUMULADOS',
             'tipo_cuenta' => 'Patrimonio',
@@ -909,7 +910,7 @@ class EmpresasController extends Controller
             'parent_id' => $patrimonio->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         $aportesDirectos = CuentasContables::create([
             'nombre_cuenta' => 'APORTES DIRECTOS',
             'tipo_cuenta' => 'Patrimonio',
@@ -918,7 +919,7 @@ class EmpresasController extends Controller
             'parent_id' => $aportesDeSocios->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         $componentesDeAportes = CuentasContables::create([
             'nombre_cuenta' => 'COMPONENTES DE APORTES',
             'tipo_cuenta' => 'Patrimonio',
@@ -1014,7 +1015,7 @@ class EmpresasController extends Controller
             'parent_id' => $ventas->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         CuentasContables::create([
             'nombre_cuenta' => 'DEVOLUCIONES SOBRE VENTAS',
             'tipo_cuenta' => 'Ingresos',
@@ -1205,7 +1206,7 @@ class EmpresasController extends Controller
             'parent_id' => $costoVentas->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         $componentesDelCosto = CuentasContables::create([
             'nombre_cuenta' => 'COSTO DE PRODUCTOS VENDIDOS',
             'tipo_cuenta' => 'Egresos',
@@ -1307,7 +1308,7 @@ class EmpresasController extends Controller
             'parent_id' => $componentesDeVenta->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         CuentasContables::create([
             'nombre_cuenta' => 'ANUNCIOS PUBLICITARIOS',
             'tipo_cuenta' => 'Egresos',
@@ -1346,7 +1347,7 @@ class EmpresasController extends Controller
             'parent_id' => $gastosFinancieros->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
-        
+
         $componentesDeInteres = CuentasContables::create([
             'nombre_cuenta' => 'COMPONENTES DE INTERES',
             'tipo_cuenta' => 'Egresos',
@@ -1429,7 +1430,7 @@ class EmpresasController extends Controller
             'Ingresos' => '4000000000',
             'Egresos' => '5000000000',
             default => '-1',
-        };  
+        };
     }
 
     public function update(Request $request, $id)
@@ -1471,7 +1472,7 @@ class EmpresasController extends Controller
         return redirect()->route('show.empresas.create')->with('success', 'Empresa eliminada correctamente.');
     }
 
-    
+
     public function archive($id)
     {
         $empresa = Empresa::findOrFail($id);

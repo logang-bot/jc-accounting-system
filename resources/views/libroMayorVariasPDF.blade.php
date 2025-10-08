@@ -8,6 +8,10 @@
         body {
             font-family: DejaVu Sans, sans-serif;
             font-size: 12px;
+            margin-top: 40px;
+            margin-right: 30px;
+            margin-bottom: 40px;
+            margin-left: 30px;
         }
 
         table {

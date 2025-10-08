@@ -29,9 +29,11 @@
                 <label for="tipo" class="block text-sm font-medium text-gray-700">Tipo</label>
                 <select id="tipo" name="tipo"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
-                    <option value="">Todos</option>
+                    <option value="" disabled @if (!request('tipo')) selected @endif>Seleccione</option>
+                    <option value="todos" @selected(request('tipo') == 'todos')>Todos</option>
                     <option value="ingreso" @selected(request('tipo') == 'ingreso')>Ingreso</option>
                     <option value="egreso" @selected(request('tipo') == 'egreso')>Egreso</option>
+                    <option value="traspaso" @selected(request('tipo') == 'traspaso')>Traspaso</option>
                     <option value="ajuste" @selected(request('tipo') == 'ajuste')>Ajuste</option>
                 </select>
             </div>
@@ -41,15 +43,19 @@
                     class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md shadow hover:bg-blue-700">
                     Filtrar
                 </button>
+
                 <a href="{{ route('libro-diario.index') }}"
                     class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-800 text-sm font-medium rounded-md shadow hover:bg-gray-200">
                     Limpiar
                 </a>
 
                 <a href="{{ route('libro-diario.pdf', request()->all()) }}"
-                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md shadow hover:bg-blue-700">Imprimir</a>
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md shadow hover:bg-blue-700">
+                    Imprimir
+                </a>
             </div>
         </form>
+
 
         <div class="overflow-x-auto bg-white rounded-lg shadow">
             @if (!$hayFiltros)
@@ -81,7 +87,7 @@
                                 <td class="px-4 py-2">{{ $comp->numero }}</td>
                                 <td class="px-4 py-2 capitalize">{{ $comp->tipo }}</td>
                                 <td class="px-4 py-2" colspan="4">{{ $comp->descripcion }}</td>
-                                
+
                             </tr>
 
                             <!-- Detalles del comprobante -->

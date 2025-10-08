@@ -4,11 +4,15 @@
 <head>
     <meta charset="UTF-8">
     {{-- <title>Libro Mayor - {{ $cuenta->codigo_cuenta }}</title> --}}
-    <title>Libro Mayor}</title>
+    <title>Libro Mayor</title>
     <style>
         body {
             font-family: DejaVu Sans, sans-serif;
             font-size: 12px;
+            margin-top: 40px;
+            margin-right: 30px;
+            margin-bottom: 40px;
+            margin-left: 30px;
         }
 
         table {

@@ -68,4 +68,18 @@ class EstadoResultadosController extends Controller
 
         return $pdf->stream("Estado_Resultados_{$fechaInicio}_{$fechaFin}.pdf");
     }
+    public function calcularEstadoResultados($empresaId, $fechaDesde, $fechaHasta)
+    {
+        // Reutiliza el mismo servicio que ya tienes
+        $resultados = $this->service->getEstadoResultados($empresaId, $fechaDesde, $fechaHasta);
+
+        // Asegura que retorne un arreglo con 'resultado_neto'
+        if (!isset($resultados['resultado_neto'])) {
+            $totalIngresos = $resultados['total_ingresos'] ?? 0;
+            $totalEgresos  = $resultados['total_egresos'] ?? 0;
+            $resultados['resultado_neto'] = $totalIngresos - $totalEgresos;
+        }
+
+        return $resultados;
+    }
 }

@@ -11,11 +11,12 @@ use Spatie\Permission\Models\Role;
 
 class EmpresasController extends Controller
 {
-    public function home($id)
+    public function home()
     {
-        session(['empresa_id' => $id]);
-        $empresa = Empresa::find($id);
-        return view('empresas.dashboard', compact('empresa'));
+        $empresas = Empresa::all();
+        return view('empresas.index', [
+            'empresas' => $empresas,
+        ]);
     }
 
     public function create()
@@ -33,6 +34,13 @@ class EmpresasController extends Controller
             'empresas' => $empresas,
             'users' => $users,
         ]);
+    }
+
+    public function show($id)
+    {
+        session(['empresa_id' => $id]);
+        $empresa = Empresa::find($id);
+        return view('empresas.show', compact('empresa'));
     }
 
     public function store(Request $request)
@@ -1463,7 +1471,7 @@ class EmpresasController extends Controller
             'gestion' => $request->gestion,
         ]);
 
-        return redirect()->route('show.empresas.home', $id)->with('success', 'Datos actualizados correctamente.');
+        return redirect()->route('show.empresas.detail', $id)->with('success', 'Datos actualizados correctamente.');
     }
 
     public function destroy($id)

@@ -2,7 +2,6 @@
 
 @section('content')
     <div class="bg-white h-screen">
-        {{-- <div class="bg-blue-600 pt-10 pb-[84px]"></div> --}}
         <div class="w-full mx-auto">
             <div class="flex flex-col gap-6">
                 <!-- Header -->

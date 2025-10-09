@@ -30,19 +30,19 @@ Route::middleware(['auth', 'role:Administrator'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::get('/users/crear', [UserController::class, 'create'])->name('show.users.create');
-        Route::post('/users', [UserController::class, 'store'])->name('users.store');
-        Route::get('/users', [UserController::class, 'index'])->name('show.users.index');
+        // Rutas para vistas
+        Route::get('/home/', [UserController::class, 'home'])->name('show.usuarios.home');
+        Route::get('/crear/', [UserController::class, 'create'])->name('show.usuarios.create');
+
+        Route::post('/users', [UserController::class, 'store'])->name('usuarios.store');
     });
 
 Route::middleware('auth')->controller(EmpresasController::class)->group(function () {
-
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     // Rutas para empresas
     Route::prefix('/empresas')->group(function () {
 
         // Rutas para vistas
-        Route::get('/home/{id}', 'home')->name('show.empresas.home');
+        Route::get('/home/', 'home')->name('show.empresas.home');
         Route::get('/crear', 'create')->name('show.empresas.create');
         Route::get('/{id}', 'show')->name('show.empresas.detail');
         Route::get('/edit/{id}', 'edit')->name('show.empresas.edit');
@@ -56,6 +56,14 @@ Route::middleware('auth')->controller(EmpresasController::class)->group(function
             Route::post('/{id}', 'archive')->name('empresas.archive');
         });
         Route::post('/exit', 'exit')->name('empresas.exit');
+    });
+});
+
+Route::middleware('auth')->controller(AuthController::class)->group(function () {
+    Route::prefix('/usuarios')->group(function () {
+
+        // Rutas de funcionalidades
+        Route::post('/logout', 'logout')->name('logout');
     });
 });
 

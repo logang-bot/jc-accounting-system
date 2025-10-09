@@ -9,22 +9,26 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function home() 
     {
-        $users = User::with('roles')->paginate(15);
-        return view('admin.users.index', compact('users'));
+        $usuarios = User::all();
+        return view('users.index', [
+            'users' => $usuarios,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $roles = Role::pluck('name'); // get all role names
-        return view('admin.users.create', compact('roles'));
+        $roles = Role::pluck('name');
+
+        $users = auth()->user()->hasRole('Administrator') 
+            ? User::with('roles')->paginate(15) 
+            : collect();
+
+        return view('users.create', [
+            'roles' => $roles,
+            'users' => $users,
+        ]);
     }
 
     /**

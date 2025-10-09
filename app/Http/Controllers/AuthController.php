@@ -6,14 +6,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
 {
-    public function showRegister()
-    {
-        return view('auth.register');
-    }
-
     public function showLogin()
     {
         if (Auth::check())
@@ -52,7 +48,7 @@ class AuthController extends Controller
         if (Auth::attempt($validated))
         {
             $request->session()->regenerate();
-            return redirect()->route('show.empresas.create');
+            return redirect()->route('show.empresas.home');
         } 
         
         throw ValidationException::withMessages([

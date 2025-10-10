@@ -1,14 +1,32 @@
+@php
+    use App\Models\Empresa;
+
+    $empresa = null;
+    if (session()->has('empresa_id')) {
+        $empresa = Empresa::find(session('empresa_id'));
+    }
+@endphp
+
 <div id="page-content" class="bg-white shadow px-4 py-3 flex items-center justify-between transition-all duration-200">
     <!-- Navbar toggle -->
-    <a id="nav-toggle" href="#" @click.prevent="sidebarOpen = !sidebarOpen" class="text-gray-700 hover:text-gray-900">
+    <a id="nav-toggle" href="#" @click.prevent="sidebarOpen = !sidebarOpen"
+        class="text-gray-700 hover:text-gray-900 flex gap-4">
         <x-carbon-menu class="w-5 h-5" />
+        @if ($empresa)
+            <span class="text-sm text-gray-800">
+                <strong>Estas operando en la empresa:</strong> {{ $empresa->name }}
+            </span>
+        @else
+            <span class="text-sm text-gray-400 italic">
+                No hay una empresa seleccionada
+            </span>
+        @endif
     </a>
 
     <!-- Right side user dropdown -->
-    <div class="hs-dropdown inline-flex relative">
-        <button id="hs-dropdown-default"
-            class="hs-dropdown-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
-            aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
+    <div>
+        <button
+            class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none ">
             @if (Auth::check())
                 Welcome {{ Auth::user()->name }}
             @endif

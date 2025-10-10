@@ -11,16 +11,12 @@ class Empresa extends Model
 
     protected $fillable = [
         'name',
-        'nit',
-        'direccion',
-        'ciudad',
-        'provincia',
-        'telefono',
-        'celular',
-        'correo_electronico',
+        'nit_ci',
+        'casa_matriz',
+        'fecha_inicio',
+        'fecha_fin',
         'periodo',
-        'gestion',
-        'activa'
+        'activa',
     ];
 
     public function cuentasContables()

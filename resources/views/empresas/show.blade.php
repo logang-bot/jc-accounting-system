@@ -12,7 +12,7 @@
                     @csrf
                     @method('PUT')
 
-                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm text-gray-700">
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {{-- Nombre --}}
                         <div>
                             <dt class="font-medium">Nombre</dt>
@@ -22,66 +22,39 @@
                             </dd>
                         </div>
 
-                        {{-- NIT --}}
+                        {{-- NIT / CI --}}
                         <div>
-                            <dt class="font-medium">NIT</dt>
+                            <dt class="font-medium">NIT / CI</dt>
                             <dd>
                                 <input type="text" name="nit" value="{{ old('nit', $empresa->nit) }}"
                                     class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
                             </dd>
                         </div>
 
-                        {{-- Dirección --}}
+                        {{-- Casa Matriz --}}
                         <div>
-                            <dt class="font-medium">Dirección</dt>
+                            <dt class="font-medium">Casa Matriz</dt>
                             <dd>
-                                <input type="text" name="direccion" value="{{ old('direccion', $empresa->direccion) }}"
+                                <input type="checkbox" name="casa_matriz" disabled @checked($empresa->casa_matriz)
+                                    class="h-4 w-4 text-blue-600 border-gray-300 rounded disabled:bg-gray-100">
+                            </dd>
+                        </div>
+
+                        {{-- Fecha de Inicio --}}
+                        <div>
+                            <dt class="font-medium">Fecha de Inicio</dt>
+                            <dd>
+                                <input type="date" name="fecha_inicio"
+                                    value="{{ old('fecha_inicio', $empresa->fecha_inicio) }}"
                                     class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
                             </dd>
                         </div>
 
-                        {{-- Ciudad --}}
+                        {{-- Fecha de Fin --}}
                         <div>
-                            <dt class="font-medium">Ciudad</dt>
+                            <dt class="font-medium">Fecha de Fin</dt>
                             <dd>
-                                <input type="text" name="ciudad" value="{{ old('ciudad', $empresa->ciudad) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
-                            </dd>
-                        </div>
-
-                        {{-- Provincia --}}
-                        <div>
-                            <dt class="font-medium">Provincia</dt>
-                            <dd>
-                                <input type="text" name="provincia" value="{{ old('provincia', $empresa->provincia) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
-                            </dd>
-                        </div>
-
-                        {{-- Teléfono --}}
-                        <div>
-                            <dt class="font-medium">Teléfono</dt>
-                            <dd>
-                                <input type="text" name="telefono" value="{{ old('telefono', $empresa->telefono) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
-                            </dd>
-                        </div>
-
-                        {{-- Celular --}}
-                        <div>
-                            <dt class="font-medium">Celular</dt>
-                            <dd>
-                                <input type="text" name="celular" value="{{ old('celular', $empresa->celular) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
-                            </dd>
-                        </div>
-
-                        {{-- Correo Electrónico --}}
-                        <div>
-                            <dt class="font-medium">Correo Electrónico</dt>
-                            <dd>
-                                <input type="email" name="correo_electronico"
-                                    value="{{ old('correo_electronico', $empresa->correo_electronico) }}"
+                                <input type="date" name="fecha_fin" value="{{ old('fecha_fin', $empresa->fecha_fin) }}"
                                     class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
                             </dd>
                         </div>
@@ -96,19 +69,12 @@
                                     <option value="Comercial" @selected(old('periodo', $empresa->periodo) == 'Comercial')>Comercial</option>
                                     <option value="Agropecuaria" @selected(old('periodo', $empresa->periodo) == 'Agropecuaria')>Agropecuaria</option>
                                     <option value="Industrial" @selected(old('periodo', $empresa->periodo) == 'Industrial')>Industrial</option>
+
                                 </select>
                             </dd>
                         </div>
-
-                        {{-- Gestión --}}
-                        <div>
-                            <dt class="font-medium">Gestión</dt>
-                            <dd>
-                                <input type="text" name="gestion" value="{{ old('gestion', $empresa->gestion) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
-                            </dd>
-                        </div>
                     </dl>
+
 
                     <div class="flex justify-end space-x-2 mt-6">
                         <button type="button" id="editBtn"

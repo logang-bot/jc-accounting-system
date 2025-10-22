@@ -19,7 +19,7 @@ class BalancesController extends Controller
 
     public function balanceGeneral(Request $request)
     {
-        // Filtros
+        // 🔹 Filtros
         $empresaId  = session('empresa_id');
         $fechaDesde = $request->input('fecha_desde');
         $fechaHasta = $request->input('fecha_hasta');
@@ -27,26 +27,42 @@ class BalancesController extends Controller
         // 🔹 Obtener balances
         $balances = $this->balanceService->getBalances($empresaId, $fechaDesde, $fechaHasta);
 
-        // 🔹 🔹 AQUÍ AGREGAR LA LÓGICA DEL RESULTADO NETO 🔹 🔹
-        // Obtener el resultado neto del Estado de Resultados
+        // 🔹 Obtener el resultado neto del Estado de Resultados
         $resultados = app(\App\Http\Controllers\EstadoResultadosController::class)
             ->calcularEstadoResultados($empresaId, $fechaDesde, $fechaHasta);
 
         $resultadoNeto = $resultados['resultado_neto'] ?? 0;
 
-        // Agregar el resultado neto como una subcuenta de patrimonio
+        // 🔹 Obtener jerarquía real de la cuenta “Resultado de Ejercicios Anteriores”
+        $cuentaResultado = \App\Models\CuentasContables::where('codigo_cuenta', '3301010000')
+            ->where('empresa_id', $empresaId)
+            ->with('parent.parent.parent') // incluir toda la jerarquía
+            ->first();
+
+        $fullParentChain = [];
+        if ($cuentaResultado) {
+            $current = $cuentaResultado->parent;
+            while ($current) {
+                $fullParentChain[] = [
+                    'codigo' => $current->codigo_cuenta,
+                    'nombre' => $current->nombre_cuenta,
+                ];
+                $current = $current->parent;
+            }
+            $fullParentChain = array_reverse($fullParentChain);
+        }
+
+        // 🔹 Agregar el Resultado de Ejercicios como subcuenta de patrimonio (con su jerarquía completa)
         $balances['patrimonio'][] = [
-            'codigo' => '3501010002',             // Excedentes del Ejercicio
-            'nombre' => 'Excedentes del Ejercicio',
+            'codigo_cuenta' => '3301010000',
+            'nombre' => 'Resultado de Ejercicios Anteriores',
             'nivel' => 5,
             'saldo' => $resultadoNeto,
-            'full_parent_chain' => ['Excedentes', 'Excedentes Contables', 'Componentes de Excedentes']
+            'full_parent_chain' => $fullParentChain,
         ];
 
-        // Recalcular total patrimonio
+        // 🔹 Recalcular totales
         $balances['total_patrimonio'] = ($balances['total_patrimonio'] ?? 0) + $resultadoNeto;
-
-        // 🔹 Recalcular total Pasivo + Patrimonio
         $balances['total_pasivos_patrimonio'] =
             ($balances['total_pasivos'] ?? 0) + ($balances['total_patrimonio'] ?? 0);
 

@@ -48,7 +48,10 @@ class AccountingService
             $parentChain = [];
             $current = $row['cuenta'];
             while ($current->parent) {
-                $parentChain[] = $current->parent->nombre_cuenta;
+                $parentChain[] = [
+                    'codigo' => $current->parent->codigo_cuenta,
+                    'nombre' => $current->parent->nombre_cuenta
+                ];
                 $current = $current->parent;
             }
             $row['full_parent_chain'] = array_reverse($parentChain); // top-down order
@@ -144,7 +147,10 @@ class AccountingService
             $parentChain = [];
             $current = $row['cuenta'];
             while ($current->parent) {
-                $parentChain[] = $current->parent->nombre_cuenta;
+                $parentChain[] = [
+                    'codigo' => $current->parent->codigo_cuenta,
+                    'nombre' => $current->parent->nombre_cuenta
+                ];
                 $current = $current->parent;
             }
             $row['full_parent_chain'] = array_reverse($parentChain);
@@ -178,7 +184,7 @@ class AccountingService
                 $resultados['total_egresos'] += $row['saldo'];
             }
               */
-            
+
             if ($row['tipo_cuenta'] === 'Ingreso' || str_starts_with($row['codigo_cuenta'], '4')) {
                 $resultados['ingresos'][] = $data;
                 $resultados['total_ingresos'] += $row['saldo'];

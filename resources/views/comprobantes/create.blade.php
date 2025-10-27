@@ -13,7 +13,12 @@
         @if (isset($empresa))
             <div class="mb-4 text-sm text-gray-600">
                 Empresa actual: <strong>{{ $empresa->name }}</strong><br>
-                NIT: <strong>{{ $empresa->nit }}</strong>
+                @if ($empresa->tipo_documento == 'CI')
+                    CI:
+                @else
+                    NIT:
+                @endif
+                <strong>{{ $empresa->documento }}</strong>
             </div>
         @endif
 
@@ -319,7 +324,14 @@
                         <button type="button" aria-controls="show-plan-cuentas-modal"
                             data-hs-overlay="#show-plan-cuentas-modal"
                             class="mt-4 px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-700">
-                            Editar Plan de Cuentas
+                            Revisar Plan de Cuentas
+                        </button>
+
+                        <!-- Botón para abrir modal para adicionar cuenta -->
+                        <button type="button" aria-controls="show-add-cuenta-modal"
+                            data-hs-overlay="#show-add-cuenta-modal"
+                            class="mt-4 px-4 py-2 bg-amber-300 text-white rounded hover:bg-amber-700">
+                            Crear cuenta
                         </button>
                     </section>
 
@@ -351,6 +363,23 @@
                 <!-- Modal Body -->
                 <div class="p-6">
                     @include('cuentas.partials.planCuentas')
+                </div>
+            </div>
+        </div>
+    </x-modal>
+
+    <x-modal id="show-add-cuenta-modal">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="bg-white w-full max-w-[40%] rounded-lg shadow-lg">
+
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between px-6 py-4 border-b">
+                    <button class="text-gray-500 hover:text-gray-700 text-xl font-bold"
+                        data-hs-overlay="#show-add-cuenta-modal">&times;</button>
+                </div>
+                <!-- Modal Body -->
+                <div class="p-6">
+                    @include('cuentas.partials.create')
                 </div>
             </div>
         </div>

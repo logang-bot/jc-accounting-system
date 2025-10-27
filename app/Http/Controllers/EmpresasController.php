@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CuentasContables;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Empresa;
-use App\Models\User;
 use Database\Seeders\CuentasSeeder;
-use Spatie\Permission\Models\Role;
 
 class EmpresasController extends Controller
 {
@@ -36,16 +32,18 @@ class EmpresasController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'nit_ci' => 'nullable|string|max:20',
+            'documento' => 'required|string|max:30',
+            'tipo_documento' => 'required|string|max:20',
             'casa_matriz' => 'required|boolean',
             'fecha_inicio' => 'nullable|date',
             'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
             'periodo' => 'nullable|string|max:100',
         ]);
-
+        
         $empresa = Empresa::create([
             'name' => $request->name,
-            'nit_ci' => $request->nit_ci,
+            'documento' => $request->documento,
+            'tipo_documento' => $request->tipo_documento,
             'casa_matriz' => $request->casa_matriz,
             'fecha_inicio' => $request->fecha_inicio,
             'fecha_fin' => $request->fecha_fin,
@@ -58,14 +56,15 @@ class EmpresasController extends Controller
         CuentasSeeder::crearCuentasIngresos($empresa);
         CuentasSeeder::crearCuentasEgresos($empresa);
 
-        return redirect()->route('show.empresas.create')->with('success', 'Empresa creada correctamente.');
+        return redirect()->route('show.empresas.home')->with('success', 'Empresa creada correctamente.');
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'nit_ci' => 'nullable|string|max:20',
+            'documento' => 'required|string|max:30',
+            'tipo_documento' => 'required|string|max:20',
             'casa_matriz' => 'required|boolean',
             'fecha_inicio' => 'nullable|date',
             'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
@@ -76,7 +75,8 @@ class EmpresasController extends Controller
 
         $empresa->update([
             'name' => $request->name,
-            'nit_ci' => $request->nit_ci,
+            'documento' => $request->documento,
+            'tipo_documento' => $request->tipo_documento,
             'casa_matriz' => $request->casa_matriz,
             'fecha_inicio' => $request->fecha_inicio,
             'fecha_fin' => $request->fecha_fin,
@@ -89,9 +89,8 @@ class EmpresasController extends Controller
     public function destroy($id)
     {
         Empresa::findOrFail($id)->delete();
-        return redirect()->route('show.empresas.create')->with('success', 'Empresa eliminada correctamente.');
+        return redirect()->route('show.empresas.home')->with('success', 'Empresa eliminada correctamente.');
     }
-
 
     public function archive($id)
     {

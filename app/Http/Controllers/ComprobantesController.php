@@ -49,8 +49,6 @@ class ComprobantesController extends Controller
         return view('comprobantes.index', compact('comprobantes'));
     }
 
-
-
     // Muestra el formulario para crear un nuevo comprobante
     public function create()
     {
@@ -62,14 +60,19 @@ class ComprobantesController extends Controller
             ->orderBy('codigo_cuenta', 'asc')
             ->get();
 
+        $cuentasPadre = CuentasContables::where('empresa_id', $empresaId)
+            ->where('es_movimiento', false)
+            ->where('nivel', '<', 5)
+            ->get();
+
         return view('comprobantes.create', [
+            'cuentasPadre' => $cuentasPadre,
             'empresa' => $empresa,
             'editMode' => false,
             'cuentas' => $cuentas,
             'comprobante' => null
         ]);
     }
-
 
     public function show($id)
     {

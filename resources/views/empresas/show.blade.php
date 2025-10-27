@@ -24,10 +24,22 @@
 
                         {{-- NIT / CI --}}
                         <div>
-                            <dt class="font-medium">NIT / CI</dt>
+                            <dt class="font-medium">Documento</dt>
                             <dd>
-                                <input type="text" name="nit" value="{{ old('nit', $empresa->nit) }}"
+                                <input type="text" name="documento" value="{{ old('nit', $empresa->documento) }}"
                                     class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
+                            </dd>
+                        </div>
+
+                        {{-- Tipo documento --}}
+                        <div>
+                            <dt class="font-medium">Tipo de documento</dt>
+                            <dd>
+                                <select name="tipo_documento" required disabled
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2">
+                                    <option value="CI" @selected(old('tipo_documento', $empresa->tipo_documento) == 'CI')>CI</option>
+                                    <option value="NIT" @selected(old('tipo_documento', $empresa->tipo_documento) == 'NIT')>NIT</option>
+                                </select>
                             </dd>
                         </div>
 

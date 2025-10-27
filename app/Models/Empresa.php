@@ -11,7 +11,8 @@ class Empresa extends Model
 
     protected $fillable = [
         'name',
-        'nit_ci',
+        'documento',
+        'tipo_documento',
         'casa_matriz',
         'fecha_inicio',
         'fecha_fin',

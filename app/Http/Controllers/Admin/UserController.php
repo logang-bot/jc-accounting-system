@@ -52,7 +52,7 @@ class UserController extends Controller
         $user->assignRole($validated['role']);
 
         
-        return redirect()->route('show.empresas.create')->with('success', 'Usuario creado correctamente.');
+        return redirect()->route('show.empresas.home')->with('success', 'Usuario creado correctamente.');
     }
 
     /**

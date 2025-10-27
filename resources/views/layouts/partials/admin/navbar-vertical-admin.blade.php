@@ -47,18 +47,6 @@
                                     </a>
                                 </button>
                             </li>
-                            @hasanyrole('Administrator|Teacher')
-                                <li class="hs-accordion" id="empresa-accordion-sub-1">
-                                    <button type="button"
-                                        class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
-                                        aria-expanded="true" aria-controls="empresa-accordion-sub-1-collapse-1">
-                                        <a href="{{ route('show.empresas.create') }}"
-                                            class="hover:text-gray-300 flex flex-row items-center">
-                                            Crear empresa
-                                        </a>
-                                    </button>
-                                </li>
-                            @endhasanyrole
                             @if (session()->has('empresa_id'))
                                 <li class="hs-accordion" id="empresa-accordion-sub-1">
                                     <button type="button"

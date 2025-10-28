@@ -117,7 +117,6 @@
                                 <th class="px-3 py-2">Haber Bs.</th>
                                 <th class="px-3 py-2">Debe (USD)</th>
                                 <th class="px-3 py-2">Haber (USD)</th>
-                                <th class="px-3 py-2">IVA</th>
                                 <th class="px-3 py-2">Acciones</th>
                             </tr>
                         </thead>
@@ -168,13 +167,6 @@
                                             <input type="text" readonly
                                                 class="w-full text-right bg-gray-100 border rounded px-2 py-1"
                                                 value="{{ number_format($detalle['us_haber'] ?? 0, 2) }}">
-                                        </td>
-
-                                        <td class="px-3 py-2 text-right iva">
-                                            <input type="number" step="0.01" min="0" max="100"
-                                                name="detalles[{{ $i }}][iva]"
-                                                class="w-20 text-right border rounded px-2 py-1"
-                                                value="{{ $detalle['iva'] ?? 0 }}">
                                         </td>
 
                                         <td class="px-3 py-2 text-center space-x-2">
@@ -239,13 +231,6 @@
                                                 value="{{ number_format($detalle->haber / ($comprobante->tasa_cambio ?: 6.96), 2) }}">
                                         </td>
 
-
-                                        <td class="px-3 py-2 text-right iva">
-                                            <input type="number" step="0.01" min="0" max="100"
-                                                name="detalles[{{ $i }}][iva]"
-                                                class="w-20 text-right border rounded px-2 py-1" placeholder="0.00">
-                                        </td>
-
                                         <td class="px-3 py-2 text-center space-x-2">
                                             <!-- Botón seleccionar cuenta -->
                                             <button type="button" class="text-blue-600 select-cuenta-action"
@@ -294,11 +279,6 @@
                                             class="w-full text-right bg-gray-100 border rounded px-2 py-1" value="0.00">
                                     </td>
 
-                                    <td class="px-3 py-2 text-right iva">
-                                        <input type="number" step="0.01" min="0" max="100"
-                                            name="detalles[0][iva]" class="w-full text-right border rounded px-2 py-1"
-                                            placeholder="0.00">
-                                    </td>
                                     <td class="px-3 py-2 text-center space-x-2">
                                         <!-- Botón seleccionar cuenta -->
                                         <button type="button" class="text-blue-600 select-cuenta-action" data-index="0">

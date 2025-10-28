@@ -9,6 +9,7 @@ use App\Http\Controllers\ComprobantesController;
 use App\Http\Controllers\EstadoResultadosController;
 use App\Http\Controllers\LibroDiarioController;
 use App\Http\Controllers\LibroMayorController;
+use App\Http\Controllers\RegistroTipoCambioController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -132,4 +133,10 @@ Route::middleware('auth')->controller(EstadoResultadosController::class)->group(
 
     Route::get('/reportes/estado-resultados/pdf', [EstadoResultadosController::class, 'exportarPDF'])
         ->name('estado_resultados.pdf');
+});
+
+Route::middleware('auth')->controller(RegistroTipoCambioController::class)->group(function () {
+    Route::get('/tipo-cambio', 'index')->name('show.tipo-cambio.index');
+    // Route::get('/api/ufv', 'latestUfv');    
+    Route::post('/tipo-cambio', 'store')->name('tipo-cambio.store');
 });

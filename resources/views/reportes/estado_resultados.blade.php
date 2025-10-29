@@ -64,12 +64,13 @@
                             <tr>
                                 <td>
                                     <span class="inline-block" style="padding-left: {{ $i * 20 }}px;">
-                                        {{ $parent }}
+                                        {{ $parent['codigo_cuenta'] ?? '' }} - {{ $parent['nombre'] ?? '' }}
                                     </span>
                                 </td>
                                 <td></td>
                             </tr>
                         @endforeach
+
                         <tr class="border-b">
                             <td>
                                 <span class="inline-block" style="padding-left: {{ $cuenta['level'] * 20 }}px;">
@@ -103,7 +104,7 @@
                             <tr>
                                 <td>
                                     <span class="inline-block" style="padding-left: {{ $i * 20 }}px;">
-                                        {{ $parent }}
+                                        {{ $parent['codigo_cuenta'] ?? '' }} - {{ $parent['nombre'] ?? '' }}
                                     </span>
                                 </td>
                                 <td></td>

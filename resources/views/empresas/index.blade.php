@@ -35,22 +35,32 @@
                                             class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
                                     </div>
 
-                                    {{-- Tipo documento --}}
-                                    <div class="mb-4">
-                                        <label for="tipo_documento">Tipo de documento</label>
-                                        <select name="tipo_documento" id="tipo_documento" required
-                                            class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none">
-                                            <option value="CI">CI</option>
-                                            <option value="NIT">NIT</option>
-                                        </select>
+                                    <div class="flex gap-4 mb-4">
+                                        {{-- Tipo documento --}}
+                                        <div class="flex-1">
+                                            <label for="tipo_documento" class="block text-sm font-medium text-gray-700 mb-1">
+                                                Tipo de documento
+                                            </label>
+                                            <select name="tipo_documento" id="tipo_documento" required
+                                                class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none">
+                                                <option value="" disabled selected>Seleccione</option>
+                                                <option value="CI">CI</option>
+                                                <option value="NIT">NIT</option>
+                                            </select>
+                                        </div>
+
+
+                                        {{-- NIT / CI --}}
+                                        <div class="flex-1">
+                                            <label for="documento" class="block text-sm font-medium text-gray-700 mb-1">
+                                                Número de documento
+                                            </label>
+                                            <input type="text" name="documento" id="documento" required
+                                                class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none">
+                                        </div>
                                     </div>
 
-                                    {{-- NIT / CI --}}
-                                    <div class="mb-4">
-                                        <label for="documento">Número</label>
-                                        <input type="text" name="documento" id="documento" required
-                                            class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none">
-                                    </div>
+
 
                                     {{-- Casa Matriz --}}
                                     <div class="mb-4 flex items-center">
@@ -59,22 +69,6 @@
                                             class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
                                         <label for="casa_matriz" class="ml-2 block text-sm text-gray-700">¿Es casa
                                             matriz?</label>
-                                    </div>
-
-                                    {{-- Fecha Inicio --}}
-                                    <div class="mb-4">
-                                        <label for="fecha_inicio" class="block text-sm font-medium text-gray-700 mb-1">Fecha de
-                                            Inicio</label>
-                                        <input id="fecha_inicio" name="fecha_inicio" type="date" required
-                                            class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
-                                    </div>
-
-                                    {{-- Fecha Fin --}}
-                                    <div class="mb-4">
-                                        <label for="fecha_fin" class="block text-sm font-medium text-gray-700 mb-1">Fecha de
-                                            Fin</label>
-                                        <input id="fecha_fin" name="fecha_fin" type="date"
-                                            class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
                                     </div>
 
                                     {{-- Periodo --}}
@@ -89,6 +83,26 @@
                                             <option value="Industrial">Industrial</option>
 
                                         </select>
+                                    </div>
+
+                                    <div class="flex gap-4 mb-4">
+                                        {{-- Fecha Inicio --}}
+                                        <div class="flex-1">
+                                            <label for="fecha_inicio" class="block text-sm font-medium text-gray-700 mb-1">
+                                                Fecha de Inicio
+                                            </label>
+                                            <input id="fecha_inicio" name="fecha_inicio" type="date" required
+                                                class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
+                                        </div>
+
+                                        {{-- Fecha Fin --}}
+                                        <div class="flex-1">
+                                            <label for="fecha_fin" class="block text-sm font-medium text-gray-700 mb-1">
+                                                Fecha de Fin
+                                            </label>
+                                            <input id="fecha_fin" name="fecha_fin" type="date"
+                                                class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
+                                        </div>
                                     </div>
 
                                     {{-- Botón de Envío --}}

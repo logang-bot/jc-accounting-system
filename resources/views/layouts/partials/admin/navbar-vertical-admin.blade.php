@@ -117,25 +117,12 @@
                             role="region" aria-labelledby="account-accordion">
 
                             <ul class="pt-1 ps-7 space-y-1">
-                                <!-- Plan de Cuentas con submenú -->
-                                <li class="hs-accordion" id="plan-cuentas-accordion">
-                                    <button type="button"
-                                        class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
-                                        aria-expanded="false" aria-controls="plan-cuentas-accordion-collapse">
+                                <!-- Plan de Cuentas -->
+                                <li>
+                                    <a href="{{ route('show.cuentas.home', ['id' => session('plan_id', 1)]) }}"
+                                        class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200">
                                         Plan de Cuentas
-                                        <x-carbon-chevron-down class="w-4 h-4 ms-auto" />
-                                    </button>
-                                    <div id="plan-cuentas-accordion-collapse"
-                                        class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                                        role="region" aria-labelledby="plan-cuentas-accordion">
-                                        <ul class="ps-7 space-y-1">
-                                            <li>
-                                                <a href="{{ route('show.cuentas.home', ['id' => session('plan_id', 1)]) }}"
-                                                    class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-yellow-800 rounded-lg hover:bg-yellow-100 focus:outline-hidden focus:bg-yellow-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200">
-                                                    Editar Plan de Cuentas</a>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                    </a>
                                 </li>
                                 <!-- Comprobantes con submenú -->
                                 <li class="hs-accordion" id="comprobantes-accordion">

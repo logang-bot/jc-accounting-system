@@ -36,10 +36,6 @@
     @apply relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent;
 }
 
-.register-button {
-    @apply text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700;
-}
-
 .hero-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -55,8 +51,8 @@
 }
 
 .logo-icon {
-    width: 150px;
-    margin-right: auto;
+    width: 250px;
+    margin: auto;
     stroke: #fff;
-    opacity: 0.7;
+    opacity: 0.5;
 }

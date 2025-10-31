@@ -16,11 +16,6 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// Rutas para autenticacion
-// Route::get('/login', [AuthController::class, 'showLogin'])->name('show.login');
-// Route::get('/register', [AuthController::class, 'showRegister'])->name('show.register');
-
-Route::get('/login', [AuthController::class, 'showLogin'])->name('show.login');
 Route::middleware('guest')->controller(AuthController::class)->group(function () {
     // Route::post('/register', 'register')->name('register');
     Route::post('/login', 'login')->name('login');

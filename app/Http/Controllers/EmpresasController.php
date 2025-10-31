@@ -32,22 +32,29 @@ class EmpresasController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'documento' => 'required|string|max:30',
             'tipo_documento' => 'required|string|max:20',
+            'numero_documento' => 'required|string|max:30',
+            'direccion' => 'nullable|string|max:255',
+            'ciudad' => 'nullable|string|max:100',
+            'telefono' => 'nullable|string|max:20',
             'casa_matriz' => 'required|boolean',
+            'periodo' => 'nullable|string|max:100',
             'fecha_inicio' => 'nullable|date',
             'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
-            'periodo' => 'nullable|string|max:100',
+
         ]);
-        
+
         $empresa = Empresa::create([
             'name' => $request->name,
-            'documento' => $request->documento,
             'tipo_documento' => $request->tipo_documento,
+            'numero_documento' => $request->documento,
+            'direccion' => $request->direccion,
+            'ciudad' => $request->ciudad,
+            'telefono' => $request->telefono,
             'casa_matriz' => $request->casa_matriz,
+            'periodo' => $request->periodo,
             'fecha_inicio' => $request->fecha_inicio,
             'fecha_fin' => $request->fecha_fin,
-            'periodo' => $request->periodo,
         ]);
 
         CuentasSeeder::crearCuentasActivos($empresa);
@@ -63,24 +70,31 @@ class EmpresasController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'documento' => 'required|string|max:30',
             'tipo_documento' => 'required|string|max:20',
+            'numero_documento' => 'required|string|max:30',
+            'direccion' => 'nullable|string|max:255',
+            'ciudad' => 'nullable|string|max:100',
+            'telefono' => 'nullable|string|max:20',
             'casa_matriz' => 'required|boolean',
+            'periodo' => 'nullable|string|max:100',
             'fecha_inicio' => 'nullable|date',
             'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
-            'periodo' => 'nullable|string|max:100',
         ]);
 
         $empresa = Empresa::findOrFail($id);
 
         $empresa->update([
             'name' => $request->name,
-            'documento' => $request->documento,
             'tipo_documento' => $request->tipo_documento,
+            'numero_documento' => $request->documento,
+            'direccion' => $request->direccion,
+            'ciudad' => $request->ciudad,
+            'telefono' => $request->telefono,
             'casa_matriz' => $request->casa_matriz,
+            'periodo' => $request->periodo,
             'fecha_inicio' => $request->fecha_inicio,
             'fecha_fin' => $request->fecha_fin,
-            'periodo' => $request->periodo,
+
         ]);
 
         return redirect()->route('show.empresas.detail', $id)->with('success', 'Datos actualizados correctamente.');

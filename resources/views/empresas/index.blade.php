@@ -55,7 +55,7 @@
                                             <label for="documento" class="block text-sm font-medium text-gray-700 mb-1">
                                                 Número de documento
                                             </label>
-                                            <input type="text" name="documento" id="documento" required
+                                            <input type="text" name="numero_documento" id="documento" required
                                                 class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none">
                                         </div>
                                     </div>
@@ -74,10 +74,10 @@
                                     {{-- Periodo --}}
                                     <div class="mb-6">
                                         <label for="periodo"
-                                            class="block text-sm font-medium text-gray-700 mb-1">Periodo</label>
+                                            class="block text-sm font-medium text-gray-700 mb-1">Tipo de empresa</label>
                                         <select id="periodo" name="periodo" required
                                             class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none">
-                                            <option value="Mineria">Mineria</option>
+                                            <option value="Mineria">Minera</option>
                                             <option value="Comercial">Comercial</option>
                                             <option value="Agropecuaria">Agropecuaria</option>
                                             <option value="Industrial">Industrial</option>
@@ -193,7 +193,6 @@
                         @endif
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

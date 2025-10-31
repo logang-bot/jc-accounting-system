@@ -3,39 +3,29 @@
 namespace Database\Seeders;
 
 use App\Models\Empresa;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class EmpresaSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $periodos = ['Mineria', 'Comercial', 'Agropecuaria', 'Industrial'];
-
-        // Instanciar los seeders dependientes
-        $cuentasSeeder = new CuentasSeeder();
-        $comprobantesSeeder = new ComprobantesSeeder();
+        $tiposDocumento = ['NIT', 'CI'];
 
         for ($i = 1; $i <= 5; $i++) {
-            $empresa = Empresa::create([
+            Empresa::create([
                 'name' => 'Empresa ' . $i,
-                'nit' => fake()->numerify('######'),
+                'tipo_documento' => fake()->randomElement($tiposDocumento),
+                'numero_documento' => fake()->numerify('##########'),
                 'direccion' => fake()->address(),
                 'ciudad' => fake()->city(),
-                'provincia' => fake()->state(),
                 'telefono' => fake()->phoneNumber(),
-                'celular' => fake()->phoneNumber(),
-                'correo_electronico' => fake()->companyEmail(),
+                'casa_matriz' => fake()->boolean(),
+                'fecha_inicio' => fake()->date(),
+                'fecha_fin' => fake()->date(),
                 'periodo' => fake()->randomElement($periodos),
-                'gestion' => now()->year,
+                'activa' => true,
             ]);
-
-            // ✅ Poblar Cuentas y Comprobantes para esta empresa
-            $cuentasSeeder->seedForEmpresa($empresa);
-            $comprobantesSeeder->seedForEmpresa($empresa);
         }
     }
 }

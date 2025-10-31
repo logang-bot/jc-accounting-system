@@ -18,7 +18,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             // CuentasSeeder::class,
             // ComprobantesSeeder::class,
-            EmpresaSeeder::class
+            RoleSeeder::class,
+            AdminUserSeeder::class,
+            //EmpresaSeeder::class
         ]);
     }
 }

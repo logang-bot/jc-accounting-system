@@ -33,7 +33,7 @@ class BalancesController extends Controller
 
         $resultadoNeto = $resultados['resultado_neto'] ?? 0;
 
-        // 🔹 Obtener jerarquía real de la cuenta “Resultado de Ejercicios Anteriores”
+        // 🔹 Obtener jerarquía real de la cuenta “Resultado de Ejercicios”
         $cuentaResultado = \App\Models\CuentasContables::where('codigo_cuenta', '3301010000')
             ->where('empresa_id', $empresaId)
             ->with('parent.parent.parent') // incluir toda la jerarquía
@@ -55,8 +55,8 @@ class BalancesController extends Controller
         // 🔹 Agregar el Resultado de Ejercicios como subcuenta de patrimonio (con su jerarquía completa)
         $balances['patrimonio'][] = [
             'codigo_cuenta' => '3301010000',
-            'nombre' => 'Resultado de Ejercicios Anteriores',
-            'nivel' => 5,
+            'nombre' => 'Resultado de Ejercicios',
+            'nivel' => 4,
             'saldo' => $resultadoNeto,
             'full_parent_chain' => $fullParentChain,
         ];

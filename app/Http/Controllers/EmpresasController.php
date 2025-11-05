@@ -47,7 +47,7 @@ class EmpresasController extends Controller
         $empresa = Empresa::create([
             'name' => $request->name,
             'tipo_documento' => $request->tipo_documento,
-            'numero_documento' => $request->documento,
+            'numero_documento' => $request->numero_documento,
             'direccion' => $request->direccion,
             'ciudad' => $request->ciudad,
             'telefono' => $request->telefono,
@@ -86,10 +86,10 @@ class EmpresasController extends Controller
         $empresa->update([
             'name' => $request->name,
             'tipo_documento' => $request->tipo_documento,
-            'numero_documento' => $request->documento,
+            'numero_documento' => $request->numero_documento,
             'direccion' => $request->direccion,
             'ciudad' => $request->ciudad,
-            'telefono' => $request->telefono,
+            'telefono' => $request->telefono,   
             'casa_matriz' => $request->casa_matriz,
             'periodo' => $request->periodo,
             'fecha_inicio' => $request->fecha_inicio,

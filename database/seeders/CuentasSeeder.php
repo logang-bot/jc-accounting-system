@@ -70,7 +70,7 @@ class CuentasSeeder extends Seeder
             'tipo_cuenta' => 'Activo',
             'nivel' => 4,
             'parent_id' => $disponibilidades->id_cuenta,
-            'es_movimiento' => true,    
+            'es_movimiento' => true,
             'moneda_principal' => 'BOB', // ✅
         ]);
 
@@ -380,7 +380,7 @@ class CuentasSeeder extends Seeder
     // SEEDERS FOR EMPRESA
 
 
-    
+
     public static function crearCuentasActivos(Empresa $empresa)
     {
         $activo = CuentasContables::create([
@@ -1082,8 +1082,27 @@ class CuentasSeeder extends Seeder
             'empresa_id' => $empresa->id,
         ]);
 
+        $resultadosDeEjercicios = CuentasContables::create([
+            'nombre_cuenta' => 'RESULTADO DE EJERCICIOS',
+            'tipo_cuenta' => 'Patrimonio',
+            'nivel' => 3,
+            'es_movimiento' => true,
+            'parent_id' => $resultadosAcumulados->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
+        CuentasContables::create([
+            'nombre_cuenta' => 'RESULTADO DE EJERCICIOS',
+            'tipo_cuenta' => 'Patrimonio',
+            'nivel' => 4,
+            'es_movimiento' => true,
+            'moneda_principal' => "BOB",
+            'parent_id' => $resultadosDeEjercicios->id_cuenta,
+            'empresa_id' => $empresa->id,
+        ]);
+
         $resultadosDeEjerciciosAnterios = CuentasContables::create([
-            'nombre_cuenta' => 'RESULTADOS DE EJERCICIOS ANTERIORES',
+            'nombre_cuenta' => 'RESULTADO DE EJERCICIOS ANTERIORES',
             'tipo_cuenta' => 'Patrimonio',
             'nivel' => 3,
             'es_movimiento' => true,
@@ -1557,5 +1576,4 @@ class CuentasSeeder extends Seeder
             default => '-1',
         };
     }
-
 }

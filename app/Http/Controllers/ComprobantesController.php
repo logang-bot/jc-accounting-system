@@ -168,7 +168,6 @@ class ComprobantesController extends Controller
                         'descripcion' => $detalle['descripcion'] ?? '',
                         'debe' => $detalle['debe'],
                         'haber' => $detalle['haber'],
-                        'iva' => $detalle['iva'] ?? 0,
                     ]);
                 }
             });
@@ -241,7 +240,6 @@ class ComprobantesController extends Controller
                     'descripcion' => $detalle['descripcion'] ?? null,
                     'debe' => $detalle['debe'] ?? 0,
                     'haber' => $detalle['haber'] ?? 0,
-                    'iva' => $detalle['iva'] ?? 0,
                 ]);
             }
         });

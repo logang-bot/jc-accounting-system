@@ -109,29 +109,8 @@
 
                         {{-- 🔹 PATRIMONIO --}}
                         @foreach ($balances['patrimonio'] ?? [] as $cuenta)
-                            @foreach ($cuenta['full_parent_chain'] ?? [] as $i => $parent)
-                                <tr>
-                                    <td>
-                                        <span class="inline-block" style="padding-left: {{ $i * 20 }}px;">
-                                            {{ $parent['codigo'] ?? '' }} - {{ $parent['nombre'] ?? '' }}
-                                        </span>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                            @endforeach
-                            <tr>
-                                <td>
-                                    <span class="inline-block" style="padding-left: {{ ($cuenta['nivel'] ?? 0) * 20 }}px;">
-                                        {{ $cuenta['codigo_cuenta'] ?? '' }} - {{ $cuenta['nombre'] ?? '' }}
-                                    </span>
-                                </td>
-                                <td class="text-right">{{ number_format($cuenta['saldo'] ?? 0, 2) }}</td>
-                            </tr>
-                        @endforeach
-
-                        {{-- 🔹 RESULTADO DE EJERCICIOS (si existe) --}}
-                        @if (isset($balances['resultado']) && count($balances['resultado']) > 0)
-                            @foreach ($balances['resultado'] as $cuenta)
+                            @if (($cuenta['saldo'] ?? 0) != 0)
+                                {{-- mostrar solo si tiene saldo --}}
                                 @foreach ($cuenta['full_parent_chain'] ?? [] as $i => $parent)
                                     <tr>
                                         <td>
@@ -151,12 +130,40 @@
                                     </td>
                                     <td class="text-right">{{ number_format($cuenta['saldo'] ?? 0, 2) }}</td>
                                 </tr>
+                            @endif
+                        @endforeach
+
+                        {{-- 🔹 RESULTADO DE EJERCICIOS --}}
+                        @if (isset($balances['resultado']) && count($balances['resultado']) > 0)
+                            @foreach ($balances['resultado'] as $cuenta)
+                                @if (($cuenta['saldo'] ?? 0) != 0)
+                                    {{-- mostrar solo si tiene saldo --}}
+                                    @foreach ($cuenta['full_parent_chain'] ?? [] as $i => $parent)
+                                        <tr>
+                                            <td>
+                                                <span class="inline-block" style="padding-left: {{ $i * 20 }}px;">
+                                                    {{ $parent['codigo'] ?? '' }} - {{ $parent['nombre'] ?? '' }}
+                                                </span>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    @endforeach
+                                    <tr>
+                                        <td>
+                                            <span class="inline-block"
+                                                style="padding-left: {{ ($cuenta['nivel'] ?? 0) * 20 }}px;">
+                                                {{ $cuenta['codigo_cuenta'] ?? '' }} - {{ $cuenta['nombre'] ?? '' }}
+                                            </span>
+                                        </td>
+                                        <td class="text-right">{{ number_format($cuenta['saldo'] ?? 0, 2) }}</td>
+                                    </tr>
+                                @endif
                             @endforeach
                         @elseif(isset($balances['resultado_neto']) && $balances['resultado_neto'] != 0)
                             <tr>
                                 <td>
                                     <span class="inline-block" style="padding-left: 60px;">
-                                        3301010000 - Resultado de Ejercicios Anteriores
+                                        3301010000 - Resultado de Ejercicios
                                     </span>
                                 </td>
                                 <td class="text-right">
@@ -164,6 +171,7 @@
                                 </td>
                             </tr>
                         @endif
+
                     </tbody>
 
                     <tfoot>

@@ -49,7 +49,6 @@
                                             </select>
                                         </div>
 
-
                                         {{-- NIT / CI --}}
                                         <div class="flex-1">
                                             <label for="documento" class="block text-sm font-medium text-gray-700 mb-1">
@@ -60,8 +59,13 @@
                                         </div>
                                     </div>
 
-
-
+                                    {{-- Dirección --}}
+                                    <div class="mb-4">
+                                        <label for="direccion"
+                                            class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+                                        <input type="text" name="direccion" id="direccion"
+                                            class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
+                                    </div>
                                     {{-- Casa Matriz --}}
                                     <div class="mb-4 flex items-center">
                                         <input type="hidden" name="casa_matriz" value="0">
@@ -71,17 +75,36 @@
                                             matriz?</label>
                                     </div>
 
-                                    {{-- Periodo --}}
+                                    {{-- Ciudad y Teléfono --}}
+                                    <div class="flex gap-4 mb-4">
+                                        {{-- Ciudad --}}
+                                        <div class="flex-1">
+                                            <label for="ciudad"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
+                                            <input type="text" name="ciudad" id="ciudad"
+                                                class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
+                                        </div>
+
+                                        {{-- Teléfono --}}
+                                        <div class="flex-1">
+                                            <label for="telefono"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                                            <input type="text" name="telefono" id="telefono"
+                                                class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
+                                        </div>
+                                    </div>
+
+                                    {{-- Tipo de empresa --}}
                                     <div class="mb-6">
                                         <label for="periodo" class="block text-sm font-medium text-gray-700 mb-1">Tipo de
                                             empresa</label>
                                         <select id="periodo" name="periodo" required
                                             class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none">
+                                            <option value="" disabled selected>Seleccione</option>
                                             <option value="Mineria">Minera</option>
                                             <option value="Comercial">Comercial</option>
                                             <option value="Agropecuaria">Agropecuaria</option>
                                             <option value="Industrial">Industrial</option>
-
                                         </select>
                                     </div>
 

@@ -12,7 +12,7 @@
                     @csrf
                     @method('PUT')
 
-                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <dl class="space-y-4">
                         {{-- Nombre --}}
                         <div>
                             <dt class="font-medium">Nombre</dt>
@@ -22,24 +22,37 @@
                             </dd>
                         </div>
 
-                        {{-- NIT / CI --}}
-                        <div>
-                            <dt class="font-medium">Documento</dt>
-                            <dd>
-                                <input type="text" name="documento" value="{{ old('nit', $empresa->documento) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
-                            </dd>
+                        {{-- Tipo de documento y Número de documento --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <dt class="font-medium">Tipo de documento</dt>
+                                <dd>
+                                    <select name="tipo_documento" required disabled
+                                        class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2">
+                                        <option value="CI" @selected(old('tipo_documento', $empresa->tipo_documento) == 'CI')>CI</option>
+                                        <option value="NIT" @selected(old('tipo_documento', $empresa->tipo_documento) == 'NIT')>NIT</option>
+                                    </select>
+                                </dd>
+                            </div>
+
+                            <div>
+                                <dt class="font-medium">Número de documento</dt>
+                                <dd>
+                                    <input type="text" name="numero_documento"
+                                        value="{{ old('numero_documento', $empresa->numero_documento) }}"
+                                        class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2"
+                                        disabled />
+
+                                </dd>
+                            </div>
                         </div>
 
-                        {{-- Tipo documento --}}
+                        {{-- Dirección --}}
                         <div>
-                            <dt class="font-medium">Tipo de documento</dt>
+                            <dt class="font-medium">Dirección</dt>
                             <dd>
-                                <select name="tipo_documento" required disabled
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2">
-                                    <option value="CI" @selected(old('tipo_documento', $empresa->tipo_documento) == 'CI')>CI</option>
-                                    <option value="NIT" @selected(old('tipo_documento', $empresa->tipo_documento) == 'NIT')>NIT</option>
-                                </select>
+                                <input type="text" name="direccion" value="{{ old('direccion', $empresa->direccion) }}"
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
                             </dd>
                         </div>
 
@@ -52,38 +65,63 @@
                             </dd>
                         </div>
 
-                        {{-- Fecha de Inicio --}}
-                        <div>
-                            <dt class="font-medium">Fecha de Inicio</dt>
-                            <dd>
-                                <input type="date" name="fecha_inicio"
-                                    value="{{ old('fecha_inicio', $empresa->fecha_inicio) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
-                            </dd>
+                        {{-- Ciudad y Teléfono --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <dt class="font-medium">Ciudad</dt>
+                                <dd>
+                                    <input type="text" name="ciudad" value="{{ old('ciudad', $empresa->ciudad) }}"
+                                        class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2"
+                                        disabled />
+                                </dd>
+                            </div>
+
+                            <div>
+                                <dt class="font-medium">Teléfono</dt>
+                                <dd>
+                                    <input type="text" name="telefono" value="{{ old('telefono', $empresa->telefono) }}"
+                                        class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2"
+                                        disabled />
+                                </dd>
+                            </div>
                         </div>
 
-                        {{-- Fecha de Fin --}}
+                        {{-- Tipo de empresa --}}
                         <div>
-                            <dt class="font-medium">Fecha de Fin</dt>
-                            <dd>
-                                <input type="date" name="fecha_fin" value="{{ old('fecha_fin', $empresa->fecha_fin) }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
-                            </dd>
-                        </div>
-
-                        {{-- Periodo --}}
-                        <div>
-                            <dt class="font-medium">Periodo</dt>
+                            <dt class="font-medium">Tipo de empresa</dt>
                             <dd>
                                 <select name="periodo"
                                     class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled>
+                                    <option value="" disabled @selected(old('periodo', $empresa->periodo) == null)>Seleccione</option>
                                     <option value="Mineria" @selected(old('periodo', $empresa->periodo) == 'Mineria')>Mineria</option>
                                     <option value="Comercial" @selected(old('periodo', $empresa->periodo) == 'Comercial')>Comercial</option>
                                     <option value="Agropecuaria" @selected(old('periodo', $empresa->periodo) == 'Agropecuaria')>Agropecuaria</option>
                                     <option value="Industrial" @selected(old('periodo', $empresa->periodo) == 'Industrial')>Industrial</option>
-
                                 </select>
                             </dd>
+                        </div>
+
+                        {{-- Fechas de inicio y fin --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <dt class="font-medium">Fecha de Inicio</dt>
+                                <dd>
+                                    <input type="date" name="fecha_inicio"
+                                        value="{{ old('fecha_inicio', $empresa->fecha_inicio) }}"
+                                        class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2"
+                                        disabled />
+                                </dd>
+                            </div>
+
+                            <div>
+                                <dt class="font-medium">Fecha de Fin</dt>
+                                <dd>
+                                    <input type="date" name="fecha_fin"
+                                        value="{{ old('fecha_fin', $empresa->fecha_fin) }}"
+                                        class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2"
+                                        disabled />
+                                </dd>
+                            </div>
                         </div>
                     </dl>
 

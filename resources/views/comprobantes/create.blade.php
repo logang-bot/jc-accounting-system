@@ -429,14 +429,20 @@
         document.addEventListener("DOMContentLoaded", function() {
             const tasaCambioInput = document.getElementById("tasa-cambio");
 
-            // Valor por defecto de la tasa
-            if (!tasaCambioInput.value) tasaCambioInput.value = 6.96;
+            // Valor por defecto solo al hacer focus
+            tasaCambioInput.addEventListener('focus', function() {
+                if (!this.value) {
+                    this.value = 6.96;
+                    actualizarConversiones();
+                    cambiarMoneda();
+                }
+            });
 
-            cambiarMoneda();
             actualizarLabelTipo();
             actualizarConversiones();
             updateSubmitButtonState();
 
+            // Cerrar modal
             const closeModalBtn = document.querySelector("#select-cuenta-modal .text-xl.font-bold");
             if (closeModalBtn) {
                 closeModalBtn.addEventListener("click", function() {
@@ -637,7 +643,4 @@
             });
         });
     </script>
-
-
-
 @endsection

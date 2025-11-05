@@ -11,12 +11,15 @@ class Empresa extends Model
 
     protected $fillable = [
         'name',
-        'documento',
         'tipo_documento',
+        'numero_documento',
+        'direccion',
+        'ciudad',
+        'telefono',
         'casa_matriz',
+        'periodo',
         'fecha_inicio',
         'fecha_fin',
-        'periodo',
         'activa',
     ];
 

@@ -12,15 +12,22 @@ use App\Http\Controllers\LibroMayorController;
 use App\Http\Controllers\RegistroTipoCambioController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+// Route::get('/', function () {
+//     return view('welcome');
+// })->name('home');
 
 Route::middleware('guest')->controller(AuthController::class)->group(function () {
+<<<<<<< Updated upstream
     // Route::post('/register', 'register')->name('register');
     // Route::post('/login', 'login')->name('login');
     Route::get('/login', 'showLogin')->name('show.login');
     Route::post('/login', 'login')->name('login');  
+=======
+    Route::post('/login', 'login')->name('login');
+    Route::get('/', function () {
+        return view('welcome');
+    })->name('home');
+>>>>>>> Stashed changes
 });
 
 // --- User management (admins only) ---
@@ -134,6 +141,5 @@ Route::middleware('auth')->controller(EstadoResultadosController::class)->group(
 
 Route::middleware('auth')->controller(RegistroTipoCambioController::class)->group(function () {
     Route::get('/tipo-cambio', 'index')->name('show.tipo-cambio.index');
-    // Route::get('/api/ufv', 'latestUfv');    
     Route::post('/tipo-cambio', 'store')->name('tipo-cambio.store');
 });

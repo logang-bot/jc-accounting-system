@@ -17,7 +17,8 @@
         </div>
     @endif
 
-    <form action="{{ $modo === 'editar' ? route('cuentas.update', $cuenta->id_cuenta) : route('cuentas.store') }}"
+    <form id="cuenta-form"
+        action="{{ $modo === 'editar' ? route('cuentas.update', $cuenta->id_cuenta) : route('cuentas.store') }}"
         method="POST" class="space-y-4">
         @csrf
         @if ($modo === 'editar')
@@ -76,7 +77,6 @@
             @enderror
         </div>
 
-
         {{-- Moneda Principal --}}
         <div class="mb-4">
             <label for="moneda_principal" class="block text-sm font-medium text-gray-700">Moneda Principal</label>
@@ -101,7 +101,8 @@
         </div>
 
         <div>
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">
+            <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded cursor-pointer">
                 {{ $modo === 'editar' ? 'Actualizar cuenta' : 'Crear cuenta' }}
             </button>
         </div>
@@ -112,6 +113,54 @@
 
 {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
 <script>
+    document.getElementById('cuenta-form').addEventListener('submit', function(event) {
+        const test = "fdjsk"
+        event.preventDefault();
+
+        const form = event.target;
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                resetCuentaForm(form);
+                closeIfModal();
+            })
+            .catch(error => console.error(error));
+    });
+
+    function resetCuentaForm(form) {
+        // Reset native form fields
+        form.reset();
+
+        // Clear Alpine.js controlled checkbox
+        const movimientoCheckbox = form.querySelector('#es_movimiento');
+        if (movimientoCheckbox) {
+            movimientoCheckbox.checked = false;
+            // Trigger input event so Alpine updates UI state
+            movimientoCheckbox.dispatchEvent(new Event('input'));
+        }
+
+        // Reset Select2/TomSelect/Choices.js if used
+        const selects = form.querySelectorAll('select');
+        selects.forEach(select => {
+            select.selectedIndex = 0;
+            select.dispatchEvent(new Event('change'));
+        });
+    }
+
+    function closeIfModal() {
+        const modal = document.querySelector('#show-add-cuenta-modal');
+        if (modal && !modal.classList.contains('hidden')) {
+            window.HSOverlay.close(modal);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const tipoCuentaSelect = document.getElementById('tipo_cuenta');
         const parentSelect = document.getElementById('parent_id');

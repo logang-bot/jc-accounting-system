@@ -280,13 +280,13 @@
                                     </td>
 
                                     <td class="px-3 py-2 text-center space-x-2">
-                                        <!-- Botón seleccionar cuenta -->
-                                        <button type="button" class="text-blue-600 select-cuenta-action" data-index="0">
+                                        <button type="button"
+                                            class="text-blue-600 select-cuenta-action hover:underline cursor-pointer"
+                                            data-index="0">
                                             Seleccionar
                                         </button>
-                                        <!-- Botón eliminar -->
                                         <button type="button" onclick="removeRow(this)"
-                                            class="text-red-600 hover:underline">
+                                            class="text-red-600 hover:underline cursor-pointer">
                                             Eliminar
                                         </button>
                                     </td>
@@ -296,21 +296,21 @@
                     </table>
                     <section class="flex flex-col">
                         <button type="button" onclick="addRow()"
-                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer">
                             Agregar Línea
                         </button>
 
                         <!-- Botón para abrir modal -->
                         <button type="button" aria-controls="show-plan-cuentas-modal"
                             data-hs-overlay="#show-plan-cuentas-modal"
-                            class="mt-4 px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-700">
+                            class="mt-4 px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-700 cursor-pointer">
                             Revisar Plan de Cuentas
                         </button>
 
                         <!-- Botón para abrir modal para adicionar cuenta -->
                         <button type="button" aria-controls="show-add-cuenta-modal"
                             data-hs-overlay="#show-add-cuenta-modal"
-                            class="mt-4 px-4 py-2 bg-amber-300 text-white rounded hover:bg-amber-700">
+                            class="mt-4 px-4 py-2 bg-amber-300 text-white rounded hover:bg-amber-700 cursor-pointer">
                             Crear cuenta
                         </button>
                     </section>
@@ -354,7 +354,7 @@
 
                 <!-- Modal Header -->
                 <div class="flex items-center justify-between px-6 py-4 border-b">
-                    <button class="text-gray-500 hover:text-gray-700 text-xl font-bold"
+                    <button class="text-gray-500 hover:text-gray-700 text-xl font-bold cursor-pointer"
                         data-hs-overlay="#show-add-cuenta-modal">&times;</button>
                 </div>
                 <!-- Modal Body -->
@@ -365,7 +365,6 @@
         </div>
     </x-modal>
 
-    <!-- Modal seleccionar cuenta -->
     <x-modal id="select-cuenta-modal" class="hidden">
         <div class="flex items-center justify-center min-h-screen px-4">
             <div class="bg-white w-full max-w-4xl rounded-lg shadow-lg">

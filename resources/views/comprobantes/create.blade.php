@@ -22,7 +22,7 @@
             </div>
         @endif
 
-        <form method="POST"
+        <form method="POST" id="form-comprobante"
             action="{{ $editMode ? route('comprobantes.update', $comprobante->id) : route('comprobantes.store') }}">
             @csrf
             @if ($editMode)
@@ -170,13 +170,11 @@
                                         </td>
 
                                         <td class="px-3 py-2 text-center space-x-2">
-                                            <!-- Botón seleccionar cuenta -->
                                             <button type="button" class="text-blue-600 select-cuenta-action"
                                                 data-index="0">
                                                 Seleccionar
                                             </button>
 
-                                            <!-- Botón eliminar -->
                                             <button type="button" onclick="removeRow(this)"
                                                 class="text-red-600 hover:underline">
                                                 Eliminar
@@ -574,6 +572,8 @@
                 rowCount--;
                 updateSubmitButtonState();
             }
+
+            document.dispatchEvent(new CustomEvent('rowRemoved'));
         }
 
         // ────────── Conversion Bs/USD de todas las filas ──────────
@@ -592,7 +592,6 @@
             if (e.target.name?.includes('[debe]') || e.target.name?.includes('[haber]')) actualizarConversiones();
         });
 
-        // ────────── Select cuentas dentro de fila ──────────
         function calculateAccountNumber(select) {
             if (select && select.classList.contains('cuenta-nombre-select')) {
                 const option = select.options[select.selectedIndex];
@@ -601,7 +600,6 @@
             }
         }
 
-        // ────────── Abrir modal de selección de cuenta (delegación de eventos) ──────────
         document.addEventListener("click", function(e) {
             if (e.target.classList.contains("select-cuenta-action")) {
                 filaActiva = e.target.closest("tr");
@@ -610,7 +608,6 @@
             }
         });
 
-        // ────────── Filtrar cuentas en modal ──────────
         document.getElementById("buscar-cuenta").addEventListener("input", function() {
             const filtro = this.value.toLowerCase();
             document.querySelectorAll("#tabla-cuentas tr").forEach(fila => {
@@ -620,7 +617,6 @@
             });
         });
 
-        // ────────── Seleccionar cuenta desde modal ──────────
         document.querySelectorAll(".select-cuenta-btn").forEach(btn => {
             btn.addEventListener("click", function() {
                 if (filaActiva !== null) {
@@ -639,6 +635,106 @@
                     document.querySelector('#select-cuenta-modal').classList.add("hidden");
                     filaActiva = null;
                 }
+                document.dispatchEvent(new CustomEvent('rowAdded'));
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('form-comprobante');
+            if (!form) return;
+
+            const storageKey = 'comprobante-form';
+
+            // 🔹 Helper to get all detalle rows as structured data
+            const getDetalles = () => {
+                const rows = [];
+                document.querySelectorAll('#detalle-rows tr').forEach((tr, index) => {
+                    const rowData = {};
+                    tr.querySelectorAll('input[name^="detalles"]').forEach(input => {
+                        const name = input.name.match(/\[([^\]]+)\]$/)?.[1];
+                        if (name) rowData[name] = input.value;
+                    });
+                    rows.push(rowData);
+                });
+                return rows;
+            };
+
+            // 🔹 Helper to rebuild detalle rows from saved data
+            const restoreDetalles = (detalles) => {
+                const tbody = document.getElementById('detalle-rows');
+                if (!tbody) return;
+
+                tbody.innerHTML = ''; // clear any existing rows
+                detalles.forEach((row, index) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                <td class="px-3 py-2">
+                    <input type="text" name="detalles[${index}][codigo_cuenta]" class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly value="${row.codigo_cuenta || ''}">
+                    <input type="hidden" name="detalles[${index}][cuenta_id]" class="cuenta-id-input" value="${row.cuenta_id || ''}">
+                </td>
+                <td class="px-3 py-2">
+                    <input type="text" name="detalles[${index}][nombre_cuenta]" class="w-full border rounded px-2 py-1" readonly value="${row.nombre_cuenta || ''}">
+                </td>
+                <td class="px-3 py-2">
+                    <input type="text" name="detalles[${index}][descripcion]" class="w-full border rounded px-2 py-1" value="${row.descripcion || ''}">
+                </td>
+                <td class="px-3 py-2">
+                    <input type="number" step="0.01" name="detalles[${index}][debe]" class="w-full text-right border rounded px-2 py-1" value="${row.debe || ''}">
+                </td>
+                <td class="px-3 py-2">
+                    <input type="number" step="0.01" name="detalles[${index}][haber]" class="w-full text-right border rounded px-2 py-1" value="${row.haber || ''}">
+                </td>
+                <td class="px-3 py-2 text-right us-debe">
+                    <input type="text" readonly class="w-full text-right bg-gray-100 border rounded px-2 py-1" value="${row.us_debe || '0.00'}">
+                </td>
+                <td class="px-3 py-2 text-right us-haber">
+                    <input type="text" readonly class="w-full text-right bg-gray-100 border rounded px-2 py-1" value="${row.us_haber || '0.00'}">
+                </td>
+                <td class="px-3 py-2 text-center space-x-2">
+                    <button type="button" class="text-blue-600 select-cuenta-action hover:underline cursor-pointer" data-index="${index}">Seleccionar</button>
+                    <button type="button" onclick="removeRow(this)" class="text-red-600 hover:underline cursor-pointer">Eliminar</button>
+                </td>
+            `;
+                    tbody.appendChild(tr);
+                });
+            };
+
+            // 🔹 Restore main form fields
+            const savedData = JSON.parse(localStorage.getItem(storageKey) || '{}');
+            Object.entries(savedData).forEach(([name, value]) => {
+                if (name === 'detalles') return; // handled separately
+                const input = form.querySelector(`[name="${name}"]`);
+                if (input) input.value = value;
+            });
+
+            // 🔹 Restore detalle rows
+            if (savedData.detalles) {
+                rowCount = savedData.detalles.length;
+                updateSubmitButtonState();
+                restoreDetalles(savedData.detalles);
+            }
+
+            // --- 2️⃣ Save data automatically on input ---
+            const saveFormData = () => {
+                const data = {};
+                form.querySelectorAll('input, select, textarea').forEach(el => {
+                    if (!el.name || el.name.startsWith('detalles')) return;
+                    data[el.name] = el.value;
+                });
+                data.detalles = getDetalles();
+                localStorage.setItem(storageKey, JSON.stringify(data));
+            };
+
+            // Listen to changes
+            form.addEventListener('input', saveFormData);
+            form.addEventListener('change', saveFormData);
+
+            document.addEventListener('rowAdded', saveFormData);
+            document.addEventListener('rowRemoved', saveFormData);
+
+            // --- 3️⃣ Clear data when the form is submitted ---
+            form.addEventListener('submit', () => {
+                localStorage.removeItem(storageKey);
             });
         });
     </script>

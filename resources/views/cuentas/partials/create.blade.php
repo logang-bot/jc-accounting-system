@@ -113,53 +113,52 @@
 
 {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
 <script>
-    document.getElementById('cuenta-form').addEventListener('submit', function(event) {
-        const test = "fdjsk"
-        event.preventDefault();
+    // document.getElementById('cuenta-form').addEventListener('submit', function(event) {
+    //     event.preventDefault();
 
-        const form = event.target;
-        const formData = new FormData(form);
+    //     const form = event.target;
+    //     const formData = new FormData(form);
 
-        fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => {
-                resetCuentaForm(form);
-                closeIfModal();
-            })
-            .catch(error => console.error(error));
-    });
+    //     fetch(form.action, {
+    //             method: 'POST',
+    //             body: formData,
+    //             headers: {
+    //                 'X-Requested-With': 'XMLHttpRequest'
+    //             }
+    //         })
+    //         .then(response => {
+    //             resetCuentaForm(form);
+    //             closeIfModal();
+    //         })
+    //         .catch(error => console.error(error));
+    // });
 
-    function resetCuentaForm(form) {
-        // Reset native form fields
-        form.reset();
+    // function resetCuentaForm(form) {
+    //     // Reset native form fields
+    //     form.reset();
 
-        // Clear Alpine.js controlled checkbox
-        const movimientoCheckbox = form.querySelector('#es_movimiento');
-        if (movimientoCheckbox) {
-            movimientoCheckbox.checked = false;
-            // Trigger input event so Alpine updates UI state
-            movimientoCheckbox.dispatchEvent(new Event('input'));
-        }
+    //     // Clear Alpine.js controlled checkbox
+    //     const movimientoCheckbox = form.querySelector('#es_movimiento');
+    //     if (movimientoCheckbox) {
+    //         movimientoCheckbox.checked = false;
+    //         // Trigger input event so Alpine updates UI state
+    //         movimientoCheckbox.dispatchEvent(new Event('input'));
+    //     }
 
-        // Reset Select2/TomSelect/Choices.js if used
-        const selects = form.querySelectorAll('select');
-        selects.forEach(select => {
-            select.selectedIndex = 0;
-            select.dispatchEvent(new Event('change'));
-        });
-    }
+    //     // Reset Select2/TomSelect/Choices.js if used
+    //     const selects = form.querySelectorAll('select');
+    //     selects.forEach(select => {
+    //         select.selectedIndex = 0;
+    //         select.dispatchEvent(new Event('change'));
+    //     });
+    // }
 
-    function closeIfModal() {
-        const modal = document.querySelector('#show-add-cuenta-modal');
-        if (modal && !modal.classList.contains('hidden')) {
-            window.HSOverlay.close(modal);
-        }
-    }
+    // function closeIfModal() {
+    //     const modal = document.querySelector('#show-add-cuenta-modal');
+    //     if (modal && !modal.classList.contains('hidden')) {
+    //         window.HSOverlay.close(modal);
+    //     }
+    // }
 
     document.addEventListener('DOMContentLoaded', function() {
         const tipoCuentaSelect = document.getElementById('tipo_cuenta');

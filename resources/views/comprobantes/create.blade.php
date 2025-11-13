@@ -43,7 +43,10 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Tipo:</label>
                     <select id="tipo" name="tipo" class="w-full border rounded px-3 py-2" required>
-                        <option value="">-- Seleccione --</option>
+                        <!-- Opción por defecto -->
+                        <option value="" disabled selected>Seleccione un tipo</option>
+
+                        <!-- Opciones dinámicas -->
                         @foreach (['ingreso', 'egreso', 'traspaso', 'ajuste'] as $tipo)
                             <option value="{{ $tipo }}"
                                 {{ old('tipo', $editMode ? $comprobante->tipo : '') === $tipo ? 'selected' : '' }}>
@@ -52,6 +55,7 @@
                         @endforeach
                     </select>
                 </div>
+
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Fecha:</label>
@@ -68,15 +72,17 @@
                         value="{{ old('tasa_cambio', $editMode ? $comprobante->tasa_cambio : '') }}" required>
                 </div>
 
-                <!-- 🔥 NUEVO: Selección de moneda -->
+                <!-- NUEVO: Selección de moneda -->
                 <div>
                     <label for="moneda" class="block text-sm font-medium text-gray-700 mb-1">Moneda:</label>
                     <select id="moneda" name="moneda" class="w-full border rounded px-3 py-2"
                         onchange="cambiarMoneda()">
-                        <option value="BOB" selected>Bolivianos (Bs.)</option>
+                        <option value="" selected disabled>Seleccione</option>
+                        <option value="BOB">Bolivianos (Bs.)</option>
                         <option value="USD">Dólares (USD)</option>
                     </select>
                 </div>
+
 
 
                 <div>
@@ -292,31 +298,49 @@
                             @endif
                         </tbody>
                     </table>
-                    <section class="flex flex-col">
+                    <table class="min-w-full border-t border-gray-300 mt-2 text-sm">
+                        <tfoot class="bg-gray-50 font-semibold">
+                            <tr>
+                                <td colspan="3" class="text-right px-3 py-2">Totales:</td>
+                                <td id="total-debe-bs" class="text-right px-3 py-2 text-green-700">0.00</td>
+                                <td id="total-haber-bs" class="text-right px-3 py-2 text-green-700">0.00</td>
+                                <td id="total-debe-usd" class="text-right px-3 py-2 text-blue-700">0.00</td>
+                                <td id="total-haber-usd" class="text-right px-3 py-2 text-blue-700">0.00</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <section class="flex flex-row gap-2 mt-4">
                         <button type="button" onclick="addRow()"
-                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer">
+                            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer">
                             Agregar Línea
                         </button>
 
                         <!-- Botón para abrir modal -->
                         <button type="button" aria-controls="show-plan-cuentas-modal"
                             data-hs-overlay="#show-plan-cuentas-modal"
-                            class="mt-4 px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-700 cursor-pointer">
+                            class="px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-700 cursor-pointer">
                             Revisar Plan de Cuentas
                         </button>
 
                         <!-- Botón para abrir modal para adicionar cuenta -->
                         <button type="button" aria-controls="show-add-cuenta-modal"
                             data-hs-overlay="#show-add-cuenta-modal"
-                            class="mt-4 px-4 py-2 bg-amber-300 text-white rounded hover:bg-amber-700 cursor-pointer">
+                            class="px-4 py-2 bg-amber-300 text-white rounded hover:bg-amber-700 cursor-pointer">
                             Crear cuenta
                         </button>
                     </section>
-
                 @endif
             </div>
 
-            <div class="text-right">
+            <div class="flex justify-end gap-2">
+                <!-- Botón Cancelar -->
+                <a href="{{ route('show.comprobantes.home') }}"
+                    class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded">
+                    Cancelar
+                </a>
+
+                <!-- Botón Guardar / Actualizar -->
                 <button id="submit-button" type="submit"
                     class="px-6 py-2 {{ $editMode ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-green-600 hover:bg-green-700' }} text-white rounded disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed">
                     {{ $editMode ? 'Actualizar Comprobante' : 'Guardar Comprobante' }}
@@ -737,5 +761,66 @@
                 localStorage.removeItem(storageKey);
             });
         });
+
+
+        // para totales en Bs y USD
+
+        document.addEventListener('input', function() {
+            calcularTotales();
+        });
+
+        function calcularTotales() {
+            let totalDebeBs = 0;
+            let totalHaberBs = 0;
+            let totalDebeUSD = 0;
+            let totalHaberUSD = 0;
+
+            // Obtener la tasa de cambio (si existe)
+            const tasaCambioInput = document.getElementById('tasa_cambio');
+            const tasaCambio = tasaCambioInput ? parseFloat(tasaCambioInput.value) || 6.96 : 6.96;
+
+            // Recorremos todas las filas
+            document.querySelectorAll('#detalle-rows tr').forEach(row => {
+                const debeInput = row.querySelector('input[name*="[debe]"]');
+                const haberInput = row.querySelector('input[name*="[haber]"]');
+
+                const debeBs = parseFloat(debeInput?.value || 0);
+                const haberBs = parseFloat(haberInput?.value || 0);
+
+                // Calcular equivalentes en USD
+                const debeUSD = debeBs / tasaCambio;
+                const haberUSD = haberBs / tasaCambio;
+
+                totalDebeBs += debeBs;
+                totalHaberBs += haberBs;
+                totalDebeUSD += debeUSD;
+                totalHaberUSD += haberUSD;
+
+                // Actualizamos columnas USD en cada fila
+                const usDebeInput = row.querySelector('.us-debe input');
+                const usHaberInput = row.querySelector('.us-haber input');
+                if (usDebeInput) usDebeInput.value = debeUSD.toFixed(2);
+                if (usHaberInput) usHaberInput.value = haberUSD.toFixed(2);
+            });
+
+            // Mostrar totales formateados
+            document.getElementById('total-debe-bs').textContent = totalDebeBs.toFixed(2);
+            document.getElementById('total-haber-bs').textContent = totalHaberBs.toFixed(2);
+            document.getElementById('total-debe-usd').textContent = totalDebeUSD.toFixed(2);
+            document.getElementById('total-haber-usd').textContent = totalHaberUSD.toFixed(2);
+
+            // Mostrar en rojo si no está cuadrado
+            const dif = Math.abs(totalDebeBs - totalHaberBs);
+            const totalDebeEl = document.getElementById('total-debe-bs');
+            const totalHaberEl = document.getElementById('total-haber-bs');
+
+            if (dif > 0.009) { // margen mínimo de error
+                totalDebeEl.classList.add('text-red-600');
+                totalHaberEl.classList.add('text-red-600');
+            } else {
+                totalDebeEl.classList.remove('text-red-600');
+                totalHaberEl.classList.remove('text-red-600');
+            }
+        }
     </script>
 @endsection

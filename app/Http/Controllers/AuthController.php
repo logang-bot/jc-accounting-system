@@ -45,12 +45,11 @@ class AuthController extends Controller
             'password' => 'required|string'
         ]);
 
-        if (Auth::attempt($validated))
-        {
+        if (Auth::attempt($validated)) {
             $request->session()->regenerate();
             return redirect()->route('show.empresas.home');
-        } 
-        
+        }
+
         throw ValidationException::withMessages([
             'Credentials' => 'Credenciales Incorrectas'
         ]);
@@ -62,6 +61,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('show.login');
+        return redirect()->route('home');
     }
 }

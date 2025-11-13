@@ -23,6 +23,16 @@ Route::middleware('guest')->controller(AuthController::class)->group(function ()
     })->name('home');
 });
 
+Route::get('/login', [AuthController::class, 'showLogin'])->name('show.login');
+
+Route::middleware('auth')->controller(AuthController::class)->group(function () {
+    Route::prefix('/usuarios')->group(function () {
+
+        // Rutas de funcionalidades
+        Route::post('/logout', 'logout')->name('logout');
+    });
+});
+
 // --- User management (admins only) ---
 Route::middleware(['auth', 'role:Administrator'])
     ->prefix('admin')
@@ -54,14 +64,6 @@ Route::middleware('auth')->controller(EmpresasController::class)->group(function
             Route::post('/{id}', 'archive')->name('empresas.archive');
         });
         Route::post('/exit', 'exit')->name('empresas.exit');
-    });
-});
-
-Route::middleware('auth')->controller(AuthController::class)->group(function () {
-    Route::prefix('/usuarios')->group(function () {
-
-        // Rutas de funcionalidades
-        Route::post('/logout', 'logout')->name('logout');
     });
 });
 

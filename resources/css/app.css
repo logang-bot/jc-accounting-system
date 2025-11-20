@@ -57,3 +57,31 @@
     stroke: #fff;
     opacity: 0.5;
 }
+
+/* Default */
+:root {
+    --sidebar-bg: #1f2937;
+    --header-bg: #111827;
+    --accent-color: #3b82f6;
+}
+
+/* Admin */
+.theme-admin {
+    --sidebar-bg: #1e40af;
+    --header-bg: #1e3a8a;
+    --accent-color: #60a5fa;
+}
+
+/* Teacher */
+.theme-teacher {
+    --sidebar-bg: #14532d;
+    --header-bg: #166534;
+    --accent-color: #22c55e;
+}
+
+/* Student */
+.theme-student {
+    --sidebar-bg: #4c1d95;
+    --header-bg: #5b21b6;
+    --accent-color: #a78bfa;
+}

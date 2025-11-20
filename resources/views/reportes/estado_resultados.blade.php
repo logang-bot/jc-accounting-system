@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="bg-blue-600 p-8">
+    <div class="bg-[var(--header-bg)] p-8">
         <div class="flex flex-wrap">
             <div class="w-full">
                 <div class="flex justify-between items-center">
@@ -34,7 +34,7 @@
             <div class="flex gap-2">
                 <!-- Filtrar -->
                 <button type="submit"
-                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md shadow hover:bg-blue-700">
+                    class="inline-flex items-center px-4 py-2 bg-[var(--header-bg)] text-white text-sm font-medium rounded-md shadow hover:bg-blue-700">
                     Filtrar
                 </button>
 

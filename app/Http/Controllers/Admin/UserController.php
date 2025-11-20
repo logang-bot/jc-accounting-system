@@ -11,9 +11,11 @@ class UserController extends Controller
 {
     public function home() 
     {
-        $usuarios = User::all();
+        $roles = Role::pluck('name');
+        $users = User::all();
         return view('users.index', [
-            'users' => $usuarios,
+            'roles' => $roles,
+            'users' => $users,
         ]);
     }
 

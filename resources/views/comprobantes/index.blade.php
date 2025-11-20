@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="bg-blue-600 p-8">
+    <div class="bg-[var(--header-bg)] p-8">
         <div class="flex flex-wrap">
             <div class="w-full">
                 <div class="flex justify-between items-center">
@@ -32,7 +32,8 @@
                     <label for="tipo_comprobante" class="block text-sm font-medium text-gray-700">Tipo</label>
                     <select id="tipo_comprobante" name="tipo_comprobante"
                         class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
-                        <option value="" disabled @if (!request('tipo_comprobante')) selected @endif>Seleccione</option>
+                        <option value="" disabled @if (!request('tipo_comprobante')) selected @endif>Seleccione
+                        </option>
                         <option value="todos" @selected(request('tipo_comprobante') == 'todos')>Todos</option>
                         <option value="ingreso" @selected(request('tipo_comprobante') == 'ingreso')>Ingreso</option>
                         <option value="egreso" @selected(request('tipo_comprobante') == 'egreso')>Egreso</option>
@@ -50,7 +51,7 @@
 
                 <div class="flex gap-2">
                     <button type="submit"
-                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md shadow hover:bg-blue-700">
+                        class="inline-flex items-center px-4 py-2 bg-[var(--header-bg)] text-white text-sm font-medium rounded-md shadow hover:bg-blue-700">
                         Buscar
                     </button>
                     <a href="{{ route('show.comprobantes.home') }}"
@@ -69,7 +70,7 @@
                         <div class="overflow-x-auto">
                             <table class="min-w-full border">
                                 <thead>
-                                    <tr class="bg-blue-600 text-white">
+                                    <tr class="bg-[var(--header-bg)] text-white">
                                         <th class="border p-2">Numero de comprobante</th>
                                         <th class="border p-2">Fecha</th>
                                         <th class="border p-2">Tipo</th>

@@ -5,7 +5,7 @@
         <div class="w-full mx-auto">
             <div class="flex flex-col gap-6">
                 <!-- Header -->
-                <div class="flex justify-between items-center bg-blue-600 px-10 py-5">
+                <div class="flex justify-between items-center bg-[var(--header-bg)] px-10 py-5">
                     <h3 class="text-white text-2xl font-semibold">Gestion de empresas</h3>
                 </div>
 
@@ -130,7 +130,7 @@
 
                                     {{-- Botón de Envío --}}
                                     <button type="submit"
-                                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded cursor-pointer">
+                                        class="w-full bg-[var(--header-bg)] hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded cursor-pointer">
                                         Crear Empresa
                                     </button>
                                 </form>

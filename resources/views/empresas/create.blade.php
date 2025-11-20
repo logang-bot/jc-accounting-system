@@ -84,7 +84,7 @@
 
                 {{-- Botón de Envío --}}
                 <button type="submit"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded cursor-pointer">
+                    class="w-full bg-[var(--header-bg)] hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded cursor-pointer">
                     Crear Empresa
                 </button>
             </form>

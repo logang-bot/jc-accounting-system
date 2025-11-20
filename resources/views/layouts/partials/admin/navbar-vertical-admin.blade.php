@@ -1,6 +1,6 @@
 <!-- Sidebar -->
 <div :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-    class="fixed top-0 start-0 bottom-0 z-60 transition-all duration-200 bg-white border-e border-gray-200 dark:bg-neutral-800 dark:border-neutral-700 min-w-64">
+    class="bg-[var(--sidebar-bg)] fixed top-0 start-0 bottom-0 z-60 transition-all duration-200 min-w-64">
 
     <header class="p-3 flex items-center gap-x-4">
         <img src="{{ asset('assets/images/img_escudo.png') }}" class="w-16 h-16 grayscale" />
@@ -17,7 +17,7 @@
         <div class="hs-accordion-group pb-0 px-2  w-full flex flex-col flex-wrap" data-hs-accordion-always-open>
             <ul class="space-y-1">
                 <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-white"
+                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm dark:text-white rounded-lg hover:bg-neutral-700 focus:outline-hidden"
                         href="#">
                         <x-carbon-home data-feather="home" class="w-4 h-4" />
                         Inicio
@@ -26,7 +26,7 @@
 
                 <li class="hs-accordion" id="empresa-accordion">
                     <button type="button"
-                        class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                        class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-neutral-700 focus:outline-hidden focus:bg-gray-100 cursor-pointer"
                         aria-expanded="true" aria-controls="empresa-accordion-collapse-1">
                         <x-carbon-gui-management class="w-4 h-4" />
                         Gestion de empresa
@@ -66,7 +66,7 @@
                 @hasanyrole('Administrator|Teacher')
                     <li class="hs-accordion" id="user-accordion">
                         <button type="button"
-                            class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                            class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-neutral-700 focus:outline-hidden focus:bg-gray-100 cursor-pointer"
                             aria-expanded="true" aria-controls="user-accordion-collapse-1">
                             <x-carbon-user-follow class="w-4 h-4 " />
                             Gestion de usuarios
@@ -84,16 +84,6 @@
                                         <a href="{{ route('admin.show.usuarios.home') }}"
                                             class="hover:text-gray-300 flex flex-row items-center">
                                             Lista de usuarios
-                                        </a>
-                                    </button>
-                                </li>
-                                <li class="hs-accordion" id="user-accordion-sub-1">
-                                    <button type="button"
-                                        class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
-                                        aria-expanded="true" aria-controls="user-accordion-sub-1-collapse-1">
-                                        <a href="{{ route('admin.show.usuarios.create') }}"
-                                            class="hover:text-gray-300 flex flex-row items-center">
-                                            Crear usuario
                                         </a>
                                     </button>
                                 </li>

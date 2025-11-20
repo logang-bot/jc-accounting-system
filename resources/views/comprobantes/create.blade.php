@@ -312,7 +312,7 @@
                     </table>
                     <section class="flex flex-row gap-2 mt-4">
                         <button type="button" onclick="addRow()"
-                            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer">
+                            class="px-4 py-2 bg-[var(--header-bg)] text-white rounded hover:bg-blue-700 cursor-pointer">
                             Agregar Línea
                         </button>
 
@@ -392,7 +392,7 @@
             <div class="bg-white w-full max-w-4xl rounded-lg shadow-lg">
 
                 <!-- Modal Header -->
-                <div class="flex items-center justify-between px-6 py-4 border-b bg-blue-600 rounded-t-lg">
+                <div class="flex items-center justify-between px-6 py-4 border-b bg-[var(--header-bg)] rounded-t-lg">
                     <h5 class="text-lg font-semibold text-white">Seleccionar Cuenta Contable</h5>
                     <button class="text-white hover:text-gray-200 text-xl font-bold"
                         data-hs-overlay="#select-cuenta-modal">&times;</button>
@@ -425,7 +425,7 @@
                                         <td class="px-3 py-2 border">{{ $cuenta->nombre_cuenta }}</td>
                                         <td class="px-3 py-2 border text-center">
                                             <button type="button"
-                                                class="px-2 py-1 bg-blue-600 text-white rounded select-cuenta-btn"
+                                                class="px-2 py-1 bg-[var(--header-bg)] text-white rounded select-cuenta-btn"
                                                 data-id="{{ $cuenta->id_cuenta }}"
                                                 data-nombre="{{ $cuenta->nombre_cuenta }}"
                                                 data-codigo="{{ $cuenta->codigo_cuenta }}">

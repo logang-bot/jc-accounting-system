@@ -8,7 +8,7 @@
     @vite('resources/js/app.js')
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 {{ auth()->user()->roles->first()?->theme ?? 'theme-default' }}">
     <div x-data="{ sidebarOpen: true }" class="flex">
         <!-- Navbar vertical -->
         @include('layouts.partials.admin.navbar-vertical-admin')

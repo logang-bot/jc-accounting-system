@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="h-screen bg-white">
-        <div class="bg-blue-600 pt-10 pb-[84px]"></div>
+        <div class="bg-[var(--header-bg)] pt-10 pb-[84px]"></div>
 
         <div class="max-w-3xl mx-auto -mt-20 px-6">
             <div class="bg-white shadow-lg rounded-xl p-6">
@@ -128,7 +128,7 @@
 
                     <div class="flex justify-end space-x-2 mt-6">
                         <button type="button" id="editBtn"
-                            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            class="bg-[var(--header-bg)] text-white px-4 py-2 rounded hover:bg-blue-700">
                             Editar
                         </button>
 

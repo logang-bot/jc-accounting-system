@@ -15,6 +15,11 @@ export default {
             fontFamily: {
                 sans: ["Figtree", ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                sidebar: "var(--sidebar-bg)",
+                header: "var(--header-bg)",
+                accent: "var(--accent-color)",
+            },
         },
     },
     plugins: [require("preline/plugin")],

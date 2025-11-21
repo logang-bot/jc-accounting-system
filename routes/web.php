@@ -14,10 +14,18 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware('guest')->controller(AuthController::class)->group(function () {
+<<<<<<< HEAD
+=======
+    // Route::post('/register', 'register')->name('register');
+    // Route::post('/login', 'login')->name('login');
+    // Route::get('/login', 'showLogin')->name('show.login');
+    // Route::post('/login', 'login')->name('login');  
+>>>>>>> 6aa03b6 (Datos nuevos en migraciones)
     Route::post('/login', 'login')->name('login');
     Route::get('/', function () {
         return view('welcome');
     })->name('home');
+<<<<<<< HEAD
 });
 
 Route::get('/', function () {
@@ -31,6 +39,8 @@ Route::middleware('auth')->controller(AuthController::class)->group(function () 
         // Rutas de funcionalidades
         Route::post('/logout', 'logout')->name('logout');
     });
+=======
+>>>>>>> 6aa03b6 (Datos nuevos en migraciones)
 });
 
 // --- User management (admins only) ---

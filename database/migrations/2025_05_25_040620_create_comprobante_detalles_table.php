@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('comprobante_detalles', function (Blueprint $table) {
             $table->id(); // Primary key
+
             // Clave foránea a comprobantes
             $table->foreignId('comprobante_id')
                 ->constrained('comprobantes')
@@ -20,17 +21,22 @@ return new class extends Migration
 
             // Clave foránea a cuentas contables
             $table->unsignedBigInteger('cuenta_contable_id');
-
-            $table->string('descripcion')->nullable();
-            $table->decimal('debe', 15, 2)->default(0);
-            $table->decimal('haber', 15, 2)->default(0);
-            $table->timestamps();
-
-            // Definición de la foreign key manualmente
             $table->foreign('cuenta_contable_id')
                 ->references('id_cuenta')
                 ->on('cuentas')
                 ->onDelete('restrict');
+
+            $table->string('descripcion', 300)->nullable();
+
+            // Montos en Bolivianos
+            $table->decimal('debe_bs', 15, 2)->default(0);
+            $table->decimal('haber_bs', 15, 2)->default(0);
+
+            // Montos en Dólares
+            $table->decimal('debe_usd', 15, 2)->default(0);
+            $table->decimal('haber_usd', 15, 2)->default(0);
+
+            $table->timestamps();
         });
     }
 

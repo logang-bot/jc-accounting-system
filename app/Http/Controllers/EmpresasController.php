@@ -33,73 +33,73 @@ class EmpresasController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'tipo_documento' => 'required|string|max:20',
+            'nombre'           => 'required|string|max:255',
+            'tipo_documento'   => 'required|in:CI,NIT',
             'numero_documento' => 'required|string|max:30',
-            'direccion' => 'nullable|string|max:255',
-            'ciudad' => 'nullable|string|max:100',
-            'telefono' => 'nullable|string|max:20',
-            'casa_matriz' => 'required|boolean',
-            'periodo' => 'nullable|string|max:100',
-            'fecha_inicio' => 'nullable|date',
-            'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
-
+            'direccion'        => 'nullable|string|max:255',
+            'ciudad'           => 'nullable|string|max:100',
+            'telefono'         => 'nullable|string|max:20',
+            'casa_matriz'      => 'required|boolean',
+            'sucursal' => $request->casa_matriz ? 'nullable|string|max:100' : 'required|string|max:100',
+            'tipo_empresa'     => 'required|string|max:100',
+            'fecha_inicio'     => 'nullable|date',
+            'fecha_fin'        => 'nullable|date|after_or_equal:fecha_inicio',
         ]);
 
-        $empresa = Empresa::create([
-            'name' => $request->name,
-            'tipo_documento' => $request->tipo_documento,
-            'numero_documento' => $request->numero_documento,
-            'direccion' => $request->direccion,
-            'ciudad' => $request->ciudad,
-            'telefono' => $request->telefono,
-            'casa_matriz' => $request->casa_matriz,
-            'periodo' => $request->periodo,
-            'fecha_inicio' => $request->fecha_inicio,
-            'fecha_fin' => $request->fecha_fin,
-        ]);
+        $data = $request->all();
 
+        // Asignar un valor por defecto a 'metodo' para no violar la restricción NOT NULL
+        $data['metodo'] = 'PEPS';
+
+        // Crear empresa
+        $empresa = Empresa::create($data);
+
+        // Crear cuentas contables iniciales
         CuentasSeeder::crearCuentasActivos($empresa);
         CuentasSeeder::crearCuentasPasivos($empresa);
         CuentasSeeder::crearCuentasPatrimonio($empresa);
         CuentasSeeder::crearCuentasIngresos($empresa);
         CuentasSeeder::crearCuentasEgresos($empresa);
 
-        return redirect()->route('show.empresas.home')->with('success', 'Empresa creada correctamente.');
+        return redirect()->route('show.empresas.detail', $empresa->id)
+            ->with('success', 'Empresa creada correctamente.');
     }
+
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'tipo_documento' => 'required|string|max:20',
+            'nombre'          => 'required|string|max:255',
+            'tipo_documento'  => 'required|in:CI,NIT',
             'numero_documento' => 'required|string|max:30',
-            'direccion' => 'nullable|string|max:255',
-            'ciudad' => 'nullable|string|max:100',
-            'telefono' => 'nullable|string|max:20',
-            'casa_matriz' => 'required|boolean',
-            'periodo' => 'nullable|string|max:100',
-            'fecha_inicio' => 'nullable|date',
-            'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
+            'direccion'       => 'nullable|string|max:255',
+            'ciudad'          => 'nullable|string|max:100',
+            'telefono'        => 'nullable|string|max:20',
+            'casa_matriz'     => 'required|boolean',
+            'sucursal' => $request->casa_matriz ? 'nullable|string|max:100' : 'required|string|max:100',
+            'tipo_empresa'    => 'nullable|string|max:100',
+            'fecha_inicio'    => 'nullable|date',
+            'fecha_fin'       => 'nullable|date|after_or_equal:fecha_inicio',
         ]);
 
         $empresa = Empresa::findOrFail($id);
 
         $empresa->update([
-            'name' => $request->name,
-            'tipo_documento' => $request->tipo_documento,
+            'nombre'          => $request->nombre,
+            'tipo_documento'  => $request->tipo_documento,
             'numero_documento' => $request->numero_documento,
-            'direccion' => $request->direccion,
-            'ciudad' => $request->ciudad,
-            'telefono' => $request->telefono,   
-            'casa_matriz' => $request->casa_matriz,
-            'periodo' => $request->periodo,
-            'fecha_inicio' => $request->fecha_inicio,
-            'fecha_fin' => $request->fecha_fin,
-
+            'direccion'       => $request->direccion,
+            'ciudad'          => $request->ciudad,
+            'telefono'        => $request->telefono,
+            'casa_matriz'     => $request->casa_matriz,
+            'sucursal'        => $request->sucursal,
+            'tipo_empresa'    => $request->tipo_empresa,
+            'fecha_inicio'    => $request->fecha_inicio,
+            'fecha_fin'       => $request->fecha_fin,
         ]);
 
-        return redirect()->route('show.empresas.detail', $id)->with('success', 'Datos actualizados correctamente.');
+        return redirect()->route('show.empresas.detail', $id)
+            ->with('success', 'Datos actualizados correctamente.');
     }
 
     public function destroy($id)

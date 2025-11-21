@@ -26,7 +26,7 @@
                 {{-- Nombre --}}
                 <div class="mb-4">
                     <label for="empresaName" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-                    <input id="empresaName" name="name" type="text" required
+                    <input id="empresaName" name="nombre" type="text" required
                         class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
                 </div>
 
@@ -43,7 +43,7 @@
                 {{-- NIT / CI --}}
                 <div class="mb-4">
                     <label for="documento">Número</label>
-                    <input type="text" name="documento" id="documento" required
+                    <input type="text" name="numero_documento" id="documento" required
                         class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none">
                 </div>
 
@@ -51,8 +51,15 @@
                 <div class="mb-4 flex items-center">
                     <input type="hidden" name="casa_matriz" value="0">
                     <input id="casa_matriz" name="casa_matriz" type="checkbox" value="1"
-                        class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        onchange="toggleSucursal()">
                     <label for="casa_matriz" class="ml-2 block text-sm text-gray-700">¿Es casa matriz?</label>
+                </div>
+
+                <div class="mb-4" id="sucursalContainer">
+                    <label for="sucursal" class="block text-sm font-medium text-gray-700 mb-1">Nombre de sucursal</label>
+                    <input type="text" name="sucursal" id="sucursal"
+                        class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none">
                 </div>
 
                 {{-- Fecha Inicio --}}
@@ -69,10 +76,10 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none" />
                 </div>
 
-                {{-- Periodo --}}
+                {{-- tipo de empresa --}}
                 <div class="mb-6">
-                    <label for="periodo" class="block text-sm font-medium text-gray-700 mb-1">Periodo</label>
-                    <select id="periodo" name="periodo" required
+                    <label for="tipo_empresa" class="block text-sm font-medium text-gray-700 mb-1">Tipo de empresa</label>
+                    <select id="tipo_empresa" name="tipo_empresa" required
                         class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none">
                         <option value="Mineria">Mineria</option>
                         <option value="Comercial">Comercial</option>
@@ -90,4 +97,12 @@
             </form>
         </div>
     </div>
+
+    <script>
+        function toggleSucursal() {
+            const checkbox = document.getElementById('casa_matriz');
+            document.getElementById('sucursalContainer').style.display = checkbox.checked ? 'none' : 'block';
+        }
+        window.addEventListener('load', toggleSucursal);
+    </script>
 @endsection

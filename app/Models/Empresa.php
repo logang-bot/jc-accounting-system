@@ -9,27 +9,31 @@ class Empresa extends Model
 {
     use HasFactory;
 
+    // Campos asignables masivamente
     protected $fillable = [
-        'name',
+        'nombre',
         'tipo_documento',
         'numero_documento',
         'direccion',
         'ciudad',
         'telefono',
         'casa_matriz',
-        'periodo',
+        'sucursal',         
+        'tipo_empresa',     
         'fecha_inicio',
         'fecha_fin',
         'activa',
     ];
 
+    // Relación con cuentas contables
     public function cuentasContables()
     {
-        return $this->hasMany(CuentasContables::class);
+        return $this->hasMany(CuentasContables::class, 'empresa_id', 'id');
     }
 
+    // Relación con comprobantes
     public function comprobantes()
     {
-        return $this->hasMany(Comprobante::class);
+        return $this->hasMany(Comprobante::class, 'empresa_id', 'id');
     }
 }

@@ -12,25 +12,34 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('empresas', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
+            $table->id(); // BIGINT
+            $table->string('nombre', 150);
 
-            // Documento
-            $table->enum('tipo_documento', ['NIT', 'CI'])->default('NIT');
+            // Documento (selección obligatoria entre CI o NIT)
+            $table->enum('tipo_documento', ['CI', 'NIT']);
+
             $table->string('numero_documento', 30)->nullable();
 
             // Datos de ubicación y contacto
-            $table->string('direccion')->nullable();
-            $table->string('ciudad')->nullable();
-            $table->string('telefono')->nullable();
+            $table->string('direccion', 200)->nullable();
+            $table->string('ciudad', 100)->nullable();
+            $table->string('telefono', 15)->nullable();
 
-            // Otros campos
+            // Sucursales y matriz
             $table->boolean('casa_matriz')->default(false);
-            $table->string('periodo')->nullable();
+            $table->string('sucursal', 150)->nullable();
+
+            // Tipo de empresa
+            $table->string('tipo_empresa', 50)->nullable();
+
+            // Método de inventario (selección entre 2 metodologías)
+            $table->enum('metodo', ['PEPS', 'Promedio'])->default('PEPS');
+
+            // Fechas
             $table->date('fecha_inicio')->nullable();
             $table->date('fecha_fin')->nullable();
 
-            // Activa
+            // Estado
             $table->boolean('activa')->default(true);
 
             $table->timestamps();

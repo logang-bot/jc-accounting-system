@@ -7,22 +7,33 @@ use Illuminate\Support\Facades\DB;
 
 class Comprobante extends Model
 {
-    protected $fillable = ['numero', 'fecha', 'tipo', 'descripcion', 'destinatario',
-    'lugar', 'total', 'tasa_cambio', 'user_id', 'empresa_id',];
+    protected $fillable = [
+        'numero',
+        'fecha',
+        'tipo',
+        'descripcion',
+        'destinatario',
+        'lugar',
+        'total',
+        'tasa_cambio',
+        'user_id',
+        'empresa_id',
+    ];
 
+    // relaciones 
     public function detalles()
     {
-        return $this->hasMany(ComprobanteDetalles::class);
+        return $this->hasMany(ComprobanteDetalles::class, 'comprobante_id', 'id');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function empresa()
     {
-        return $this->belongsTo(Empresa::class);
+        return $this->belongsTo(Empresa::class,  'empresa_id', 'id');
     }
 
     public static function booted()
@@ -44,7 +55,11 @@ class Comprobante extends Model
                 ->max('id') ?? 0;
 
             $numero = sprintf("COMP-%s-%04d", $year, $lastId + 1);
-        } while (DB::table('comprobantes')->where('empresa_id', $empresaId)->where('numero', $numero)->exists());
+        } while (DB::table('comprobantes')
+            ->where('empresa_id', $empresaId)
+            ->where('numero', $numero)
+            ->exists()
+        );
 
         return $numero;
     }

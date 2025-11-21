@@ -7,12 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 class ComprobanteDetalles extends Model
 {
     protected $table = 'comprobante_detalles';
-    protected $fillable = ['comprobante_id', 'cuenta_contable_id', 'debe', 'haber', 'descripcion', 'iva'];
+    protected $fillable = [
+        'comprobante_id',
+        'cuenta_contable_id',
+        'debe_bs',
+        'haber_bs',
+        'debe_usd',
+        'haber_usd',
+        'descripcion',
+    ];
 
     protected $casts = [
-        'debe' => 'float',
-        'haber' => 'float',
-        'iva' => 'float',
+        'debe_bs' => 'decimal:2',
+        'haber_bs' => 'decimal:2',
+        'debe_usd' => 'decimal:2',
+        'haber_usd' => 'decimal:2',
     ];
 
     public function comprobante()
@@ -27,9 +36,7 @@ class ComprobanteDetalles extends Model
 
     public function scopeForEmpresa($query, $empresaId)
     {
-        return $query->whereHas('comprobante', function ($q) use ($empresaId) {
-            $q->where('empresa_id', $empresaId);
-        });
+        return $query->whereHas('comprobante', fn($q) => $q->where('empresa_id', $empresaId));
     }
 
     /**
@@ -42,14 +49,10 @@ class ComprobanteDetalles extends Model
     public function scopeBetweenFechas($query, $desde = null, $hasta = null)
     {
         if ($desde) {
-            $query->whereHas('comprobante', function ($q) use ($desde) {
-                $q->whereDate('fecha', '>=', $desde);
-            });
+            $query->whereHas('comprobante', fn($q) => $q->whereDate('fecha', '>=', $desde));
         }
         if ($hasta) {
-            $query->whereHas('comprobante', function ($q) use ($hasta) {
-                $q->whereDate('fecha', '<=', $hasta);
-            });
+            $query->whereHas('comprobante', fn($q) => $q->whereDate('fecha', '<=', $hasta));
         }
         return $query;
     }
@@ -60,9 +63,8 @@ class ComprobanteDetalles extends Model
      */
     public function scopeForCuentas($query, $cuentas)
     {
-        if (is_array($cuentas)) {
-            return $query->whereIn('cuenta_contable_id', $cuentas);
-        }
-        return $query->where('cuenta_contable_id', $cuentas);
+        return is_array($cuentas)
+            ? $query->whereIn('cuenta_contable_id', $cuentas)
+            : $query->where('cuenta_contable_id', $cuentas);
     }
 }

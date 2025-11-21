@@ -1,6 +1,7 @@
 @php
     $modo = $modo ?? 'crear';
 @endphp
+
 <div class="max-w-2xl mx-auto p-6 m-6 bg-white rounded-xl shadow" x-data="{
     esMovimiento: {{ old('es_movimiento', $cuenta->es_movimiento ?? false) ? 'true' : 'false' }},
     isNivelValido: {{ isset($cuenta) && in_array($cuenta->nivel, [4, 5]) ? 'true' : 'false' }}
@@ -66,6 +67,9 @@
 
         {{-- Checkbox: Es Movimiento --}}
         <div class="mb-4">
+            {{-- Hidden para enviar valor 0 si no está marcado --}}
+            <input type="hidden" name="es_movimiento" value="0">
+
             <label class="inline-flex items-center">
                 <input type="checkbox" name="es_movimiento" id="es_movimiento" value="1"
                     class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
@@ -80,9 +84,6 @@
         {{-- Moneda Principal --}}
         <div class="mb-4">
             <label for="moneda_principal" class="block text-sm font-medium text-gray-700">Moneda Principal</label>
-
-            {{-- @if (isset($cuenta) && in_array($cuenta->nivel, [4, 5])) --}}
-            {{-- Dropdown shown only in edit + nivel 4/5 --}}
             <select name="moneda_principal" id="moneda_principal" :disabled="!esMovimiento"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-100 disabled:text-gray-500">
                 <option value="">Selecciona una moneda</option>
@@ -90,7 +91,6 @@
                 <option value="USD" @selected(old('moneda_principal', $cuenta?->moneda_principal ?? '') === 'USD')>USD</option>
             </select>
 
-            {{-- Conditional help message when disabled --}}
             <div class="mt-2 text-xs text-gray-500" x-show="!esMovimiento">
                 ⚠️ Marca esta cuenta como de movimiento para seleccionar una moneda.
             </div>
@@ -108,50 +108,75 @@
         </div>
         <input type="hidden" name="redirect_to" value="{{ request('redirect_to') }}">
     </form>
-
 </div>
 
-{{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    // document.getElementById('cuenta-form').addEventListener('submit', function(event) {
-    //     event.preventDefault();
+    document.getElementById('cuenta-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Evita el envío normal
+        const form = event.target;
+        const formData = new FormData(form);
 
-    //     const form = event.target;
-    //     const formData = new FormData(form);
+        fetch(form.action, {
+                method: form.method,
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(async response => {
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error(text);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error al guardar la cuenta'
+                    });
+                } else {
+                    resetCuentaForm(form);
+                    closeIfModal();
 
-    //     fetch(form.action, {
-    //             method: 'POST',
-    //             body: formData,
-    //             headers: {
-    //                 'X-Requested-With': 'XMLHttpRequest'
-    //             }
-    //         })
-    //         .then(response => {
-    //             resetCuentaForm(form);
-    //             closeIfModal();
-    //         })
-    //         .catch(error => console.error(error));
-    // });
+                    const modo = "{{ $modo }}";
+                    const mensaje = modo === 'editar' ?
+                        'Datos actualizados correctamente' :
+                        'Cuenta creada correctamente';
 
-    // function resetCuentaForm(form) {
-    //     // Reset native form fields
-    //     form.reset();
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: mensaje,
+                        timer: 2000,
+                        showConfirmButton: false,
+                        willClose: () => {
+                            window.location.href = "{{ route('show.cuentas.home') }}";
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al guardar la cuenta'
+                });
+            });
+    });
 
-    //     // Clear Alpine.js controlled checkbox
-    //     const movimientoCheckbox = form.querySelector('#es_movimiento');
-    //     if (movimientoCheckbox) {
-    //         movimientoCheckbox.checked = false;
-    //         // Trigger input event so Alpine updates UI state
-    //         movimientoCheckbox.dispatchEvent(new Event('input'));
-    //     }
-
-    //     // Reset Select2/TomSelect/Choices.js if used
-    //     const selects = form.querySelectorAll('select');
-    //     selects.forEach(select => {
-    //         select.selectedIndex = 0;
-    //         select.dispatchEvent(new Event('change'));
-    //     });
-    // }
+    function resetCuentaForm(form) {
+        form.reset();
+        const movimientoCheckbox = form.querySelector('#es_movimiento');
+        if (movimientoCheckbox) {
+            movimientoCheckbox.checked = false;
+            movimientoCheckbox.dispatchEvent(new Event('input'));
+        }
+        const selects = form.querySelectorAll('select');
+        selects.forEach(select => {
+            select.selectedIndex = 0;
+            select.dispatchEvent(new Event('change'));
+        });
+    }
 
     // function closeIfModal() {
     //     const modal = document.querySelector('#show-add-cuenta-modal');
@@ -164,8 +189,8 @@
         const tipoCuentaSelect = document.getElementById('tipo_cuenta');
         const parentSelect = document.getElementById('parent_id');
         const checkboxMovimiento = document.getElementById('es_movimiento');
-        const originalOptions = Array.from(parentSelect.options);
         const monedaSelect = document.querySelector('#moneda_principal');
+        const originalOptions = Array.from(parentSelect.options);
 
         function filtrarOpciones() {
             const tipoSeleccionado = tipoCuentaSelect.value;
@@ -182,10 +207,9 @@
             }
 
             parentSelect.disabled = false;
-
             originalOptions.forEach(option => {
                 if (option.dataset && option.dataset.tipo === tipoSeleccionado) {
-                    parentSelect.appendChild(option);
+                    parentSelect.appendChild(option.cloneNode(true));
                 }
             });
         }
@@ -194,30 +218,39 @@
             const selectedOption = parentSelect.options[parentSelect.selectedIndex];
             const nivel = parseInt(selectedOption.dataset.nivel || '0');
 
-            // Si el padre tiene nivel 3 o menor, deshabilitar checkbox
+            // Validación de nivel
             if (!isNaN(nivel) && nivel < 3) {
                 checkboxMovimiento.checked = false;
                 checkboxMovimiento.disabled = true;
                 monedaSelect.selectedIndex = 0;
-                monedaSelect.disabled = !checkboxMovimiento.checked
+                monedaSelect.disabled = true;
+                return;
+            }
+
+            // Validar hijos
+            const tieneHijos = {{ isset($cuenta) && $cuenta->hasChildren() ? 'true' : 'false' }};
+
+            if (tieneHijos) {
+                checkboxMovimiento.checked = false;
+                checkboxMovimiento.disabled = true;
+                monedaSelect.selectedIndex = 0;
+                monedaSelect.disabled = true;
             } else {
-                // Solo habilita si la cuenta NO tiene hijos (en edición)
-                const isEditMode = {{ $modo === 'editar' ? 'true' : 'false' }};
-                if (isEditMode) {
-                    const tieneHijos = {{ isset($cuenta) && $cuenta->hasChildren() ? 'true' : 'false' }};
-                    checkboxMovimiento.disabled = tieneHijos;
-                    monedaSelect.disabled = !checkboxMovimiento.checked
-                } else {
-                    checkboxMovimiento.disabled = false;
-                    monedaSelect.disabled = !checkboxMovimiento.checked
-                }
+                checkboxMovimiento.disabled = false;
+                monedaSelect.disabled = !checkboxMovimiento.checked;
             }
         }
 
         parentSelect.addEventListener('change', evaluarCheckboxMovimientoYMonedaPrincipal);
-        parentSelect.addEventListener('change', evaluarCheckboxMovimientoYMonedaPrincipal);
-        evaluarCheckboxMovimientoYMonedaPrincipal();
         tipoCuentaSelect.addEventListener('change', filtrarOpciones);
-        filtrarOpciones(); // Ejecutar una vez al cargar la página
+        checkboxMovimiento.addEventListener('change', () => {
+            monedaSelect.disabled = !checkboxMovimiento.checked;
+            if (!checkboxMovimiento.checked) {
+                monedaSelect.selectedIndex = 0;
+            }
+        });
+
+        filtrarOpciones();
+        evaluarCheckboxMovimientoYMonedaPrincipal();
     });
 </script>

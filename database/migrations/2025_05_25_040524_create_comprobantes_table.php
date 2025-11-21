@@ -13,13 +13,16 @@ return new class extends Migration
     {
         Schema::create('comprobantes', function (Blueprint $table) {
             $table->id(); // Primary key
-            $table->string('numero')->unique(); // e.g. COMP-2025-0001
+            $table->string('numero', 20)->unique(); // e.g. COMP-2025-0001
             $table->date('fecha');
             $table->enum('tipo', ['ingreso', 'egreso', 'traspaso', 'ajuste'])->index();
-            $table->text('descripcion')->nullable();
+            $table->string('descripcion', 300)->nullable();
             $table->decimal('total', 15, 2)->default(0);
+
+            //relaciones
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('empresa_id')->constrained('empresas')->onDelete('cascade');
+            
             $table->timestamps();
         });
     }

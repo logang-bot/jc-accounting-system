@@ -1125,7 +1125,7 @@ class CuentasSeeder extends Seeder
     {
         $ingresos = CuentasContables::create([
             'nombre_cuenta' => 'INGRESOS',
-            'tipo_cuenta' => 'Ingresos',
+            'tipo_cuenta' => 'Ingreso',
             'codigo_cuenta' => self::generarCodigoRaiz('Ingresos'),
             'nivel' => 1,
             'es_movimiento' => false,
@@ -1135,7 +1135,7 @@ class CuentasSeeder extends Seeder
         // -------------------- INGRESOS OPERATIVOS --------------------
         $ingresosOperativos = CuentasContables::create([
             'nombre_cuenta' => 'INGRESOS OPERATIVOS',
-            'tipo_cuenta' => 'Ingresos',
+            'tipo_cuenta' => 'Ingreso',
             'nivel' => 2,
             'es_movimiento' => false,
             'parent_id' => $ingresos->id_cuenta,
@@ -1144,7 +1144,7 @@ class CuentasSeeder extends Seeder
 
         $ventas = CuentasContables::create([
             'nombre_cuenta' => 'VENTAS',
-            'tipo_cuenta' => 'Ingresos',
+            'tipo_cuenta' => 'Ingreso',
             'nivel' => 3,
             'es_movimiento' => false,
             'parent_id' => $ingresosOperativos->id_cuenta,
@@ -1153,7 +1153,7 @@ class CuentasSeeder extends Seeder
 
         $ventasPorProductos = CuentasContables::create([
             'nombre_cuenta' => 'VENTAS POR PRODUCTOS',
-            'tipo_cuenta' => 'Ingresos',
+            'tipo_cuenta' => 'Ingreso',
             'nivel' => 4,
             'es_movimiento' => false,
             'parent_id' => $ventas->id_cuenta,
@@ -1169,7 +1169,7 @@ class CuentasSeeder extends Seeder
         foreach ($cuentasVentasPorProductos as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
-                'tipo_cuenta' => 'Ingresos',
+                'tipo_cuenta' => 'Ingreso',
                 'nivel' => 5,
                 'es_movimiento' => true,
                 'moneda_principal' => "BOB",
@@ -1180,7 +1180,7 @@ class CuentasSeeder extends Seeder
 
         $devoluciones = CuentasContables::create([
             'nombre_cuenta' => 'DEVOLUCIONES',
-            'tipo_cuenta' => 'Ingresos',
+            'tipo_cuenta' => 'Ingreso',
             'nivel' => 4,
             'es_movimiento' => false,
             'parent_id' => $ventas->id_cuenta,
@@ -1189,7 +1189,7 @@ class CuentasSeeder extends Seeder
 
         CuentasContables::create([
             'nombre_cuenta' => 'DEVOLUCIONES SOBRE VENTAS',
-            'tipo_cuenta' => 'Ingresos',
+            'tipo_cuenta' => 'Ingreso',
             'nivel' => 5,
             'es_movimiento' => false,
             'moneda_principal' => "BOB",
@@ -1200,7 +1200,7 @@ class CuentasSeeder extends Seeder
         // -------------------- INGRESOS NO OPERATIVOS --------------------
         $ingresosNoOperativos = CuentasContables::create([
             'nombre_cuenta' => 'INGRESOS NO OPERATIVOS',
-            'tipo_cuenta' => 'Ingresos',
+            'tipo_cuenta' => 'Ingreso',
             'nivel' => 2,
             'es_movimiento' => false,
             'parent_id' => $ingresos->id_cuenta,
@@ -1209,7 +1209,7 @@ class CuentasSeeder extends Seeder
 
         $ingresosFinancieros = CuentasContables::create([
             'nombre_cuenta' => 'INGRESOS FINANCIEROS',
-            'tipo_cuenta' => 'Ingresos',
+            'tipo_cuenta' => 'Ingreso',
             'nivel' => 3,
             'es_movimiento' => false,
             'parent_id' => $ingresosNoOperativos->id_cuenta,
@@ -1218,7 +1218,7 @@ class CuentasSeeder extends Seeder
 
         $ingresosPorInteresYRentas = CuentasContables::create([
             'nombre_cuenta' => 'INGRESOS POR INTERES Y RENTAS',
-            'tipo_cuenta' => 'Ingresos',
+            'tipo_cuenta' => 'Ingreso',
             'nivel' => 4,
             'es_movimiento' => false,
             'parent_id' => $ingresosFinancieros->id_cuenta,
@@ -1233,7 +1233,7 @@ class CuentasSeeder extends Seeder
         foreach ($cuentasIngresosPorInteresYRentas as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
-                'tipo_cuenta' => 'Ingresos',
+                'tipo_cuenta' => 'Ingreso',
                 'nivel' => 5,
                 'es_movimiento' => true,
                 'moneda_principal' => "BOB",
@@ -1244,7 +1244,7 @@ class CuentasSeeder extends Seeder
 
         $ingresosExtraordinarios = CuentasContables::create([
             'nombre_cuenta' => 'INGRESOS EXTRAORDINARIOS',
-            'tipo_cuenta' => 'Ingresos',
+            'tipo_cuenta' => 'Ingreso',
             'nivel' => 3,
             'es_movimiento' => false,
             'parent_id' => $ingresosNoOperativos->id_cuenta,
@@ -1253,7 +1253,7 @@ class CuentasSeeder extends Seeder
 
         $ingresosNoRecurrentes = CuentasContables::create([
             'nombre_cuenta' => 'INGRESOS NO RECURRENTES',
-            'tipo_cuenta' => 'Ingresos',
+            'tipo_cuenta' => 'Ingreso',
             'nivel' => 4,
             'es_movimiento' => false,
             'parent_id' => $ingresosExtraordinarios->id_cuenta,
@@ -1268,7 +1268,7 @@ class CuentasSeeder extends Seeder
         foreach ($cuentasIngresosNoRecurrentes as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
-                'tipo_cuenta' => 'Ingresos',
+                'tipo_cuenta' => 'Ingreso',
                 'nivel' => 5,
                 'es_movimiento' => true,
                 'moneda_principal' => "BOB",
@@ -1280,7 +1280,7 @@ class CuentasSeeder extends Seeder
         // -------------------- OTROS INGRESOS --------------------
         $otrosIngresos = CuentasContables::create([
             'nombre_cuenta' => 'OTROS INGRESOS',
-            'tipo_cuenta' => 'Ingresos',
+            'tipo_cuenta' => 'Ingreso',
             'nivel' => 2,
             'es_movimiento' => false,
             'parent_id' => $ingresos->id_cuenta,
@@ -1289,7 +1289,7 @@ class CuentasSeeder extends Seeder
 
         $donaciones = CuentasContables::create([
             'nombre_cuenta' => 'DONACIONES',
-            'tipo_cuenta' => 'Ingresos',
+            'tipo_cuenta' => 'Ingreso',
             'nivel' => 3,
             'es_movimiento' => false,
             'parent_id' => $otrosIngresos->id_cuenta,
@@ -1304,7 +1304,7 @@ class CuentasSeeder extends Seeder
         foreach ($donacionesHijas as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
-                'tipo_cuenta' => 'Ingresos',
+                'tipo_cuenta' => 'Ingreso',
                 'nivel' => 4,
                 'es_movimiento' => true,
                 'moneda_principal' => "BOB",
@@ -1315,7 +1315,7 @@ class CuentasSeeder extends Seeder
 
         $ingresosServicios = CuentasContables::create([
             'nombre_cuenta' => 'INGRESOS POR SERVICIOS',
-            'tipo_cuenta' => 'Ingresos',
+            'tipo_cuenta' => 'Ingreso',
             'nivel' => 3,
             'es_movimiento' => false,
             'parent_id' => $otrosIngresos->id_cuenta,
@@ -1324,7 +1324,7 @@ class CuentasSeeder extends Seeder
 
         $serviciosPrestados = CuentasContables::create([
             'nombre_cuenta' => 'SERVICIOS PRESTADOS',
-            'tipo_cuenta' => 'Ingresos',
+            'tipo_cuenta' => 'Ingreso',
             'nivel' => 4,
             'es_movimiento' => false,
             'parent_id' => $ingresosServicios->id_cuenta,
@@ -1339,7 +1339,7 @@ class CuentasSeeder extends Seeder
         foreach ($cuentasServiciosPrestados as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
-                'tipo_cuenta' => 'Ingresos',
+                'tipo_cuenta' => 'Ingreso',
                 'nivel' => 5,
                 'es_movimiento' => true,
                 'parent_id' => $serviciosPrestados->id_cuenta,
@@ -1352,7 +1352,7 @@ class CuentasSeeder extends Seeder
     {
         $egresos = CuentasContables::create([
             'nombre_cuenta' => 'EGRESOS',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'codigo_cuenta' => self::generarCodigoRaiz('Egresos'),
             'nivel' => 1,
             'es_movimiento' => false,
@@ -1362,7 +1362,7 @@ class CuentasSeeder extends Seeder
         // -------------------- COSTO DE VENTAS --------------------
         $costoVentas = CuentasContables::create([
             'nombre_cuenta' => 'COSTO DE VENTAS',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 2,
             'es_movimiento' => false,
             'parent_id' => $egresos->id_cuenta,
@@ -1371,7 +1371,7 @@ class CuentasSeeder extends Seeder
 
         $costoProductosVendidos = CuentasContables::create([
             'nombre_cuenta' => 'COSTO DE PRODUCTOS VENDIDOS',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 3,
             'es_movimiento' => false,
             'parent_id' => $costoVentas->id_cuenta,
@@ -1381,7 +1381,7 @@ class CuentasSeeder extends Seeder
         // -------------------- GASTOS OPERATIVOS --------------------
         $gastosOperativos = CuentasContables::create([
             'nombre_cuenta' => 'GASTOS OPERATIVOS',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 2,
             'es_movimiento' => false,
             'parent_id' => $egresos->id_cuenta,
@@ -1390,7 +1390,7 @@ class CuentasSeeder extends Seeder
 
         $gastosAdministracion = CuentasContables::create([
             'nombre_cuenta' => 'GASTOS DE ADMINISTRACIÓN',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 3,
             'es_movimiento' => false,
             'parent_id' => $gastosOperativos->id_cuenta,
@@ -1399,7 +1399,7 @@ class CuentasSeeder extends Seeder
 
         $componentesAdministrativos = CuentasContables::create([
             'nombre_cuenta' => 'COMPONENTES ADMINISTRATIVOS',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 4,
             'es_movimiento' => false,
             'parent_id' => $gastosAdministracion->id_cuenta,
@@ -1415,7 +1415,7 @@ class CuentasSeeder extends Seeder
         foreach ($cuentasComponentesAdministrativos as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
-                'tipo_cuenta' => 'Egresos',
+                'tipo_cuenta' => 'Egreso',
                 'nivel' => 5,
                 'es_movimiento' => true,
                 'moneda_principal' => "BOB",
@@ -1427,7 +1427,7 @@ class CuentasSeeder extends Seeder
         // -------------------- GASTOS DE VENTA --------------------
         $gastosVenta = CuentasContables::create([
             'nombre_cuenta' => 'GASTOS DE VENTA',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 3,
             'es_movimiento' => false,
             'parent_id' => $gastosOperativos->id_cuenta,
@@ -1436,7 +1436,7 @@ class CuentasSeeder extends Seeder
 
         $componentesDeVenta = CuentasContables::create([
             'nombre_cuenta' => 'COMPONENTES DE VENTA',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 4,
             'es_movimiento' => false,
             'parent_id' => $gastosVenta->id_cuenta,
@@ -1445,7 +1445,7 @@ class CuentasSeeder extends Seeder
 
         CuentasContables::create([
             'nombre_cuenta' => 'PUBLICIDAD Y PROMOCIÓN',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 5,
             'es_movimiento' => false,
             'moneda_principal' => "BOB",
@@ -1455,7 +1455,7 @@ class CuentasSeeder extends Seeder
 
         CuentasContables::create([
             'nombre_cuenta' => 'ANUNCIOS PUBLICITARIOS',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 5,
             'es_movimiento' => false,
             'moneda_principal' => "BOB",
@@ -1465,7 +1465,7 @@ class CuentasSeeder extends Seeder
 
         CuentasContables::create([
             'nombre_cuenta' => 'GASTOS DE PROMOCIÓN',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 5,
             'es_movimiento' => false,
             'moneda_principal' => "BOB",
@@ -1476,7 +1476,7 @@ class CuentasSeeder extends Seeder
         // -------------------- GASTOS FINANCIEROS --------------------
         $gastosFinancieros = CuentasContables::create([
             'nombre_cuenta' => 'GASTOS FINANCIEROS',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 2,
             'es_movimiento' => false,
             'parent_id' => $egresos->id_cuenta,
@@ -1485,7 +1485,7 @@ class CuentasSeeder extends Seeder
 
         $interesesYCargosFinancieros = CuentasContables::create([
             'nombre_cuenta' => 'INTERESES Y CARGOS FINANCIEROS',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 3,
             'es_movimiento' => false,
             'parent_id' => $gastosFinancieros->id_cuenta,
@@ -1494,7 +1494,7 @@ class CuentasSeeder extends Seeder
 
         $componentesDeInteres = CuentasContables::create([
             'nombre_cuenta' => 'COMPONENTES DE INTERES',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 4,
             'es_movimiento' => false,
             'parent_id' => $interesesYCargosFinancieros->id_cuenta,
@@ -1510,7 +1510,7 @@ class CuentasSeeder extends Seeder
         foreach ($cuentasComponentesDeInteres as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
-                'tipo_cuenta' => 'Egresos',
+                'tipo_cuenta' => 'Egreso',
                 'nivel' => 5,
                 'es_movimiento' => true,
                 'moneda_principal' => "BOB",
@@ -1522,7 +1522,7 @@ class CuentasSeeder extends Seeder
         // -------------------- OTROS GASTOS --------------------
         $otrosGastos = CuentasContables::create([
             'nombre_cuenta' => 'OTROS GASTOS',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 2,
             'es_movimiento' => false,
             'parent_id' => $egresos->id_cuenta,
@@ -1531,7 +1531,7 @@ class CuentasSeeder extends Seeder
 
         $perdidasExtraordinarias = CuentasContables::create([
             'nombre_cuenta' => 'PÉRDIDAS EXTRAORDINARIAS',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 3,
             'es_movimiento' => false,
             'parent_id' => $otrosGastos->id_cuenta,
@@ -1540,7 +1540,7 @@ class CuentasSeeder extends Seeder
 
         $componentesDePerdida = CuentasContables::create([
             'nombre_cuenta' => 'COMPONENTES DE PERDIDA',
-            'tipo_cuenta' => 'Egresos',
+            'tipo_cuenta' => 'Egreso',
             'nivel' => 4,
             'es_movimiento' => false,
             'parent_id' => $perdidasExtraordinarias->id_cuenta,
@@ -1555,7 +1555,7 @@ class CuentasSeeder extends Seeder
         foreach ($cuentasComponentesDePerdida as $nombre) {
             CuentasContables::create([
                 'nombre_cuenta' => $nombre,
-                'tipo_cuenta' => 'Egresos',
+                'tipo_cuenta' => 'Egreso',
                 'nivel' => 5,
                 'es_movimiento' => true,
                 'moneda_principal' => "BOB",

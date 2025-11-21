@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('cuentas', function (Blueprint $table) {
             $table->id('id_cuenta'); // Clave primaria
             $table->string('codigo_cuenta', 10)->unique();
-            $table->string('nombre_cuenta', 255);
-            $table->enum('tipo_cuenta', ['Activo', 'Pasivo', 'Patrimonio', 'Ingresos', 'Egresos']);
+            $table->string('nombre_cuenta', 150);
+            $table->enum('tipo_cuenta', ['Activo', 'Pasivo', 'Patrimonio', 'Ingreso', 'Egreso']);
             $table->integer('nivel')->default(1);
 
             // Relación jerárquica

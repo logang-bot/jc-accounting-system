@@ -17,17 +17,14 @@ use Illuminate\Support\Facades\Route;
 // })->name('home');
 
 Route::middleware('guest')->controller(AuthController::class)->group(function () {
-<<<<<<< Updated upstream
     // Route::post('/register', 'register')->name('register');
     // Route::post('/login', 'login')->name('login');
-    Route::get('/login', 'showLogin')->name('show.login');
-    Route::post('/login', 'login')->name('login');  
-=======
+    // Route::get('/login', 'showLogin')->name('show.login');
+    // Route::post('/login', 'login')->name('login');  
     Route::post('/login', 'login')->name('login');
     Route::get('/', function () {
         return view('welcome');
     })->name('home');
->>>>>>> Stashed changes
 });
 
 // --- User management (admins only) ---

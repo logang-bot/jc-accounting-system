@@ -144,11 +144,6 @@
                                 <x-carbon-building class="w-10 h-10 mb-3 opacity-70" />
                                 <p class="text-lg font-semibold">No hay empresas registradas</p>
                                 <p class="text-sm text-gray-500 mb-4">Agrega una nueva empresa para comenzar</p>
-                                <a href="{{ route('show.empresas.home') }}"
-                                    class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-2">
-                                    <x-carbon-add class="w-5 h-5 inline-block mr-2" />
-                                    Crear Empresa
-                                </a>
                             </div>
                         @else
                             <!-- Table -->

@@ -26,7 +26,7 @@
 
                 <li class="hs-accordion" id="empresa-accordion">
                     <button type="button"
-                        class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-neutral-700 focus:outline-hidden focus:bg-gray-100 cursor-pointer"
+                        class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-neutral-700 focus:outline-hidden cursor-pointer"
                         aria-expanded="true" aria-controls="empresa-accordion-collapse-1">
                         <x-carbon-gui-management class="w-4 h-4" />
                         Gestion de empresa
@@ -39,7 +39,7 @@
                         <ul class="hs-accordion-group pt-1 ps-7 space-y-1" data-hs-accordion-always-open>
                             <li class="hs-accordion" id="empresa-accordion-sub-1">
                                 <button type="button"
-                                    class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                                    class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-neutral-200 rounded-lg hover:bg-neutral-700 focus:outline-hidden"
                                     aria-expanded="true" aria-controls="empresa-accordion-sub-1-collapse-1">
                                     <a href="{{ route('show.empresas.home') }}"
                                         class="hover:text-gray-300 flex flex-row items-center">
@@ -50,7 +50,7 @@
                             @if (session()->has('empresa_id'))
                                 <li class="hs-accordion" id="empresa-accordion-sub-1">
                                     <button type="button"
-                                        class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                                        class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-neutral-200 rounded-lg hover:bg-neutral-700 focus:outline-hidden"
                                         aria-expanded="true" aria-controls="empresa-accordion-sub-1-collapse-1">
                                         <a href="{{ route('show.empresas.detail', ['id' => session('empresa_id', Auth::user()->empresa_id ?? 1)]) }}"
                                             class="hover:text-gray-300 flex flex-row items-center">
@@ -66,7 +66,7 @@
                 @hasanyrole('Administrator|Teacher')
                     <li class="hs-accordion" id="user-accordion">
                         <button type="button"
-                            class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-neutral-700 focus:outline-hidden focus:bg-gray-100 cursor-pointer"
+                            class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-neutral-700 focus:outline-hidden cursor-pointer"
                             aria-expanded="true" aria-controls="user-accordion-collapse-1">
                             <x-carbon-user-follow class="w-4 h-4 " />
                             Gestion de usuarios
@@ -79,7 +79,7 @@
                             <ul class="hs-accordion-group pt-1 ps-7 space-y-1" data-hs-accordion-always-open>
                                 <li class="hs-accordion" id="user-accordion-sub-1">
                                     <button type="button"
-                                        class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                                        class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-neutral-200 rounded-lg hover:bg-neutral-700 focus:outline-hidden"
                                         aria-expanded="true" aria-controls="user-accordion-sub-1-collapse-1">
                                         <a href="{{ route('admin.show.usuarios.home') }}"
                                             class="hover:text-gray-300 flex flex-row items-center">

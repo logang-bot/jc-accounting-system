@@ -12,9 +12,6 @@ use App\Http\Controllers\LibroMayorController;
 use App\Http\Controllers\RegistroTipoCambioController;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// })->name('home');
 
 Route::middleware('guest')->controller(AuthController::class)->group(function () {
     Route::post('/login', 'login')->name('login');
@@ -23,7 +20,10 @@ Route::middleware('guest')->controller(AuthController::class)->group(function ()
     })->name('home');
 });
 
-Route::get('/login', [AuthController::class, 'showLogin'])->name('show.login');
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
+// Route::get('/login', [AuthController::class, 'showLogin'])->name('show.login');
 
 Route::middleware('auth')->controller(AuthController::class)->group(function () {
     Route::prefix('/usuarios')->group(function () {

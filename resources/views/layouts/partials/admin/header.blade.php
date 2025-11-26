@@ -14,7 +14,7 @@
         <x-carbon-menu class="w-5 h-5" />
         @if ($empresa)
             <span class="text-sm text-gray-800">
-                <strong>Estas operando en la empresa:</strong> {{ $empresa->name }}
+                <strong>Estas operando en la empresa:</strong> {{ $empresa->nombre }}
             </span>
         @else
             <span class="text-sm text-gray-400 italic">

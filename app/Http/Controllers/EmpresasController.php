@@ -18,11 +18,6 @@ class EmpresasController extends Controller
         ]);
     }
 
-    public function create()
-    {
-        return view('empresas.create');
-    }
-
     public function show($id)
     {
         session(['empresa_id' => $id]);

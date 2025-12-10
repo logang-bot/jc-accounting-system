@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="bg-blue-600 p-8">
+    <div class="bg-[var(--header-bg)] p-8">
         <div class="flex flex-wrap">
             <div class="w-full">
                 <div class="flex justify-between items-center">
@@ -21,7 +21,7 @@
                 <label for="cuenta" class="block font-medium text-gray-700">Código Contable</label>
                 <select id="cuenta" name="cuenta"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                    
+
                     @foreach ($cuentas as $cu)
                         <option value="{{ $cu->id_cuenta }}" @selected(request('cuenta') == $cu->id_cuenta)>
                             {{ $cu->codigo_cuenta }} - {{ $cu->nombre_cuenta }}
@@ -98,7 +98,8 @@
                 <input type="checkbox" name="cuenta_mode" id="cuenta_mode" {{ request('cuenta_mode') ? 'checked' : '' }}
                     value="1">
 
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Procesar</button>
+                <button type="submit"
+                    class="px-4 py-2 bg-[var(--header-bg)] text-white rounded hover:bg-blue-700">Procesar</button>
                 <a href="{{ route('show.libro-mayor.index') }}"
                     class="px-4 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200">Cancelar</a>
 

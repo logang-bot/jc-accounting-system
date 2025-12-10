@@ -102,7 +102,7 @@
 
         <div>
             <button type="submit"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded cursor-pointer">
+                class="bg-[var(--header-bg)] hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded cursor-pointer">
                 {{ $modo === 'editar' ? 'Actualizar cuenta' : 'Crear cuenta' }}
             </button>
         </div>

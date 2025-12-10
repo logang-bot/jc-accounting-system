@@ -27,7 +27,7 @@
                 <label for="tasa-cambio"><strong>Tasa de cambio:</strong></label>
                 <input type="number" step="0.0001" id="tasa-cambio" class="border rounded px-3 py-1 w-32" value="6.96">
                 <button type="button" onclick="actualizarConversiones()"
-                    class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
+                    class="bg-[var(--header-bg)] text-white px-4 py-1 rounded hover:bg-blue-700">
                     Actualizar (USD)
                 </button>
             </div>

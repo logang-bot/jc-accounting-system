@@ -11,20 +11,29 @@ use App\Http\Controllers\LibroDiarioController;
 use App\Http\Controllers\LibroMayorController;
 use App\Http\Controllers\RegistroTipoCambioController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 // Route::get('/', function () {
 //     return view('welcome');
 // })->name('home');
 
+// --- Ruta raíz única ---
+Route::get('/', function () {
+    if (Auth::check()) {
+        return redirect()->route('show.empresas.home');
+    }
+    return view('auth.login'); // o 'welcome'
+})->name('home');
+
+// --- Login para invitados ---
 Route::middleware('guest')->controller(AuthController::class)->group(function () {
-    // Route::post('/register', 'register')->name('register');
-    // Route::post('/login', 'login')->name('login');
-    // Route::get('/login', 'showLogin')->name('show.login');
-    // Route::post('/login', 'login')->name('login');  
-    Route::post('/login', 'login')->name('login');
-    Route::get('/', function () {
-        return view('welcome');
-    })->name('home');
+    Route::get('/login', 'showLogin')->name('show.login'); // Vista login
+    Route::post('/login', 'login')->name('login');         // Procesar login
+});
+
+// --- Logout para usuarios autenticados ---
+Route::middleware('auth')->controller(AuthController::class)->group(function () {
+    Route::post('/logout', 'logout')->name('logout');
 });
 
 // --- User management (admins only) ---
@@ -45,7 +54,6 @@ Route::middleware('auth')->controller(EmpresasController::class)->group(function
 
         // Rutas para vistas
         Route::get('/home/', 'home')->name('show.empresas.home');
-        Route::get('/crear', 'create')->name('show.empresas.create');
         Route::get('/{id}', 'show')->name('show.empresas.detail');
         Route::get('/edit/{id}', 'edit')->name('show.empresas.edit');
 
@@ -58,14 +66,6 @@ Route::middleware('auth')->controller(EmpresasController::class)->group(function
             Route::post('/{id}', 'archive')->name('empresas.archive');
         });
         Route::post('/exit', 'exit')->name('empresas.exit');
-    });
-});
-
-Route::middleware('auth')->controller(AuthController::class)->group(function () {
-    Route::prefix('/usuarios')->group(function () {
-
-        // Rutas de funcionalidades
-        Route::post('/logout', 'logout')->name('logout');
     });
 });
 

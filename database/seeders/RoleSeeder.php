@@ -19,9 +19,9 @@ class RoleSeeder extends Seeder
         $admin->givePermissionTo(['archive empresas', 'unarchive empresas']);
 
         // Updated role name
-        Role::firstOrCreate(['name' => 'Teacher', 'guard_name' => 'web']); // Previously "User"
+        Role::firstOrCreate(['name' => 'Docente']); // Previously "User"
 
         // New role
-        Role::firstOrCreate(['name' => 'Student', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'Estudiante']);
     }
 }

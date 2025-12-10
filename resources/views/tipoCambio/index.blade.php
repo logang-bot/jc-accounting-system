@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="w-full mx-auto">
-        <div class="flex justify-between items-center bg-blue-600 px-10 py-5">
+        <div class="flex justify-between items-center bg-[var(--header-bg)] px-10 py-5">
             <h3 class="text-white text-2xl font-semibold">Historial de tipo de cambios</h3>
         </div>
 
@@ -48,7 +48,7 @@
 
                     <div class="flex justify-end">
                         <button type="submit"
-                            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Guardar</button>
+                            class="bg-[var(--header-bg)] text-white px-4 py-2 rounded hover:bg-blue-700">Guardar</button>
                     </div>
                 </form>
             </div>
@@ -75,7 +75,7 @@
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center bg-blue-600 px-10 py-5">
+                <div class="flex justify-between items-center bg-[var(--header-bg)] px-10 py-5">
                     <h3 class="text-white text-2xl font-semibold">Historial de registros</h3>
                 </div>
 

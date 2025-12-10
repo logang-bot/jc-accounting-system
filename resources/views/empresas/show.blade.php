@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="h-screen bg-white">
-        <div class="bg-blue-600 pt-10 pb-[84px]"></div>
+        <div class="bg-[var(--header-bg)] pt-10 pb-[84px]"></div>
 
         <div class="max-w-3xl mx-auto -mt-20 px-6">
             <div class="bg-white shadow-lg rounded-xl p-6">
@@ -15,12 +15,12 @@
                     <dl class="space-y-4">
 
                         {{-- Nombre --}}
-                        <div class="mb-4">
-                            <label for="empresaName" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-                            <input id="empresaName" name="nombre" type="text" required
-                                value="{{ old('nombre', $empresa->nombre) }}"
-                                class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:outline-none bg-gray-100"
-                                readonly>
+                        <div>
+                            <dt class="font-medium">Nombre</dt>
+                            <dd>
+                                <input type="text" name="nombre" value="{{ old('name', $empresa->nombre) }}"
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled />
+                            </dd>
                         </div>
 
                         {{-- Tipo de documento y Número de documento --}}
@@ -93,17 +93,18 @@
                         </div>
 
                         {{-- Tipo de empresa --}}
-                        <div class="mb-4">
-                            <label for="tipo_empresa" class="block text-sm font-medium text-gray-700 mb-1">Tipo de
-                                empresa</label>
-                            <select id="tipo_empresa" name="tipo_empresa"
-                                class="w-full border border-gray-300 rounded p-2 bg-gray-100 pointer-events-none">
-                                <option value="" disabled @selected(old('tipo_empresa', $empresa->tipo_empresa) == null)>Seleccione</option>
-                                <option value="Mineria" @selected(old('tipo_empresa', $empresa->tipo_empresa) == 'Mineria')>Mineria</option>
-                                <option value="Comercial" @selected(old('tipo_empresa', $empresa->tipo_empresa) == 'Comercial')>Comercial</option>
-                                <option value="Agropecuaria" @selected(old('tipo_empresa', $empresa->tipo_empresa) == 'Agropecuaria')>Agropecuaria</option>
-                                <option value="Industrial" @selected(old('tipo_empresa', $empresa->tipo_empresa) == 'Industrial')>Industrial</option>
-                            </select>
+                        <div>
+                            <dt class="font-medium">Tipo de empresa</dt>
+                            <dd>
+                                <select name="tipo_empresa"
+                                    class="w-full border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 p-2" disabled>
+                                    <option value="" disabled @selected(old('periodo', $empresa->periodo) == null)>Seleccione</option>
+                                    <option value="Mineria" @selected(old('periodo', $empresa->periodo) == 'Mineria')>Mineria</option>
+                                    <option value="Comercial" @selected(old('periodo', $empresa->periodo) == 'Comercial')>Comercial</option>
+                                    <option value="Agropecuaria" @selected(old('periodo', $empresa->periodo) == 'Agropecuaria')>Agropecuaria</option>
+                                    <option value="Industrial" @selected(old('periodo', $empresa->periodo) == 'Industrial')>Industrial</option>
+                                </select>
+                            </dd>
                         </div>
 
                         {{-- Fechas de inicio y fin --}}
@@ -132,7 +133,7 @@
                     {{-- Botones --}}
                     <div class="flex justify-end space-x-2 mt-6">
                         <button type="button" id="editBtn"
-                            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            class="bg-[var(--header-bg)] text-white px-4 py-2 rounded hover:bg-blue-700">
                             Editar
                         </button>
 
@@ -171,11 +172,13 @@
             function toggleSucursalField() {
                 if (casaMatriz.checked) {
                     sucursalContainer.style.display = 'none';
-                    sucursal.value = '';
                 } else {
                     sucursalContainer.style.display = 'block';
                 }
             }
+
+            // Inicializar el estado al cargar la página
+            toggleSucursalField();
 
             // Botón Editar
             editBtn.addEventListener('click', () => {
@@ -208,9 +211,6 @@
                 cancelBtn.classList.add('hidden');
                 toggleSucursalField();
             });
-
-            // Inicializar el estado al cargar
-            toggleSucursalField();
         });
     </script>
 @endsection

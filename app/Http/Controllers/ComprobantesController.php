@@ -113,15 +113,20 @@ class ComprobantesController extends Controller
             'detalles' => 'required|array|min:2',
             'detalles.*.cuenta_id' => 'required|exists:cuentas,id_cuenta',
             'detalles.*.descripcion' => 'nullable|string',
-            'detalles.*.debe' => 'nullable|numeric|min:0',
-            'detalles.*.haber' => 'nullable|numeric|min:0',
+            'detalles.*.debe_bs' => 'nullable|numeric|min:0',
+            'detalles.*.haber_bs' => 'nullable|numeric|min:0',
+            'detalles.*.debe_usd' => 'nullable|numeric|min:0',
+            'detalles.*.haber_usd' => 'nullable|numeric|min:0',
         ]);
 
         $validated = $validator->validated();
 
+        // Asegurarse de que los valores no sean nulos
         foreach ($validated['detalles'] as &$detalle) {
-            $detalle['debe']  = $detalle['debe']  ?? 0;
-            $detalle['haber'] = $detalle['haber'] ?? 0;
+            $detalle['debe_bs']  = $detalle['debe_bs']  ?? 0;
+            $detalle['haber_bs'] = $detalle['haber_bs'] ?? 0;
+            $detalle['debe_usd']  = $detalle['debe_usd']  ?? 0;
+            $detalle['haber_usd'] = $detalle['haber_usd'] ?? 0;
         }
 
         $validator->after(function ($validator) use ($request) {
@@ -129,8 +134,8 @@ class ComprobantesController extends Controller
             $totalHaber = 0;
 
             foreach ($request->input('detalles', []) as $detalle) {
-                $totalDebe += floatval($detalle['debe'] ?? 0);
-                $totalHaber += floatval($detalle['haber'] ?? 0);
+                $totalDebe += floatval($detalle['debe_bs'] ?? 0);
+                $totalHaber += floatval($detalle['haber_bs'] ?? 0);
             }
 
             if (round($totalDebe, 2) !== round($totalHaber, 2)) {
@@ -139,15 +144,12 @@ class ComprobantesController extends Controller
         });
 
         if ($validator->fails()) {
-            return redirect()
-                ->back()
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
         try {
             DB::transaction(function () use ($validated) {
-                $totalDebe = collect($validated['detalles'])->sum('debe');
+                $totalDebe = collect($validated['detalles'])->sum('debe_bs');
                 $empresaId = session('empresa_id');
 
                 $comprobante = Comprobante::create([
@@ -166,8 +168,10 @@ class ComprobantesController extends Controller
                     $comprobante->detalles()->create([
                         'cuenta_contable_id' => $detalle['cuenta_id'],
                         'descripcion' => $detalle['descripcion'] ?? '',
-                        'debe' => $detalle['debe'],
-                        'haber' => $detalle['haber'],
+                        'debe_bs' => $detalle['debe_bs'],
+                        'haber_bs' => $detalle['haber_bs'],
+                        'debe_usd' => $detalle['debe_usd'],
+                        'haber_usd' => $detalle['haber_usd'],
                     ]);
                 }
             });
@@ -177,6 +181,7 @@ class ComprobantesController extends Controller
             return back()->withErrors(['error' => 'Error al crear el comprobante: ' . $e->getMessage()])->withInput();
         }
     }
+
 
     public function update(Request $request, $id)
     {
@@ -191,8 +196,10 @@ class ComprobantesController extends Controller
             'detalles' => 'required|array|min:1',
             'detalles.*.cuenta_id' => 'required|exists:cuentas,id_cuenta',
             'detalles.*.descripcion' => 'nullable|string',
-            'detalles.*.debe' => 'nullable|numeric|min:0',
-            'detalles.*.haber' => 'nullable|numeric|min:0',
+            'detalles.*.debe_bs' => 'nullable|numeric|min:0',
+            'detalles.*.haber_bs' => 'nullable|numeric|min:0',
+            'detalles.*.debe_usd' => 'nullable|numeric|min:0',
+            'detalles.*.haber_usd' => 'nullable|numeric|min:0',
         ]);
 
         $validator->after(function ($validator) use ($request) {
@@ -200,8 +207,8 @@ class ComprobantesController extends Controller
             $totalHaber = 0;
 
             foreach ($request->input('detalles', []) as $detalle) {
-                $debe = is_numeric($detalle['debe']) ? floatval($detalle['debe']) : 0;
-                $haber = is_numeric($detalle['haber']) ? floatval($detalle['haber']) : 0;
+                $debe = is_numeric($detalle['debe_bs']) ? floatval($detalle['debe_bs']) : 0;
+                $haber = is_numeric($detalle['haber_bs']) ? floatval($detalle['haber_bs']) : 0;
                 $totalDebe += $debe;
                 $totalHaber += $haber;
             }
@@ -212,10 +219,7 @@ class ComprobantesController extends Controller
         });
 
         if ($validator->fails()) {
-            return redirect()
-                ->back()
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
         DB::transaction(function () use ($request, $id) {
@@ -231,6 +235,14 @@ class ComprobantesController extends Controller
                 'lugar' => $request['lugar'],
             ]);
 
+            // Asegurarse de que los valores de los detalles nunca sean nulos
+            foreach ($request->detalles as &$detalle) {
+                $detalle['debe_bs']  = $detalle['debe_bs']  ?? 0;
+                $detalle['haber_bs'] = $detalle['haber_bs'] ?? 0;
+                $detalle['debe_usd']  = $detalle['debe_usd']  ?? 0;
+                $detalle['haber_usd'] = $detalle['haber_usd'] ?? 0;
+            }
+
             // Eliminar detalles existentes y recrearlos
             $comprobante->detalles()->delete();
 
@@ -238,14 +250,17 @@ class ComprobantesController extends Controller
                 $comprobante->detalles()->create([
                     'cuenta_contable_id' => $detalle['cuenta_id'],
                     'descripcion' => $detalle['descripcion'] ?? null,
-                    'debe' => $detalle['debe'] ?? 0,
-                    'haber' => $detalle['haber'] ?? 0,
+                    'debe_bs' => $detalle['debe_bs'],
+                    'haber_bs' => $detalle['haber_bs'],
+                    'debe_usd' => $detalle['debe_usd'],
+                    'haber_usd' => $detalle['haber_usd'],
                 ]);
             }
         });
 
         return redirect()->route('show.comprobantes.home')->with('success', 'Comprobante actualizado correctamente.');
     }
+
 
     public function destroy($id)
     {

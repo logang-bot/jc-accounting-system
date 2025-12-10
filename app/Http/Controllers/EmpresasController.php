@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ComprobanteDetalles;
+use App\Models\CuentasContables;
 use Illuminate\Http\Request;
 use App\Models\Empresa;
 use Database\Seeders\CuentasSeeder;
@@ -14,11 +16,6 @@ class EmpresasController extends Controller
         return view('empresas.index', [
             'empresas' => $empresas,
         ]);
-    }
-
-    public function create()
-    {
-        return view('empresas.create');
     }
 
     public function show($id)
@@ -59,7 +56,7 @@ class EmpresasController extends Controller
         CuentasSeeder::crearCuentasIngresos($empresa);
         CuentasSeeder::crearCuentasEgresos($empresa);
 
-        return redirect()->route('show.empresas.detail', $empresa->id)
+        return redirect()->route('show.empresas.home', $empresa->id)
             ->with('success', 'Empresa creada correctamente.');
     }
 
@@ -102,7 +99,14 @@ class EmpresasController extends Controller
 
     public function destroy($id)
     {
-        Empresa::findOrFail($id)->delete();
+        $empresa = Empresa::findOrFail($id);
+        $cuentasIds = CuentasContables::where('empresa_id', $id)->pluck('id_cuenta');
+
+        if ($cuentasIds->isNotEmpty()) {
+            ComprobanteDetalles::whereIn('cuenta_contable_id', $cuentasIds)->delete();
+        }
+
+        $empresa->delete();
         return redirect()->route('show.empresas.home')->with('success', 'Empresa eliminada correctamente.');
     }
 

@@ -22,7 +22,7 @@
             </div>
         @endif
 
-        <form method="POST"
+        <form method="POST" id="form-comprobante"
             action="{{ $editMode ? route('comprobantes.update', $comprobante->id) : route('comprobantes.store') }}">
             @csrf
             @if ($editMode)
@@ -43,7 +43,10 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Tipo:</label>
                     <select id="tipo" name="tipo" class="w-full border rounded px-3 py-2" required>
-                        <option value="">-- Seleccione --</option>
+                        <!-- Opción por defecto -->
+                        <option value="" disabled selected>Seleccione un tipo</option>
+
+                        <!-- Opciones dinámicas -->
                         @foreach (['ingreso', 'egreso', 'traspaso', 'ajuste'] as $tipo)
                             <option value="{{ $tipo }}"
                                 {{ old('tipo', $editMode ? $comprobante->tipo : '') === $tipo ? 'selected' : '' }}>
@@ -68,16 +71,16 @@
                         value="{{ old('tasa_cambio', $editMode ? $comprobante->tasa_cambio : '') }}" required>
                 </div>
 
-                <!-- 🔥 NUEVO: Selección de moneda -->
+                <!-- NUEVO: Selección de moneda -->
                 <div>
                     <label for="moneda" class="block text-sm font-medium text-gray-700 mb-1">Moneda:</label>
                     <select id="moneda" name="moneda" class="w-full border rounded px-3 py-2"
                         onchange="cambiarMoneda()">
-                        <option value="BOB" selected>Bolivianos (Bs.)</option>
+                        <option value="" selected disabled>Seleccione</option>
+                        <option value="BOB">Bolivianos (Bs.)</option>
                         <option value="USD">Dólares (USD)</option>
                     </select>
                 </div>
-
 
                 <div>
                     <label for="destinatario" id="label-destinatario" class="block text-sm font-medium text-gray-700 mb-1">
@@ -121,131 +124,74 @@
                             </tr>
                         </thead>
                         <tbody id="detalle-rows">
-                            @if ($oldDetalles && is_array($oldDetalles) && count($oldDetalles))
-                                @foreach ($oldDetalles as $i => $detalle)
-                                    <tr>
-                                        <td class="px-3 py-2">
-                                            <input type="text" name="detalles[0][codigo_cuenta]"
-                                                class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly
-                                                value="{{ old("detalles.$i.cuenta.codigo_cuenta", $detalle->cuenta->codigo_cuenta ?? '') }}">
-                                            <input type="hidden" name="detalles[0][cuenta_id]" class="cuenta-id-input"
-                                                value="">
-                                        </td>
+                            @php
+                                $rows = $oldDetalles ?? ($editMode ? $comprobante->detalles : []);
+                            @endphp
 
-                                        <td class="px-3 py-2">
-                                            <input type="text" name="detalles[0][nombre_cuenta]"
-                                                class="w-full border rounded px-2 py-1" readonly
-                                                value="{{ old("detalles.$i.cuenta.nombre_cuenta", $detalle->cuenta->nombre_cuenta ?? '') }}">
-                                        </td>
+                            @foreach ($rows as $i => $detalle)
+                                <tr>
+                                    <td class="px-3 py-2">
+                                        <input type="text" name="detalles[{{ $i }}][codigo_cuenta]"
+                                            class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly
+                                            value="{{ $detalle->cuenta->codigo_cuenta ?? '' }}">
+                                        <input type="hidden" name="detalles[{{ $i }}][cuenta_id]"
+                                            class="cuenta-id-input" value="{{ $detalle->cuenta_contable_id ?? '' }}">
+                                    </td>
 
-                                        <td class="px-3 py-2">
-                                            <input type="text" name="detalles[{{ $i }}][descripcion]"
-                                                class="w-full border rounded px-2 py-1"
-                                                value="{{ $detalle['descripcion'] ?? '' }}">
-                                        </td>
+                                    <td class="px-3 py-2">
+                                        <input type="text" name="detalles[{{ $i }}][nombre_cuenta]"
+                                            class="w-full border rounded px-2 py-1" readonly
+                                            value="{{ $detalle->cuenta->nombre_cuenta ?? '' }}">
+                                    </td>
 
-                                        <td class="px-3 py-2">
-                                            <input type="number" step="0.01" name="detalles[{{ $i }}][debe]"
-                                                class="w-full text-right border rounded px-2 py-1"
-                                                value="{{ $detalle['debe'] ?? '' }}">
-                                        </td>
+                                    <td class="px-3 py-2">
+                                        <input type="text" name="detalles[{{ $i }}][descripcion]"
+                                            class="w-full border rounded px-2 py-1"
+                                            value="{{ $detalle->descripcion ?? '' }}">
+                                    </td>
 
-                                        <td class="px-3 py-2">
-                                            <input type="number" step="0.01"
-                                                name="detalles[{{ $i }}][haber]"
-                                                class="w-full text-right border rounded px-2 py-1"
-                                                value="{{ $detalle['haber'] ?? '' }}">
-                                        </td>
+                                    <td class="px-3 py-2">
+                                        <input type="number" step="0.01" name="detalles[{{ $i }}][debe_bs]"
+                                            class="w-full text-right border rounded px-2 py-1"
+                                            value="{{ $detalle->debe_bs ?? 0 }}">
+                                    </td>
 
-                                        <td class="px-3 py-2 text-right us-debe">
-                                            <input type="text" readonly
-                                                class="w-full text-right bg-gray-100 border rounded px-2 py-1"
-                                                value="{{ number_format($detalle['us_debe'] ?? 0, 2) }}">
-                                        </td>
+                                    <td class="px-3 py-2">
+                                        <input type="number" step="0.01"
+                                            name="detalles[{{ $i }}][haber_bs]"
+                                            class="w-full text-right border rounded px-2 py-1"
+                                            value="{{ $detalle->haber_bs ?? 0 }}">
+                                    </td>
 
-                                        <td class="px-3 py-2 text-right us-haber">
-                                            <input type="text" readonly
-                                                class="w-full text-right bg-gray-100 border rounded px-2 py-1"
-                                                value="{{ number_format($detalle['us_haber'] ?? 0, 2) }}">
-                                        </td>
+                                    <td class="px-3 py-2 text-right us-debe">
+                                        <input type="number" step="0.01"
+                                            name="detalles[{{ $i }}][debe_usd]" readonly
+                                            class="w-full text-right bg-gray-100 border rounded px-2 py-1"
+                                            value="{{ number_format($detalle->debe_usd ?? 0, 2) }}">
+                                    </td>
 
-                                        <td class="px-3 py-2 text-center space-x-2">
-                                            <!-- Botón seleccionar cuenta -->
-                                            <button type="button" class="text-blue-600 select-cuenta-action"
-                                                data-index="0">
-                                                Seleccionar
-                                            </button>
+                                    <td class="px-3 py-2 text-right us-haber">
+                                        <input type="number" step="0.01"
+                                            name="detalles[{{ $i }}][haber_usd]" readonly
+                                            class="w-full text-right bg-gray-100 border rounded px-2 py-1"
+                                            value="{{ number_format($detalle->haber_usd ?? 0, 2) }}">
+                                    </td>
 
-                                            <!-- Botón eliminar -->
-                                            <button type="button" onclick="removeRow(this)"
-                                                class="text-red-600 hover:underline">
-                                                Eliminar
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @elseif ($editMode)
-                                @foreach ($comprobante->detalles as $i => $detalle)
-                                    <tr>
-                                        <td class="px-3 py-2">
-                                            <input type="text" name="detalles[0][codigo_cuenta]"
-                                                class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly
-                                                value="{{ old("detalles.$i.cuenta.codigo_cuenta", $detalle->cuenta->codigo_cuenta ?? '') }}">
-                                            <input type="hidden" name="detalles[0][cuenta_id]" class="cuenta-id-input"
-                                                value="">
-                                        </td>
 
-                                        <!-- Columna: Nombre de cuenta (select) -->
-                                        <td class="px-3 py-2">
-                                            <input type="text" name="detalles[0][nombre_cuenta]"
-                                                class="w-full border rounded px-2 py-1" readonly
-                                                value="{{ old("detalles.$i.cuenta.nombre_cuenta", $detalle->cuenta->nombre_cuenta ?? '') }}">
-                                        </td>
-                                        <td class="px-3 py-2">
-                                            <input type="text" name="detalles[{{ $i }}][descripcion]"
-                                                class="w-full border rounded px-2 py-1"
-                                                value="{{ old("detalles.$i.descripcion", $detalle->descripcion ?? '') }}">
-                                        </td>
-                                        <td class="px-3 py-2">
-                                            <div>
-                                                <input type="number" step="0.01"
-                                                    name="detalles[{{ $i }}][debe]"
-                                                    class="w-full text-right border rounded px-2 py-1"
-                                                    value="{{ old("detalles.$i.debe", $detalle->debe ?? 0) }}">
-                                            </div>
-                                        </td>
-                                        <td class="px-3 py-2">
-                                            <input type="number" step="0.01"
-                                                name="detalles[{{ $i }}][haber]"
-                                                class="w-full text-right border rounded px-2 py-1"
-                                                value="{{ old("detalles.$i.haber", $detalle->haber ?? 0) }}">
-                                        </td>
-                                        <td class="px-3 py-2 text-right us-debe">
-                                            <input type="text" readonly
-                                                class="w-full text-right bg-gray-100 border rounded px-2 py-1"
-                                                value="{{ number_format($detalle->debe / ($comprobante->tasa_cambio ?: 6.96), 2) }}">
-                                        </td>
-                                        <td class="px-3 py-2 text-right us-haber">
-                                            <input type="text" readonly
-                                                class="w-full text-right bg-gray-100 border rounded px-2 py-1"
-                                                value="{{ number_format($detalle->haber / ($comprobante->tasa_cambio ?: 6.96), 2) }}">
-                                        </td>
+                                    <td class="px-3 py-2 text-center space-x-2">
+                                        <button type="button" class="text-blue-600 select-cuenta-action"
+                                            data-index="{{ $i }}">
+                                            Seleccionar
+                                        </button>
+                                        <button type="button" onclick="removeRow(this)"
+                                            class="text-red-600 hover:underline">
+                                            Eliminar
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
 
-                                        <td class="px-3 py-2 text-center space-x-2">
-                                            <!-- Botón seleccionar cuenta -->
-                                            <button type="button" class="text-blue-600 select-cuenta-action"
-                                                data-index="0">
-                                                Seleccionar
-                                            </button>
-                                            <!-- Botón eliminar -->
-                                            <button type="button" onclick="removeRow(this)"
-                                                class="text-red-600 hover:underline">
-                                                Eliminar
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @else
+                            @if (!count($rows))
                                 <tr>
                                     <td class="px-3 py-2">
                                         <input type="text" name="detalles[0][codigo_cuenta]"
@@ -253,7 +199,6 @@
                                         <input type="hidden" name="detalles[0][cuenta_id]" class="cuenta-id-input"
                                             value="">
                                     </td>
-
                                     <td class="px-3 py-2">
                                         <input type="text" name="detalles[0][nombre_cuenta]"
                                             class="w-full border rounded px-2 py-1" readonly>
@@ -263,30 +208,28 @@
                                             class="w-full border rounded px-2 py-1">
                                     </td>
                                     <td class="px-3 py-2">
-                                        <input type="number" step="0.01" name="detalles[0][debe]"
-                                            class="w-full text-right border rounded px-2 py-1">
+                                        <input type="number" step="0.01" name="detalles[0][debe_bs]"
+                                            class="w-full text-right border rounded px-2 py-1" value="0.00">
                                     </td>
                                     <td class="px-3 py-2">
-                                        <input type="number" step="0.01" name="detalles[0][haber]"
-                                            class="w-full text-right border rounded px-2 py-1">
+                                        <input type="number" step="0.01" name="detalles[0][haber_bs]"
+                                            class="w-full text-right border rounded px-2 py-1" value="0.00">
                                     </td>
                                     <td class="px-3 py-2 text-right us-debe">
-                                        <input type="text" readonly
+                                        <input type="text" name="detalles[0][debe_usd]" readonly
                                             class="w-full text-right bg-gray-100 border rounded px-2 py-1" value="0.00">
                                     </td>
                                     <td class="px-3 py-2 text-right us-haber">
-                                        <input type="text" readonly
+                                        <input type="text" name="detalles[0][haber_usd]" readonly
                                             class="w-full text-right bg-gray-100 border rounded px-2 py-1" value="0.00">
                                     </td>
 
                                     <td class="px-3 py-2 text-center space-x-2">
-                                        <!-- Botón seleccionar cuenta -->
                                         <button type="button"
                                             class="text-blue-600 select-cuenta-action hover:underline cursor-pointer"
                                             data-index="0">
                                             Seleccionar
                                         </button>
-                                        <!-- Botón eliminar -->
                                         <button type="button" onclick="removeRow(this)"
                                             class="text-red-600 hover:underline cursor-pointer">
                                             Eliminar
@@ -296,31 +239,50 @@
                             @endif
                         </tbody>
                     </table>
-                    <section class="flex flex-col">
+
+                    <table class="min-w-full border-t border-gray-300 mt-2 text-sm">
+                        <tfoot class="bg-gray-50 font-semibold">
+                            <tr>
+                                <td colspan="3" class="text-right px-3 py-2">Totales:</td>
+                                <td id="total-debe-bs" class="text-right px-3 py-2 text-green-700">0.00</td>
+                                <td id="total-haber-bs" class="text-right px-3 py-2 text-green-700">0.00</td>
+                                <td id="total-debe-usd" class="text-right px-3 py-2 text-blue-700">0.00</td>
+                                <td id="total-haber-usd" class="text-right px-3 py-2 text-blue-700">0.00</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <section class="flex flex-row gap-2 mt-4">
                         <button type="button" onclick="addRow()"
-                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer">
+                            class="px-4 py-2 bg-[var(--header-bg)] text-white rounded hover:bg-blue-700 cursor-pointer">
                             Agregar Línea
                         </button>
 
                         <!-- Botón para abrir modal -->
                         <button type="button" aria-controls="show-plan-cuentas-modal"
                             data-hs-overlay="#show-plan-cuentas-modal"
-                            class="mt-4 px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-700 cursor-pointer">
+                            class="px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-700 cursor-pointer">
                             Revisar Plan de Cuentas
                         </button>
 
                         <!-- Botón para abrir modal para adicionar cuenta -->
                         <button type="button" aria-controls="show-add-cuenta-modal"
                             data-hs-overlay="#show-add-cuenta-modal"
-                            class="mt-4 px-4 py-2 bg-amber-300 text-white rounded hover:bg-amber-700 cursor-pointer">
+                            class="px-4 py-2 bg-amber-300 text-white rounded hover:bg-amber-700 cursor-pointer">
                             Crear cuenta
                         </button>
                     </section>
-
                 @endif
             </div>
 
-            <div class="text-right">
+            <div class="flex justify-end gap-2">
+                <!-- Botón Cancelar -->
+                <a href="{{ route('show.comprobantes.home') }}"
+                    class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded">
+                    Cancelar
+                </a>
+
+                <!-- Botón Guardar / Actualizar -->
                 <button id="submit-button" type="submit"
                     class="px-6 py-2 {{ $editMode ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-green-600 hover:bg-green-700' }} text-white rounded disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed">
                     {{ $editMode ? 'Actualizar Comprobante' : 'Guardar Comprobante' }}
@@ -367,13 +329,12 @@
         </div>
     </x-modal>
 
-    <!-- Modal seleccionar cuenta -->
     <x-modal id="select-cuenta-modal" class="hidden">
         <div class="flex items-center justify-center min-h-screen px-4">
             <div class="bg-white w-full max-w-4xl rounded-lg shadow-lg">
 
                 <!-- Modal Header -->
-                <div class="flex items-center justify-between px-6 py-4 border-b bg-blue-600 rounded-t-lg">
+                <div class="flex items-center justify-between px-6 py-4 border-b bg-[var(--header-bg)] rounded-t-lg">
                     <h5 class="text-lg font-semibold text-white">Seleccionar Cuenta Contable</h5>
                     <button class="text-white hover:text-gray-200 text-xl font-bold"
                         data-hs-overlay="#select-cuenta-modal">&times;</button>
@@ -406,7 +367,7 @@
                                         <td class="px-3 py-2 border">{{ $cuenta->nombre_cuenta }}</td>
                                         <td class="px-3 py-2 border text-center">
                                             <button type="button"
-                                                class="px-2 py-1 bg-blue-600 text-white rounded select-cuenta-btn"
+                                                class="px-2 py-1 bg-[var(--header-bg)] text-white rounded select-cuenta-btn"
                                                 data-id="{{ $cuenta->id_cuenta }}"
                                                 data-nombre="{{ $cuenta->nombre_cuenta }}"
                                                 data-codigo="{{ $cuenta->codigo_cuenta }}">
@@ -462,8 +423,8 @@
             const tasa = parseFloat(document.getElementById('tasa-cambio').value) || 6.96;
 
             filas.forEach(fila => {
-                const debeBs = fila.querySelector('input[name*="[debe]"]');
-                const haberBs = fila.querySelector('input[name*="[haber]"]');
+                const debeBs = fila.querySelector('input[name*="[debe_bs]"]');
+                const haberBs = fila.querySelector('input[name*="[haber_bs]"]');
                 const debeUSD = fila.querySelector('.us-debe input');
                 const haberUSD = fila.querySelector('.us-haber input');
 
@@ -498,9 +459,9 @@
             if (moneda === "USD" && (e.target.closest('.us-debe') || e.target.closest('.us-haber'))) {
                 const fila = e.target.closest('tr');
                 const tasa = parseFloat(document.getElementById('tasa-cambio').value) || 6.96;
-                fila.querySelector('input[name*="[debe]"]').value = ((parseFloat(fila.querySelector(
+                fila.querySelector('input[name*="[debe_bs]"]').value = ((parseFloat(fila.querySelector(
                     '.us-debe input').value) || 0) * tasa).toFixed(2);
-                fila.querySelector('input[name*="[haber]"]').value = ((parseFloat(fila.querySelector(
+                fila.querySelector('input[name*="[haber_bs]"]').value = ((parseFloat(fila.querySelector(
                     '.us-haber input').value) || 0) * tasa).toFixed(2);
             }
         });
@@ -546,7 +507,8 @@
             const inputs = newRow.querySelectorAll('input, select');
             inputs.forEach(el => {
                 if (el.tagName === 'INPUT') {
-                    if (el.name?.includes('[debe]') || el.name?.includes('[haber]') || el.closest('.us-debe') || el
+                    if (el.name?.includes('[debe_bs]') || el.name?.includes('[haber_bs]') || el.closest(
+                            '.us-debe') || el
                         .closest('.us-haber')) {
                         el.value = "0.00";
                     } else if (el.name?.includes('[cuenta_id]') || el.name?.includes('[codigo_cuenta]') || el.name
@@ -577,25 +539,30 @@
                 rowCount--;
                 updateSubmitButtonState();
             }
+
+            document.dispatchEvent(new CustomEvent('rowRemoved'));
         }
 
         // ────────── Conversion Bs/USD de todas las filas ──────────
         function actualizarConversiones() {
-            const tasa = parseFloat(document.getElementById('tasa-cambio').value);
-            if (!tasa || tasa <= 0) return;
+            const tasa = parseFloat(document.getElementById('tasa-cambio').value) || 6.96;
             document.querySelectorAll('#detalle-rows tr').forEach(fila => {
-                const debe = parseFloat(fila.querySelector('input[name*="[debe]"]').value) || 0;
-                const haber = parseFloat(fila.querySelector('input[name*="[haber]"]').value) || 0;
+                const debe = parseFloat(fila.querySelector('input[name*="[debe_bs]"]').value) || 0;
+                const haber = parseFloat(fila.querySelector('input[name*="[haber_bs]"]').value) || 0;
                 fila.querySelector('.us-debe input').value = (debe / tasa).toFixed(2);
                 fila.querySelector('.us-haber input').value = (haber / tasa).toFixed(2);
             });
         }
 
+
         document.addEventListener('input', function(e) {
-            if (e.target.name?.includes('[debe]') || e.target.name?.includes('[haber]')) actualizarConversiones();
+            if (e.target.name?.includes('[debe_bs]') || e.target.name?.includes('[haber_bs]')) {
+                actualizarConversiones();
+                calcularTotales();
+            }
         });
 
-        // ────────── Select cuentas dentro de fila ──────────
+
         function calculateAccountNumber(select) {
             if (select && select.classList.contains('cuenta-nombre-select')) {
                 const option = select.options[select.selectedIndex];
@@ -604,7 +571,6 @@
             }
         }
 
-        // ────────── Abrir modal de selección de cuenta (delegación de eventos) ──────────
         document.addEventListener("click", function(e) {
             if (e.target.classList.contains("select-cuenta-action")) {
                 filaActiva = e.target.closest("tr");
@@ -613,7 +579,6 @@
             }
         });
 
-        // ────────── Filtrar cuentas en modal ──────────
         document.getElementById("buscar-cuenta").addEventListener("input", function() {
             const filtro = this.value.toLowerCase();
             document.querySelectorAll("#tabla-cuentas tr").forEach(fila => {
@@ -623,7 +588,6 @@
             });
         });
 
-        // ────────── Seleccionar cuenta desde modal ──────────
         document.querySelectorAll(".select-cuenta-btn").forEach(btn => {
             btn.addEventListener("click", function() {
                 if (filaActiva !== null) {
@@ -642,7 +606,169 @@
                     document.querySelector('#select-cuenta-modal').classList.add("hidden");
                     filaActiva = null;
                 }
+                document.dispatchEvent(new CustomEvent('rowAdded'));
             });
         });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('form-comprobante');
+            if (!form) return;
+
+            const storageKey = 'comprobante-form';
+
+            // 🔹 Helper to get all detalle rows as structured data
+            const getDetalles = () => {
+                const rows = [];
+                document.querySelectorAll('#detalle-rows tr').forEach((tr, index) => {
+                    const rowData = {};
+                    tr.querySelectorAll('input[name^="detalles"]').forEach(input => {
+                        const name = input.name.match(/\[([^\]]+)\]$/)?.[1];
+                        if (name) rowData[name] = input.value;
+                    });
+                    rows.push(rowData);
+                });
+                return rows;
+            };
+
+            // 🔹 Helper to rebuild detalle rows from saved data
+            const restoreDetalles = (detalles) => {
+                const tbody = document.getElementById('detalle-rows');
+                if (!tbody) return;
+
+                tbody.innerHTML = ''; // Limpiar filas existentes
+                detalles.forEach((row, index) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+            <td class="px-3 py-2">
+                <input type="text" name="detalles[${index}][codigo_cuenta]" class="w-full bg-gray-100 border rounded px-2 py-1 text-sm" readonly value="${row.codigo_cuenta || ''}">
+                <input type="hidden" name="detalles[${index}][cuenta_id]" class="cuenta-id-input" value="${row.cuenta_id || ''}">
+            </td>
+            <td class="px-3 py-2">
+                <input type="text" name="detalles[${index}][nombre_cuenta]" class="w-full border rounded px-2 py-1" readonly value="${row.nombre_cuenta || ''}">
+            </td>
+            <td class="px-3 py-2">
+                <input type="text" name="detalles[${index}][descripcion]" class="w-full border rounded px-2 py-1" value="${row.descripcion || ''}">
+            </td>
+            <td class="px-3 py-2">
+                <input type="number" step="0.01" name="detalles[${index}][debe_bs]" class="w-full text-right border rounded px-2 py-1" value="${row.debe || '0.00'}">
+            </td>
+            <td class="px-3 py-2">
+                <input type="number" step="0.01" name="detalles[${index}][haber_bs]" class="w-full text-right border rounded px-2 py-1" value="${row.haber || '0.00'}">
+            </td>
+            <td class="px-3 py-2 text-right us-debe">
+                <input type="text" name="detalles[${index}][debe_usd]" readonly class="w-full text-right bg-gray-100 border rounded px-2 py-1" value="${row.us_debe || '0.00'}">
+            </td>
+            <td class="px-3 py-2 text-right us-haber">
+                <input type="text" name="detalles[${index}][haber_usd]" readonly class="w-full text-right bg-gray-100 border rounded px-2 py-1" value="${row.us_haber || '0.00'}">
+            </td>
+            <td class="px-3 py-2 text-center space-x-2">
+                <button type="button" class="text-blue-600 select-cuenta-action hover:underline cursor-pointer" data-index="${index}">Seleccionar</button>
+                <button type="button" onclick="removeRow(this)" class="text-red-600 hover:underline cursor-pointer">Eliminar</button>
+            </td>
+        `;
+                    tbody.appendChild(tr);
+                });
+            };
+
+
+            // 🔹 Restore main form fields
+            const savedData = JSON.parse(localStorage.getItem(storageKey) || '{}');
+            Object.entries(savedData).forEach(([name, value]) => {
+                if (name === 'detalles') return; // handled separately
+                const input = form.querySelector(`[name="${name}"]`);
+                if (input) input.value = value;
+            });
+
+            // 🔹 Restore detalle rows
+            if (savedData.detalles) {
+                rowCount = savedData.detalles.length;
+                updateSubmitButtonState();
+                restoreDetalles(savedData.detalles);
+            }
+
+            // --- 2️⃣ Save data automatically on input ---
+            const saveFormData = () => {
+                const data = {};
+                form.querySelectorAll('input, select, textarea').forEach(el => {
+                    if (!el.name || el.name.startsWith('detalles')) return;
+                    data[el.name] = el.value;
+                });
+                data.detalles = getDetalles();
+                localStorage.setItem(storageKey, JSON.stringify(data));
+            };
+
+            // Listen to changes
+            form.addEventListener('input', saveFormData);
+            form.addEventListener('change', saveFormData);
+
+            document.addEventListener('rowAdded', saveFormData);
+            document.addEventListener('rowRemoved', saveFormData);
+
+            // --- 3️⃣ Clear data when the form is submitted ---
+            form.addEventListener('submit', () => {
+                localStorage.removeItem(storageKey);
+            });
+        });
+
+
+        // para totales en Bs y USD
+
+        document.addEventListener('input', function() {
+            calcularTotales();
+        });
+
+        function calcularTotales() {
+            let totalDebeBs = 0;
+            let totalHaberBs = 0;
+            let totalDebeUSD = 0;
+            let totalHaberUSD = 0;
+
+            // Obtener la tasa de cambio (si existe)
+            const tasaCambioInput = document.getElementById('tasa_cambio');
+            const tasaCambio = tasaCambioInput ? parseFloat(tasaCambioInput.value) || 6.96 : 6.96;
+
+            // Recorremos todas las filas
+            document.querySelectorAll('#detalle-rows tr').forEach(row => {
+                const debeInput = row.querySelector('input[name*="[debe_bs]"]');
+                const haberInput = row.querySelector('input[name*="[haber_bs]"]');
+
+                const debeBs = parseFloat(debeInput?.value || 0);
+                const haberBs = parseFloat(haberInput?.value || 0);
+
+                // Calcular equivalentes en USD
+                const debeUSD = debeBs / tasaCambio;
+                const haberUSD = haberBs / tasaCambio;
+
+                totalDebeBs += debeBs;
+                totalHaberBs += haberBs;
+                totalDebeUSD += debeUSD;
+                totalHaberUSD += haberUSD;
+
+                // Actualizamos columnas USD en cada fila
+                const usDebeInput = row.querySelector('.us-debe input');
+                const usHaberInput = row.querySelector('.us-haber input');
+                if (usDebeInput) usDebeInput.value = debeUSD.toFixed(2);
+                if (usHaberInput) usHaberInput.value = haberUSD.toFixed(2);
+            });
+
+            // Mostrar totales formateados
+            document.getElementById('total-debe-bs').textContent = totalDebeBs.toFixed(2);
+            document.getElementById('total-haber-bs').textContent = totalHaberBs.toFixed(2);
+            document.getElementById('total-debe-usd').textContent = totalDebeUSD.toFixed(2);
+            document.getElementById('total-haber-usd').textContent = totalHaberUSD.toFixed(2);
+
+            // Mostrar en rojo si no está cuadrado
+            const dif = Math.abs(totalDebeBs - totalHaberBs);
+            const totalDebeEl = document.getElementById('total-debe-bs');
+            const totalHaberEl = document.getElementById('total-haber-bs');
+
+            if (dif > 0.009) { // margen mínimo de error
+                totalDebeEl.classList.add('text-red-600');
+                totalHaberEl.classList.add('text-red-600');
+            } else {
+                totalDebeEl.classList.remove('text-red-600');
+                totalHaberEl.classList.remove('text-red-600');
+            }
+        }
     </script>
 @endsection

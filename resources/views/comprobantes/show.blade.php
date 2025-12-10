@@ -51,12 +51,13 @@
                             <td class="border p-2">{{ $detalle->cuenta->codigo_cuenta ?? '-' }}</td>
                             <td class="border p-2">{{ $detalle->cuenta->nombre_cuenta ?? '-' }}</td>
                             <td class="border p-2">{{ $detalle->descripcion }}</td>
-                            <td class="border p-2 text-right debe-bs" data-original="{{ $detalle->debe }}">
-                                {{ number_format($detalle->debe, 2) }}</td>
-                            <td class="border p-2 text-right haber-bs" data-original="{{ $detalle->haber }}">
-                                {{ number_format($detalle->haber, 2) }}</td>
-                            <td class="border p-2 text-right us-debe">{{ number_format($detalle->debe / 6.96, 2) }}</td>
-                            <td class="border p-2 text-right us-haber">{{ number_format($detalle->haber / 6.96, 2) }}</td>
+                            <td class="border p-2 text-right debe-bs" data-original="{{ $detalle->debe_bs }}">
+                                {{ number_format($detalle->debe_bs, 2) }}</td>
+                            <td class="border p-2 text-right haber-bs" data-original="{{ $detalle->haber_bs }}">
+                                {{ number_format($detalle->haber_bs, 2) }}</td>
+                            <td class="border p-2 text-right us-debe">{{ number_format($detalle->debe_usd, 2) }}</td>
+                            <td class="border p-2 text-right us-haber">{{ number_format($detalle->haber_usd, 2) }}
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -64,16 +65,16 @@
                     <tr>
                         <td colspan="3" class="px-3 py-2 text-center">Totales:</td>
                         <td class="px-3 py-2 text-right" id="total-debe-bs">
-                            {{ number_format($comprobante->detalles->sum('debe'), 2) }}
+                            {{ number_format($comprobante->detalles->sum('debe_bs'), 2) }}
                         </td>
                         <td class="px-3 py-2 text-right" id="total-haber-bs">
-                            {{ number_format($comprobante->detalles->sum('haber'), 2) }}
+                            {{ number_format($comprobante->detalles->sum('haber_bs'), 2) }}
                         </td>
                         <td class="px-3 py-2 text-right" id="total-debe-us">
-                            {{ number_format($comprobante->detalles->sum('debe') / 6.96, 2) }}
+                            {{ number_format($comprobante->detalles->sum('debe_usd') / 6.96, 2) }}
                         </td>
                         <td class="px-3 py-2 text-right" id="total-haber-us">
-                            {{ number_format($comprobante->detalles->sum('haber') / 6.96, 2) }}
+                            {{ number_format($comprobante->detalles->sum('haber_usd') / 6.96, 2) }}
                         </td>
                     </tr>
                 </tfoot>

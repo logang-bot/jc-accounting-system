@@ -238,9 +238,6 @@
                                 </tr>
                             @endif
                         </tbody>
-                    </table>
-
-                    <table class="min-w-full border-t border-gray-300 mt-2 text-sm">
                         <tfoot class="bg-gray-50 font-semibold">
                             <tr>
                                 <td colspan="3" class="text-right px-3 py-2">Totales:</td>

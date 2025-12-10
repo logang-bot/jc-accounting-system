@@ -37,15 +37,18 @@ Route::middleware('auth')->controller(AuthController::class)->group(function () 
 });
 
 // --- User management (admins only) ---
-Route::middleware(['auth', 'role:Administrator'])
+Route::middleware(['auth', 'role:Administrator|Teacher'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
         // Rutas para vistas
         Route::get('/home/', [UserController::class, 'home'])->name('show.usuarios.home');
-        Route::get('/crear/', [UserController::class, 'create'])->name('show.usuarios.create');
+        Route::get('/edit/{id}', [UserController::class, 'edit'])->name('show.usuarios.edit');
 
         Route::post('/users', [UserController::class, 'store'])->name('usuarios.store');
+
+        Route::put('/{id}', [UserController::class, 'update'])->name('usuarios.update');
+        Route::delete('/{id}', [UserController::class, 'destroy'])->name('usuarios.destroy');
     });
 
 Route::middleware('auth')->controller(EmpresasController::class)->group(function () {

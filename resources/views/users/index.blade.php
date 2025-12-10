@@ -11,6 +11,11 @@
                 {{ session('success') }}
             </div>
         @endif
+        @if (session('error'))
+            <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
+                {{ session('error') }}
+            </div>
+        @endif
         <div class="flex flex-row gap-5 p-6">
             <div class="flex-1">
                 <div class="max-w-7xl mx-auto p-6 m-6 bg-white shadow-md rounded-xl">
@@ -64,16 +69,22 @@
                             <th class="px-6 py-3 text-start text-xs font-medium uppercase">
                                 Email</th>
                             <th class="px-6 py-3 text-start text-xs font-medium uppercase">
-                                Role(s)</th>
+                                Rol</th>
+                            <th class="px-6 py-3 text-start text-xs font-medium uppercase">
+                                Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($users as $user)
                             <tr class="odd:bg-white even:bg-black/10 hover:bg-gray-100">
-                                <td class="px-3 py-2">{{ $user->name }}</td>
-                                <td class="px-3 py-2">{{ $user->email }}</td>
-                                <td class="px-3 py-2">
+                                <td class="px-6 py-2">{{ $user->name }}</td>
+                                <td class="px-6 py-2">{{ $user->email }}</td>
+                                <td class="px-6 py-2">
                                     {{ $user->getRoleNames()->implode(', ') }}</td>
+                                <td>
+                                    <a href="{{ route('admin.show.usuarios.edit', $user->id) }}"
+                                        class=" px-6 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none ">Revisar</a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

@@ -23,6 +23,11 @@
         </a>
     </div>
     <div class="overflow-y-auto max-h-[760px] w-[90%]">
+        <input type="text" id="search-box" placeholder="Buscar cuenta..."
+            class="w-full px-4 py-2 mb-4 border border-gray-300 rounded-lg shadow-sm
+               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+               dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700" />
+
         <div class="hs-accordion-group border border-gray-300 divide-y divide-gray-300" data-hs-accordion-always-open>
 
             <!-- Header row -->
@@ -119,4 +124,45 @@
     <x-modal id="cuentas-delete">
         @include('cuentas.delete')
     </x-modal>
+
+    <script>
+        document.getElementById('search-box').addEventListener('input', function() {
+            const search = this.value.toLowerCase();
+            const rows = document.querySelectorAll('[data-row-id]');
+
+            // STEP 1: First pass: mark matches
+            rows.forEach(row => {
+                const nameCell = row.querySelector('.grid .px-4:nth-child(2)');
+                if (!nameCell) return;
+
+                const accountName = nameCell.textContent.toLowerCase();
+                const matches = accountName.includes(search);
+
+                row.dataset.matchesSearch = matches ? "true" : "false";
+            });
+
+            // STEP 2: Second pass: bubble matches up to parents
+            rows.forEach(row => {
+                const childMatches = row.querySelectorAll('[data-matches-search="true"]').length > 0;
+                if (childMatches) {
+                    row.dataset.matchesSearch = "true";
+                }
+            });
+
+            // STEP 3: Show/hide rows
+            rows.forEach(row => {
+                const isMatch = row.dataset.matchesSearch === "true";
+                row.style.display = isMatch ? "" : "none";
+
+                // If a parent matches → expand it automatically
+                if (isMatch) {
+                    const accordionContent = row.querySelector('.hs-accordion-content');
+                    if (accordionContent) {
+                        accordionContent.classList.remove('hidden');
+                        accordionContent.style.display = "";
+                    }
+                }
+            });
+        });
+    </script>
 </div>

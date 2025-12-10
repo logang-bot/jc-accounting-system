@@ -71,10 +71,10 @@
                             {{ number_format($comprobante->detalles->sum('haber_bs'), 2) }}
                         </td>
                         <td class="px-3 py-2 text-right" id="total-debe-us">
-                            {{ number_format($comprobante->detalles->sum('debe_usd') / 6.96, 2) }}
+                            {{ number_format($comprobante->detalles->sum('debe_usd'), 2) }}
                         </td>
                         <td class="px-3 py-2 text-right" id="total-haber-us">
-                            {{ number_format($comprobante->detalles->sum('haber_usd') / 6.96, 2) }}
+                            {{ number_format($comprobante->detalles->sum('haber_usd'), 2) }}
                         </td>
                     </tr>
                 </tfoot>

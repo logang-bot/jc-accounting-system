@@ -17,27 +17,6 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function register(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|string|exists:roles,name'
-        ]);
-
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
-        ]);
-
-        // Assign chosen role
-        $user->assignRole($validated['role']);
-
-        return redirect()->route('users.index')->with('success', 'User created successfully');
-    }
-
     public function login(Request $request)
     {
         $validated = $request->validate([

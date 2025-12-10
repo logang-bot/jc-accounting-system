@@ -33,7 +33,10 @@
                     class="inline-flex items-center px-4 py-2 bg-[var(--header-bg)] text-white text-sm font-medium rounded-md shadow hover:bg-blue-700">
                     Filtrar
                 </button>
-
+                <a href="{{ route('balances.general') }}"
+                    class="inline-flex items-center px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded-md shadow hover:bg-gray-600">
+                    Limpiar
+                </a>
                 <a href="{{ route('balances.pdf', ['fecha_desde' => $fechaDesde, 'fecha_hasta' => $fechaHasta]) }}"
                     target="_blank"
                     class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md shadow hover:bg-red-700">

@@ -63,7 +63,7 @@
                     </div>
                 </li>
 
-                @hasanyrole('Administrator|Teacher')
+                @hasanyrole('Administrator|Docente')
                     <li class="hs-accordion" id="user-accordion">
                         <button type="button"
                             class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-neutral-700 focus:outline-hidden cursor-pointer"

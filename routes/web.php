@@ -37,7 +37,7 @@ Route::middleware('auth')->controller(AuthController::class)->group(function () 
 });
 
 // --- User management (admins only) ---
-Route::middleware(['auth', 'role:Administrator|Teacher'])
+Route::middleware(['auth', 'role:Administrator|Docente'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {

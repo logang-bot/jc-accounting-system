@@ -162,10 +162,15 @@
 
                         @foreach ($cuentaData['movimientos'] as $mov)
                             @php
-                                $debeBs = $mov->debe ?? 0;
-                                $haberBs = $mov->haber ?? 0;
-                                $debeUsd = $mov->debe_usd ?? $mov->debe / $mov->comprobante->tasa_cambio;
-                                $haberUsd = $mov->haber_usd ?? $mov->haber / $mov->comprobante->tasa_cambio;
+                                // Monto en Bs según el modelo
+                                $debeBs = $mov->debe_bs ?? 0;
+                                $haberBs = $mov->haber_bs ?? 0;
+
+                                // Monto en USD: si existe en tabla, usa; si no, calcula con tasa de cambio
+                                $debeUsd =
+                                    $mov->debe_usd ?? ($mov->debe_bs / optional($mov->comprobante)->tasa_cambio ?? 1);
+                                $haberUsd =
+                                    $mov->haber_usd ?? ($mov->haber_bs / optional($mov->comprobante)->tasa_cambio ?? 1);
 
                                 $saldoBs += $debeBs - $haberBs;
                                 $saldoUsd += $debeUsd - $haberUsd;
@@ -176,35 +181,25 @@
                                 $totalHaberUsd += $haberUsd;
                             @endphp
                             <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-2 text-gray-700 border border-gray-300 rounded">
-                                    {{ optional($mov->comprobante)->fecha ? \Carbon\Carbon::parse($mov->comprobante->fecha)->format('d/m/Y') : '—' }}
+                                <td>{{ optional($mov->comprobante)->fecha ? \Carbon\Carbon::parse($mov->comprobante->fecha)->format('d/m/Y') : '—' }}
                                 </td>
-                                <td class="px-4 py-2 text-gray-700 border border-gray-300 rounded">
-                                    {{ $mov->comprobante->numero ?? '—' }}</td>
-                                <td class="px-4 py-2 text-gray-700 border border-gray-300 rounded">
-                                    {{ $mov->descripcion ?? '—' }}</td>
+                                <td>{{ $mov->comprobante->numero ?? '—' }}</td>
+                                <td>{{ $mov->descripcion ?? '—' }}</td>
 
                                 @if (request('moneda') == 'bs' || request('moneda') == 'ambas')
-                                    <td class="px-4 py-2 text-right border border-gray-300 rounded">
-                                        {{ number_format($debeBs, 2) }}</td>
-                                    <td class="px-4 py-2 text-right border border-gray-300 rounded">
-                                        {{ number_format($haberBs, 2) }}</td>
-                                    <td
-                                        class="px-4 py-2 text-right font-medium text-gray-900 border border-gray-300 rounded">
-                                        {{ number_format($saldoBs, 2) }}</td>
+                                    <td class="text-right">{{ number_format($debeBs, 2) }}</td>
+                                    <td class="text-right">{{ number_format($haberBs, 2) }}</td>
+                                    <td class="text-right font-medium">{{ number_format($saldoBs, 2) }}</td>
                                 @endif
 
                                 @if (request('moneda') == 'usd' || request('moneda') == 'ambas')
-                                    <td class="px-4 py-2 text-right border border-gray-300 rounded">
-                                        {{ number_format($debeUsd, 2) }}</td>
-                                    <td class="px-4 py-2 text-right border border-gray-300 rounded">
-                                        {{ number_format($haberUsd, 2) }}</td>
-                                    <td
-                                        class="px-4 py-2 text-right font-medium text-gray-900 border border-gray-300 rounded">
-                                        {{ number_format($saldoUsd, 2) }}</td>
+                                    <td class="text-right">{{ number_format($debeUsd, 2) }}</td>
+                                    <td class="text-right">{{ number_format($haberUsd, 2) }}</td>
+                                    <td class="text-right font-medium">{{ number_format($saldoUsd, 2) }}</td>
                                 @endif
                             </tr>
                         @endforeach
+
                     </tbody>
                     <tfoot class="bg-gray-50">
                         <tr>

@@ -196,13 +196,13 @@
                                 <p><small>{{ $detalle->descripcion }}</small></p>
                             @endif
                         </td>
-                        <td style="text-align: right">{{ number_format($detalle->debe ?? 0, 2) }}</td>
-                        <td style="text-align: right">{{ number_format($detalle->haber ?? 0, 2) }}</td>
+                        <td style="text-align: right">{{ number_format($detalle->debe_bs ?? 0, 2) }}</td>
+                        <td style="text-align: right">{{ number_format($detalle->haber_bs ?? 0, 2) }}</td>
                         <td style="text-align: right">
-                            {{ number_format(($detalle->debe ?? 0) / ($comprobante->tasa_cambio ?: 1), 2) }}
+                            {{ number_format(($detalle->debe_usd ?? 0) / ($comprobante->tasa_cambio ?: 1), 2) }}
                         </td>
                         <td style="text-align: right">
-                            {{ number_format(($detalle->haber ?? 0) / ($comprobante->tasa_cambio ?: 1), 2) }}
+                            {{ number_format(($detalle->haber_usd ?? 0) / ($comprobante->tasa_cambio ?: 1), 2) }}
                         </td>
                     </tr>
                 @endforeach
@@ -211,16 +211,16 @@
                 <tr style="font-weight:bold; background:#eee;">
                     <td colspan="2">TOTAL COMPROBANTE</td>
                     <td style="text-align: right">
-                        {{ number_format($comprobante->detalles->sum(fn($d) => $d->debe ?? 0), 2) }}
+                        {{ number_format($comprobante->detalles->sum(fn($d) => $d->debe_bs ?? 0), 2) }}
                     </td>
                     <td style="text-align: right">
-                        {{ number_format($comprobante->detalles->sum(fn($d) => $d->haber ?? 0), 2) }}
+                        {{ number_format($comprobante->detalles->sum(fn($d) => $d->haber_bs ?? 0), 2) }}
                     </td>
                     <td style="text-align: right">
-                        {{ number_format($comprobante->detalles->sum(fn($d) => ($d->debe ?? 0) / ($comprobante->tasa_cambio ?: 1)), 2) }}
+                        {{ number_format($comprobante->detalles->sum(fn($d) => ($d->debe_usd ?? 0) / ($comprobante->tasa_cambio ?: 1)), 2) }}
                     </td>
                     <td style="text-align: right">
-                        {{ number_format($comprobante->detalles->sum(fn($d) => ($d->haber ?? 0) / ($comprobante->tasa_cambio ?: 1)), 2) }}
+                        {{ number_format($comprobante->detalles->sum(fn($d) => ($d->haber_usd ?? 0) / ($comprobante->tasa_cambio ?: 1)), 2) }}
                     </td>
                 </tr>
             @empty
@@ -231,8 +231,6 @@
                 </tr>
             @endforelse
         </tbody>
-
-
     </table>
 </body>
 

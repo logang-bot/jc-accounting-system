@@ -99,8 +99,8 @@
                                     <td class="px-4 py-2"></td>
                                     <td class="px-4 py-2">{{ $det->cuenta->codigo_cuenta ?? '' }} -
                                         {{ $det->cuenta->nombre_cuenta ?? '' }}</td>
-                                    <td class="px-4 py-2 text-right">{{ number_format($det->debe ?? 0, 2) }}</td>
-                                    <td class="px-4 py-2 text-right">{{ number_format($det->haber ?? 0, 2) }}</td>
+                                    <td class="px-4 py-2 text-right">{{ number_format($det->debe_bs ?? 0, 2) }}</td>
+                                    <td class="px-4 py-2 text-right">{{ number_format($det->haber_bs ?? 0, 2) }}</td>
                                     <td></td>
                                 </tr>
                             @endforeach
@@ -109,10 +109,10 @@
                             <tr class="bg-gray-100 font-semibold border-b">
                                 <td colspan="5" class="px-4 py-2 text-right">Totales (Comprobante)</td>
                                 <td class="px-4 py-2 text-right">
-                                    {{ number_format($comp->detalles->sum(fn($d) => $d->debe ?? 0), 2) }}
+                                    {{ number_format($comp->detalles->sum(fn($d) => $d->debe_bs ?? 0), 2) }}
                                 </td>
                                 <td class="px-4 py-2 text-right">
-                                    {{ number_format($comp->detalles->sum(fn($d) => $d->haber ?? 0), 2) }}
+                                    {{ number_format($comp->detalles->sum(fn($d) => $d->haber_bs ?? 0), 2) }}
                                 </td>
                                 <td></td>
                             </tr>

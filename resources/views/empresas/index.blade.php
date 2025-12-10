@@ -16,7 +16,7 @@
                 @endif
 
                 <div class="flex flex-row gap-5 p-6">
-                    @hasanyrole('Administrator|Teacher')
+                    @hasanyrole('Administrator|Docente')
                         <div class="p-6 bg-white shadow-md rounded-xl flex-1">
                             <h2 class="text-2xl font-semibold mb-6">
                                 Crear empresa

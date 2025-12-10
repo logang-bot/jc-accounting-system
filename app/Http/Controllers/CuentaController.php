@@ -95,7 +95,7 @@ class CuentaController extends Controller
     {
         $validated = $request->validate([
             'nombre_cuenta' => 'required|string|max:255',
-            'tipo_cuenta' => 'required|in:Activo,Pasivo,Patrimonio,Ingresos,Egresos',
+            'tipo_cuenta' => 'required|in:Activo,Pasivo,Patrimonio,Ingreso,Egreso',
             'parent_id' => 'nullable|exists:cuentas,id_cuenta',
             'es_movimiento' => 'sometimes|boolean',
             'moneda_principal' => ['nullable', Rule::in(['BOB', 'USD'])],

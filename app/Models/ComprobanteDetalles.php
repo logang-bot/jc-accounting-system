@@ -26,7 +26,7 @@ class ComprobanteDetalles extends Model
 
     public function comprobante()
     {
-        return $this->belongsTo(Comprobante::class, 'comprobante_id');
+        return $this->belongsTo(Comprobante::class, 'comprobante_id', 'id');
     }
 
     public function cuenta()

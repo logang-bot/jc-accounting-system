@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\AccountingService;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 
 class EstadoResultadosController extends Controller
 {
@@ -38,36 +39,26 @@ class EstadoResultadosController extends Controller
             'fechaHasta' => $fechaHasta,
         ]);
     }
+
     public function exportarPDF(Request $request)
     {
-        // Aquí reutilizas la misma lógica de tu vista (filtros, cálculos, etc.)
-        $fechaInicio = $request->get('fecha_inicio');
-        $fechaFin    = $request->get('fecha_fin');
+        $empresaId = session('empresa_id');
+        $fechaDesde = $request->input('fecha_desde');
+        $fechaHasta = $request->input('fecha_hasta');
 
-        $ingresos = [
-            ['codigo' => '4120201010', 'nombre' => 'HONORARIOS POR SERVICIOS', 'saldo' => 1200.00],
-        ];
+        // Obtenemos los resultados filtrados
+        $resultados = $this->service->getEstadoResultados($empresaId, $fechaDesde, $fechaHasta);
 
-        $egresos = [
-            ['codigo' => '5110101012', 'nombre' => 'GASTOS DE OFICINA', 'saldo' => 86.50],
-        ];
+        // Pasamos todo al PDF
+        $pdf = Pdf::loadView('reportes.estado_resultados_pdf', [
+            'resultados' => $resultados,
+            'fechaDesde' => $fechaDesde,
+            'fechaHasta' => $fechaHasta,
+        ]);
 
-        $totalIngresos = collect($ingresos)->sum('saldo');
-        $totalEgresos  = collect($egresos)->sum('saldo');
-        $resultadoNeto = $totalIngresos - $totalEgresos;
-
-        $pdf = Pdf::loadView('reportes.estado_resultados_pdf', compact(
-            'fechaInicio',
-            'fechaFin',
-            'ingresos',
-            'egresos',
-            'totalIngresos',
-            'totalEgresos',
-            'resultadoNeto'
-        ));
-
-        return $pdf->stream("Estado_Resultados_{$fechaInicio}_{$fechaFin}.pdf");
+        return $pdf->stream('estado_resultados.pdf');
     }
+
     public function calcularEstadoResultados($empresaId, $fechaDesde, $fechaHasta)
     {
         // Reutiliza el mismo servicio que ya tienes

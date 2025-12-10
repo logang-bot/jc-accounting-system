@@ -40,7 +40,7 @@
             <select name="tipo_cuenta" id="tipo_cuenta" {{ isset($cuenta) && $cuenta->hasChildren() ? 'disabled' : '' }}
                 class="mt-1 block w-full border border-gray-300 rounded px-3 py-2" required>
                 <option value="">-- Seleccione --</option>
-                @foreach (['Activo', 'Pasivo', 'Patrimonio', 'Ingresos', 'Egresos'] as $tipo)
+                @foreach (['Activo', 'Pasivo', 'Patrimonio', 'Ingreso', 'Egreso'] as $tipo)
                     <option value="{{ $tipo }}"
                         {{ old('tipo_cuenta', $cuenta->tipo_cuenta ?? '') == $tipo ? 'selected' : '' }}>
                         {{ $tipo }}
@@ -207,11 +207,18 @@
             }
 
             parentSelect.disabled = false;
+            let hayOpciones = false;
             originalOptions.forEach(option => {
                 if (option.dataset && option.dataset.tipo === tipoSeleccionado) {
                     parentSelect.appendChild(option.cloneNode(true));
+                    hayOpciones = true;
                 }
             });
+
+            // Si no hay opciones del mismo tipo, dejar la opción raíz habilitada
+            if (!hayOpciones) {
+                parentSelect.disabled = false;
+            }
         }
 
         function evaluarCheckboxMovimientoYMonedaPrincipal() {

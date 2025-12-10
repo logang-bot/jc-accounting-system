@@ -7,6 +7,7 @@ use App\Models\Comprobantes;
 use App\Models\CuentasContables;
 use App\Models\DetalleComprobantes;
 use App\Models\Empresa;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -92,11 +93,18 @@ class ComprobantesController extends Controller
             ->where('empresa_id', $empresaId)
             ->get();
 
+        $cuentasPadre = CuentasContables::where('empresa_id', $empresaId)
+            ->where('es_movimiento', false)
+            ->where('nivel', '<', 5)
+            ->get();
+
         return view('comprobantes.create', [
             'empresa' => $empresa,
             'editMode' => true,
             'comprobante' => $comprobante,
-            'cuentas' => $cuentas
+            'cuentas' => $cuentas,
+            'cuentasPadre' => $cuentasPadre
+
         ]);
     }
 
@@ -279,17 +287,20 @@ class ComprobantesController extends Controller
 
     public function generatePDF($id)
     {
-        $data = [
-            'title' => 'Detalle Comprobante',
-            'date' => date('m/d/Y')
-        ];
-
         $comprobante = Comprobante::with(['detalles.cuenta', 'user'])->findOrFail($id);
         $empresaId = session('empresa_id');
         $empresa = Empresa::findOrFail($empresaId);
 
-        $pdf = pdf()->view('comprobantePDF', compact('comprobante', 'empresa'));
+        // Calcular montos en USD antes de pasar a la vista
+        foreach ($comprobante->detalles as $detalle) {
+            $detalle->debe_usd = $detalle->debe_bs / $comprobante->tasa_cambio;
+            $detalle->haber_usd = $detalle->haber_bs / $comprobante->tasa_cambio;
+        }
 
-        return $pdf->name('comprobante-' . $comprobante->numero . '.pdf');
+        // Aquí cargamos la vista correcta
+        $pdf = Pdf::loadView('comprobantePDF', compact('comprobante', 'empresa'));
+
+        // Mostrar en navegador
+        return $pdf->stream('comprobante-' . $comprobante->numero . '.pdf');
     }
 }

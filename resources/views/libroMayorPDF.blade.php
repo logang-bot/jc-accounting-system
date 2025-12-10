@@ -86,8 +86,8 @@
                 @endphp
                 @foreach ($cuentaData['movimientos'] as $mov)
                     @php
-                        $debeBs = $mov->debe ?? 0;
-                        $haberBs = $mov->haber ?? 0;
+                        $debeBs = $mov->debe_bs ?? 0;
+                        $haberBs = $mov->haber_bs ?? 0;
                         $debeUsd = $mov->debe_usd ?? $mov->debe / $mov->comprobante->tasa_cambio;
                         $haberUsd = $mov->haber_usd ?? $mov->haber / $mov->comprobante->tasa_cambio;
 

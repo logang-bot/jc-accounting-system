@@ -119,7 +119,8 @@
                     </td>
                     <td class="text-right">{{ number_format($cuenta['saldo'] ?? 0, 2) }}</td>
                 </tr>
-            @endforeachd
+            @endforeach
+
         <tfoot>
             <tr class="font-bold">
                 <td>Total Pasivos + Patrimonio</td>

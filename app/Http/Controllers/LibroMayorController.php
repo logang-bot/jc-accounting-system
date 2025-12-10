@@ -78,8 +78,10 @@ class LibroMayorController extends Controller
             }
 
             $libroMayor[$cuenta->id_cuenta]['movimientos'][] = (object) [
-                'debe'        => $mov->debe,
-                'haber'       => $mov->haber,
+                'debe_bs'   => $mov->debe_bs,
+                'haber_bs'  => $mov->haber_bs,
+                'debe_usd'  => $mov->debe_usd,
+                'haber_usd' => $mov->haber_usd,
                 'descripcion' => $mov->descripcion,
                 'comprobante' => $mov->comprobante,
             ];
@@ -177,8 +179,10 @@ class LibroMayorController extends Controller
             }
 
             $libroMayor[$cuenta->id_cuenta]['movimientos'][] = (object) [
-                'debe'        => $mov->debe,
-                'haber'       => $mov->haber,
+                'debe_bs'   => $mov->debe_bs,
+                'haber_bs'  => $mov->haber_bs,
+                'debe_usd'  => $mov->debe_usd,
+                'haber_usd' => $mov->haber_usd,
                 'descripcion' => $mov->descripcion,
                 'comprobante' => $mov->comprobante,
             ];
@@ -186,7 +190,7 @@ class LibroMayorController extends Controller
 
         if ($saldoTipo === 'con_saldo') {
             $libroMayor = array_filter($libroMayor, function ($cuentaData) {
-                $total = collect($cuentaData['movimientos'])->sum(fn($m) => ($m->debe ?? 0) - ($m->haber ?? 0));
+                $total = collect($cuentaData['movimientos'])->sum(fn($m) => ($m->debe_bs ?? 0) - ($m->haber_bs ?? 0));
                 return $total != 0;
             });
         }

@@ -415,7 +415,7 @@ class CuentasSeeder extends Seeder
             'nombre_cuenta' => 'CAJA',
             'tipo_cuenta' => 'Activo',
             'nivel' => 4,
-            'es_movimiento' => true,
+            'es_movimiento' => false,
             'parent_id' => $disponibilidades->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
@@ -444,7 +444,7 @@ class CuentasSeeder extends Seeder
             'nombre_cuenta' => 'BANCOS',
             'tipo_cuenta' => 'Activo',
             'nivel' => 4,
-            'es_movimiento' => true,
+            'es_movimiento' => false,
             'parent_id' => $disponibilidades->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
@@ -482,7 +482,7 @@ class CuentasSeeder extends Seeder
             'nombre_cuenta' => 'CUENTAS POR COBRAR',
             'tipo_cuenta' => 'Activo',
             'nivel' => 4,
-            'es_movimiento' => true,
+            'es_movimiento' => false,
             'parent_id' => $activoExigible->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
@@ -511,7 +511,7 @@ class CuentasSeeder extends Seeder
             'nombre_cuenta' => 'DOCUMENTOS POR COBRAR',
             'tipo_cuenta' => 'Activo',
             'nivel' => 4,
-            'es_movimiento' => true,
+            'es_movimiento' => false,
             'parent_id' => $activoExigible->id_cuenta,
             'empresa_id' => $empresa->id,
         ]);
